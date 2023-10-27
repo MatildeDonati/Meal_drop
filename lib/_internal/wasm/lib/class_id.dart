@@ -68,5 +68,5 @@ class ClassID {
   external static int get cidRecordType;
 
   // Dummy, only used by VM-specific hash table code.
-  static final int numPredefinedCids = 1;
+  static const int numPredefinedCids = 1;
 }

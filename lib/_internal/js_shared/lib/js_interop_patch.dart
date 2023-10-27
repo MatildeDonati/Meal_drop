@@ -4,7 +4,6 @@
 
 import 'dart:_foreign_helper' as foreign_helper;
 import 'dart:_interceptors' show JavaScriptObject;
-import 'dart:_internal' show patch;
 import 'dart:_js_types';
 import 'dart:js_util' as js_util;
 import 'dart:typed_data';

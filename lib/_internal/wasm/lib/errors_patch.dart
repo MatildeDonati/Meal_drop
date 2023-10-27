@@ -113,7 +113,7 @@ class NoSuchMethodError {
 
   NoSuchMethodError(Object? receiver, Symbol memberName,
       List? positionalArguments, Map<Symbol, dynamic>? namedArguments,
-      [List? existingArgumentNames = null])
+      [List? existingArgumentNames])
       : _receiver = receiver,
         _memberName = memberName,
         _arguments = positionalArguments,
@@ -131,6 +131,7 @@ class NoSuchMethodError {
     throw NoSuchMethodError(receiver, memberName, null, null);
   }
 
+  @override
   @patch
   String toString() {
     StringBuffer sb = StringBuffer('');
@@ -159,13 +160,13 @@ class NoSuchMethodError {
     List? existingArgumentNames = _existingArgumentNames;
     if (existingArgumentNames == null) {
       return "NoSuchMethodError: method not found: '$memberName'\n"
-          "Receiver: ${receiverText}\n"
+          "Receiver: $receiverText\n"
           "Arguments: [$actualParameters]";
     } else {
       String formalParameters = existingArgumentNames.join(', ');
       return "NoSuchMethodError: incorrect number of arguments passed to "
           "method named '$memberName'\n"
-          "Receiver: ${receiverText}\n"
+          "Receiver: $receiverText\n"
           "Tried calling: $memberName($actualParameters)\n"
           "Found: $memberName($formalParameters)";
     }
@@ -190,13 +191,14 @@ class _DuplicatedFieldInitializerError extends Error {
 
   _DuplicatedFieldInitializerError(this._name);
 
+  @override
   toString() => "Error: field '$_name' is already initialized.";
 }
 
 @patch
 class StateError {
   static _throwNew(String msg) {
-    throw new StateError(msg);
+    throw StateError(msg);
   }
 }
 
@@ -207,7 +209,7 @@ class StateError {
 class OutOfMemoryError {
   StackTrace? get _stackTrace =>
       throw UnsupportedError('OutOfMemoryError._stackTrace');
-  void set _stackTrace(StackTrace? _) {
+  set _stackTrace(StackTrace? _) {
     throw UnsupportedError('OutOfMemoryError._stackTrace');
   }
 }
@@ -216,7 +218,7 @@ class OutOfMemoryError {
 class StackOverflowError {
   StackTrace? get _stackTrace =>
       throw UnsupportedError('StackOverflowError._stackTrace');
-  void set _stackTrace(StackTrace? _) {
+  set _stackTrace(StackTrace? _) {
     throw UnsupportedError('StackOverflowError._stackTrace');
   }
 }
@@ -225,7 +227,7 @@ class StackOverflowError {
 class IntegerDivisionByZeroException {
   StackTrace? get _stackTrace =>
       throw UnsupportedError('IntegerDivisionByZeroException._stackTrace');
-  void set _stackTrace(StackTrace? _) {
+  set _stackTrace(StackTrace? _) {
     throw UnsupportedError('IntegerDivisionByZeroException._stackTrace');
   }
 }

@@ -6,9 +6,10 @@ part of "core_patch.dart";
 
 @pragma("vm:entry-point")
 class _GrowableList<T> extends ListBase<T> {
+  @override
   void insert(int index, T element) {
     if ((index < 0) || (index > length)) {
-      throw new RangeError.range(index, 0, length);
+      throw RangeError.range(index, 0, length);
     }
     int oldLength = this.length;
     add(element);
@@ -19,6 +20,7 @@ class _GrowableList<T> extends ListBase<T> {
     this[index] = element;
   }
 
+  @override
   T removeAt(int index) {
     var result = this[index];
     int newLength = this.length - 1;
@@ -29,6 +31,7 @@ class _GrowableList<T> extends ListBase<T> {
     return result;
   }
 
+  @override
   bool remove(Object? element) {
     for (int i = 0; i < this.length; i++) {
       if (this[i] == element) {
@@ -39,9 +42,10 @@ class _GrowableList<T> extends ListBase<T> {
     return false;
   }
 
+  @override
   void insertAll(int index, Iterable<T> iterable) {
     if (index < 0 || index > length) {
-      throw new RangeError.range(index, 0, length);
+      throw RangeError.range(index, 0, length);
     }
     // TODO(floitsch): we can probably detect more cases.
     if (iterable is! List && iterable is! Set && iterable is! SubListIterable) {
@@ -64,6 +68,7 @@ class _GrowableList<T> extends ListBase<T> {
     setAll(index, iterable);
   }
 
+  @override
   void setAll(int index, Iterable<T> iterable) {
     if (iterable is List) {
       setRange(index, index + iterable.length, iterable);
@@ -74,28 +79,30 @@ class _GrowableList<T> extends ListBase<T> {
     }
   }
 
+  @override
   void removeRange(int start, int end) {
     RangeError.checkValidRange(start, end, this.length);
     Lists.copy(this, end, this, start, this.length - end);
     this.length = this.length - (end - start);
   }
 
+  @override
   List<T> sublist(int start, [int? end]) {
     final int actualEnd = RangeError.checkValidRange(start, end, this.length);
     int length = actualEnd - start;
     if (length == 0) return <T>[];
-    final list = new _List(length);
+    final list = _List(length);
     for (int i = 0; i < length; i++) {
       list[i] = this[start + i];
     }
-    final result = new _GrowableList<T>._withData(list);
+    final result = _GrowableList<T>._withData(list);
     result._setLength(length);
     return result;
   }
 
   factory _GrowableList(int length) {
     var data = _allocateData(length);
-    var result = new _GrowableList<T>._withData(data);
+    var result = _GrowableList<T>._withData(data);
     if (length > 0) {
       result._setLength(length);
     }
@@ -104,7 +111,7 @@ class _GrowableList<T> extends ListBase<T> {
 
   factory _GrowableList.withCapacity(int capacity) {
     var data = _allocateData(capacity);
-    return new _GrowableList<T>._withData(data);
+    return _GrowableList<T>._withData(data);
   }
 
   // Specialization of List.empty constructor for growable == true.
@@ -130,7 +137,7 @@ class _GrowableList<T> extends ListBase<T> {
   // Specialization of List.generate constructor for growable == true.
   // Used by pkg/vm/lib/transformations/list_factory_specializer.dart.
   @pragma("vm:prefer-inline")
-  factory _GrowableList.generate(int length, T generator(int index)) {
+  factory _GrowableList.generate(int length, T Function(int index) generator) {
     final result = _GrowableList<T>(length);
     for (int i = 0; i < result.length; ++i) {
       result[i] = generator(i);
@@ -217,52 +224,56 @@ class _GrowableList<T> extends ListBase<T> {
   @pragma("vm:external-name", "GrowableList_getCapacity")
   external int get _capacity;
 
+  @override
   @pragma("vm:recognized", "graph-intrinsic")
   @pragma("vm:exact-result-type", "dart:core#_Smi")
   @pragma("vm:prefer-inline")
   @pragma("vm:external-name", "GrowableList_getLength")
   external int get length;
 
-  void set length(int new_length) {
-    if (new_length > length) {
+  @override
+  set length(int newLength) {
+    if (newLength > length) {
       // Verify that element type is nullable.
       null as T;
-      if (new_length > _capacity) {
-        _grow(new_length);
+      if (newLength > _capacity) {
+        _grow(newLength);
       }
-      _setLength(new_length);
+      _setLength(newLength);
       return;
     }
-    final int new_capacity = new_length;
+    final int newCapacity = newLength;
     // We are shrinking. Pick the method which has fewer writes.
     // In the shrink-to-fit path, we write |new_capacity + new_length| words
     // (null init + copy).
     // In the non-shrink-to-fit path, we write |length - new_length| words
     // (null overwrite).
     final bool shouldShrinkToFit =
-        (new_capacity + new_length) < (length - new_length);
+        (newCapacity + newLength) < (length - newLength);
     if (shouldShrinkToFit) {
-      _shrink(new_capacity, new_length);
+      _shrink(newCapacity, newLength);
     } else {
-      for (int i = new_length; i < length; i++) {
+      for (int i = newLength; i < length; i++) {
         _setIndexed(i, null);
       }
     }
-    _setLength(new_length);
+    _setLength(newLength);
   }
 
   @pragma("vm:recognized", "graph-intrinsic")
   @pragma("vm:external-name", "GrowableList_setLength")
-  external void _setLength(int new_length);
+  external void _setLength(int newLength);
 
   @pragma("vm:recognized", "graph-intrinsic")
   @pragma("vm:external-name", "GrowableList_setData")
   external void _setData(_List array);
 
+  @override
   @pragma("vm:recognized", "graph-intrinsic")
   @pragma("vm:external-name", "GrowableList_getIndexed")
   external T operator [](int index);
 
+  @override
   @pragma("vm:recognized", "other")
   void operator []=(int index, T value) {
     _setIndexed(index, value);
@@ -272,6 +283,7 @@ class _GrowableList<T> extends ListBase<T> {
   @pragma("vm:external-name", "GrowableList_setIndexed")
   external void _setIndexed(int index, T? value);
 
+  @override
   @pragma("vm:entry-point", "call")
   @pragma("vm:prefer-inline")
   void add(T value) {
@@ -283,6 +295,7 @@ class _GrowableList<T> extends ListBase<T> {
     this[len] = value;
   }
 
+  @override
   void addAll(Iterable<T> iterable) {
     var len = length;
     final cid = ClassID.getID(iterable);
@@ -305,7 +318,7 @@ class _GrowableList<T> extends ListBase<T> {
       }
       if (isVMList) {
         if (identical(iterable, this)) {
-          throw new ConcurrentModificationError(this);
+          throw ConcurrentModificationError(this);
         }
         this._setLength(newLen);
         final ListBase<T> iterableAsList = iterable as ListBase<T>;
@@ -323,13 +336,14 @@ class _GrowableList<T> extends ListBase<T> {
         this._setLength(newLen);
         this[len] = it.current;
         if (!it.moveNext()) return;
-        if (this.length != newLen) throw new ConcurrentModificationError(this);
+        if (this.length != newLen) throw ConcurrentModificationError(this);
         len = newLen;
       }
       _growToNextCapacity();
     } while (true);
   }
 
+  @override
   @pragma("vm:prefer-inline")
   T removeLast() {
     var len = length - 1;
@@ -338,16 +352,19 @@ class _GrowableList<T> extends ListBase<T> {
     return elem;
   }
 
+  @override
   T get first {
     if (length > 0) return this[0];
     throw IterableElementError.noElement();
   }
 
+  @override
   T get last {
     if (length > 0) return this[length - 1];
     throw IterableElementError.noElement();
   }
 
+  @override
   T get single {
     if (length == 1) return this[0];
     if (length == 0) throw IterableElementError.noElement();
@@ -355,7 +372,7 @@ class _GrowableList<T> extends ListBase<T> {
   }
 
   // Shared array used as backing for new empty growable arrays.
-  static final _List _emptyList = new _List(0);
+  static final _List _emptyList = _List(0);
 
   static _List _allocateData(int capacity) {
     if (capacity == 0) {
@@ -370,10 +387,10 @@ class _GrowableList<T> extends ListBase<T> {
   static int _adjustedCapacity(int capacity) => capacity | 1;
 
   // Grow from 0 to 3, and then double + 1.
-  int _nextCapacity(int old_capacity) => (old_capacity * 2) | 3;
+  int _nextCapacity(int oldCapacity) => (oldCapacity * 2) | 3;
 
-  void _grow(int new_capacity) {
-    var newData = _allocateData(new_capacity);
+  void _grow(int newCapacity) {
+    var newData = _allocateData(newCapacity);
     // This is a workaround for dartbug.com/30090: array-bound-check
     // generalization causes excessive deoptimizations because it
     // hoists CheckArrayBound(i, ...) out of the loop below and turns it
@@ -396,11 +413,11 @@ class _GrowableList<T> extends ListBase<T> {
     _grow(_nextCapacity(_capacity));
   }
 
-  void _shrink(int new_capacity, int new_length) {
-    var newData = _allocateData(new_capacity);
+  void _shrink(int newCapacity, int newLength) {
+    var newData = _allocateData(newCapacity);
     // This is a workaround for dartbug.com/30090. See the comment in _grow.
-    if (new_length > 0) {
-      for (int i = 0; i < new_length; i++) {
+    if (newLength > 0) {
+      for (int i = 0; i < newLength; i++) {
         newData[i] = this[i];
       }
     }
@@ -409,15 +426,17 @@ class _GrowableList<T> extends ListBase<T> {
 
   // Iterable interface.
 
+  @override
   @pragma("vm:prefer-inline")
-  void forEach(f(T element)) {
+  void forEach(Function(T element) f) {
     int initialLength = length;
     for (int i = 0; i < length; i++) {
       f(this[i]);
-      if (length != initialLength) throw new ConcurrentModificationError(this);
+      if (length != initialLength) throw ConcurrentModificationError(this);
     }
   }
 
+  @override
   String join([String separator = ""]) {
     final int length = this.length;
     if (length == 0) return "";
@@ -449,7 +468,7 @@ class _GrowableList<T> extends ListBase<T> {
       }
 
       // Not all elements are strings, so allocate a new backing array.
-      final list = new _List(length);
+      final list = _List(length);
       for (int copyIndex = 0; copyIndex < i; copyIndex++) {
         list[copyIndex] = this[copyIndex];
       }
@@ -476,7 +495,7 @@ class _GrowableList<T> extends ListBase<T> {
   }
 
   String _joinWithSeparator(String separator) {
-    StringBuffer buffer = new StringBuffer();
+    StringBuffer buffer = StringBuffer();
     buffer.write(this[0]);
     for (int i = 1; i < this.length; i++) {
       buffer.write(separator);
@@ -485,27 +504,34 @@ class _GrowableList<T> extends ListBase<T> {
     return buffer.toString();
   }
 
+  @override
   T elementAt(int index) {
     return this[index];
   }
 
+  @override
   bool get isEmpty {
-    return this.length == 0;
+    return this.isEmpty;
   }
 
+  @override
   bool get isNotEmpty => !isEmpty;
 
+  @override
   void clear() {
     this.length = 0;
   }
 
+  @override
   String toString() => ListBase.listToString(this);
 
+  @override
   @pragma("vm:prefer-inline")
   Iterator<T> get iterator {
-    return new ListIterator<T>(this);
+    return ListIterator<T>(this);
   }
 
+  @override
   List<T> toList({bool growable = true}) {
     // TODO(sra): We should be able to replace the following with:
     //
@@ -518,18 +544,18 @@ class _GrowableList<T> extends ListBase<T> {
     final length = this.length;
     if (growable) {
       if (length > 0) {
-        final data = new _List(_adjustedCapacity(length));
+        final data = _List(_adjustedCapacity(length));
         for (int i = 0; i < length; i++) {
           data[i] = this[i];
         }
-        final result = new _GrowableList<T>._withData(data);
+        final result = _GrowableList<T>._withData(data);
         result._setLength(length);
         return result;
       }
       return <T>[];
     } else {
       if (length > 0) {
-        final list = new _List<T>(length);
+        final list = _List<T>(length);
         for (int i = 0; i < length; i++) {
           list[i] = this[i];
         }
@@ -539,15 +565,16 @@ class _GrowableList<T> extends ListBase<T> {
     }
   }
 
+  @override
   Set<T> toSet() {
-    return new Set<T>.of(this);
+    return Set<T>.of(this);
   }
 
   // Factory constructing a mutable List from a parser generated List literal.
   // [elements] contains elements that are already type checked.
   @pragma("vm:entry-point", "call")
   factory _GrowableList._literal(_List elements) {
-    final result = new _GrowableList<T>._withData(elements);
+    final result = _GrowableList<T>._withData(elements);
     result._setLength(elements.length);
     return result;
   }
@@ -557,7 +584,7 @@ class _GrowableList<T> extends ListBase<T> {
   factory _GrowableList._literal1(T e0) {
     _List elements = _List(1);
     elements[0] = e0;
-    final result = new _GrowableList<T>._withData(elements);
+    final result = _GrowableList<T>._withData(elements);
     result._setLength(1);
     return result;
   }
@@ -566,7 +593,7 @@ class _GrowableList<T> extends ListBase<T> {
     _List elements = _List(2);
     elements[0] = e0;
     elements[1] = e1;
-    final result = new _GrowableList<T>._withData(elements);
+    final result = _GrowableList<T>._withData(elements);
     result._setLength(2);
     return result;
   }
@@ -576,7 +603,7 @@ class _GrowableList<T> extends ListBase<T> {
     elements[0] = e0;
     elements[1] = e1;
     elements[2] = e2;
-    final result = new _GrowableList<T>._withData(elements);
+    final result = _GrowableList<T>._withData(elements);
     result._setLength(3);
     return result;
   }
@@ -587,7 +614,7 @@ class _GrowableList<T> extends ListBase<T> {
     elements[1] = e1;
     elements[2] = e2;
     elements[3] = e3;
-    final result = new _GrowableList<T>._withData(elements);
+    final result = _GrowableList<T>._withData(elements);
     result._setLength(4);
     return result;
   }
@@ -599,7 +626,7 @@ class _GrowableList<T> extends ListBase<T> {
     elements[2] = e2;
     elements[3] = e3;
     elements[4] = e4;
-    final result = new _GrowableList<T>._withData(elements);
+    final result = _GrowableList<T>._withData(elements);
     result._setLength(5);
     return result;
   }
@@ -612,7 +639,7 @@ class _GrowableList<T> extends ListBase<T> {
     elements[3] = e3;
     elements[4] = e4;
     elements[5] = e5;
-    final result = new _GrowableList<T>._withData(elements);
+    final result = _GrowableList<T>._withData(elements);
     result._setLength(6);
     return result;
   }
@@ -626,7 +653,7 @@ class _GrowableList<T> extends ListBase<T> {
     elements[4] = e4;
     elements[5] = e5;
     elements[6] = e6;
-    final result = new _GrowableList<T>._withData(elements);
+    final result = _GrowableList<T>._withData(elements);
     result._setLength(7);
     return result;
   }
@@ -642,7 +669,7 @@ class _GrowableList<T> extends ListBase<T> {
     elements[5] = e5;
     elements[6] = e6;
     elements[7] = e7;
-    final result = new _GrowableList<T>._withData(elements);
+    final result = _GrowableList<T>._withData(elements);
     result._setLength(8);
     return result;
   }

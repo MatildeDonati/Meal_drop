@@ -47,13 +47,13 @@ class _JSEventLoop {
 @patch
 class Timer {
   @patch
-  static Timer _createTimer(Duration duration, void callback()) {
+  static Timer _createTimer(Duration duration, void Function() callback) {
     return _OneShotTimer(duration, callback);
   }
 
   @patch
   static Timer _createPeriodicTimer(
-      Duration duration, void callback(Timer timer)) {
+      Duration duration, void Function(Timer timer) callback) {
     return _PeriodicTimer(duration, callback);
   }
 }
@@ -136,7 +136,7 @@ class _PeriodicTimer extends _Timer {
 @patch
 class _AsyncRun {
   @patch
-  static void _scheduleImmediate(void callback()) {
+  static void _scheduleImmediate(void Function() callback) {
     _JSEventLoop._queueMicrotask(callback);
   }
 }

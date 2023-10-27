@@ -11,7 +11,7 @@ import 'dart:_foreign_helper' show JS;
 /// Deprecated way of initializing `main()` in DDC, typically called from JS.
 @deprecated
 void startRootIsolate(main, args) {
-  if (args == null) args = <String>[];
+  args ??= <String>[];
   if (args is List) {
     if (args is! List<String>) args = List<String>.from(args);
     // DDC attaches signatures only when torn off, and the typical way of
@@ -37,7 +37,7 @@ class TimerImpl implements Timer {
   int? _handle;
   int _tick = 0;
 
-  TimerImpl(int milliseconds, void callback()) : _once = true {
+  TimerImpl(int milliseconds, void Function() callback) : _once = true {
     if (hasTimer()) {
       int currentHotRestartIteration = dart.hotRestartIteration;
       void internalCallback() {
@@ -58,7 +58,7 @@ class TimerImpl implements Timer {
     }
   }
 
-  TimerImpl.periodic(int milliseconds, void callback(Timer timer))
+  TimerImpl.periodic(int milliseconds, void Function(Timer timer) callback)
       : _once = false {
     if (hasTimer()) {
       dart.addAsyncCallback();
@@ -69,14 +69,14 @@ class TimerImpl implements Timer {
           cancel();
           return;
         }
-        int tick = this._tick + 1;
+        int tick = _tick + 1;
         if (milliseconds > 0) {
           int duration = JS<int>('!', 'Date.now()') - start;
           if (duration > (tick + 1) * milliseconds) {
             tick = duration ~/ milliseconds;
           }
         }
-        this._tick = tick;
+        _tick = tick;
         callback(this);
       }, milliseconds);
     } else {
@@ -84,8 +84,10 @@ class TimerImpl implements Timer {
     }
   }
 
+  @override
   int get tick => _tick;
 
+  @override
   void cancel() {
     if (hasTimer()) {
       if (_handle == null) return;
@@ -101,6 +103,7 @@ class TimerImpl implements Timer {
     }
   }
 
+  @override
   bool get isActive => _handle != null;
 }
 

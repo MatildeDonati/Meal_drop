@@ -5,7 +5,6 @@
 // Patch file for the dart:async library.
 
 import 'dart:_js_helper' show notNull, ReifyFunctionTypes;
-import 'dart:_internal' show patch;
 import 'dart:_isolate_helper' show TimerImpl;
 import 'dart:_foreign_helper' show JS, JSExportName;
 import 'dart:_runtime' as dart;
@@ -194,7 +193,7 @@ class Timer {
 
   @patch
   static Timer _createPeriodicTimer(
-      Duration duration, void callback(Timer timer)) {
+      Duration duration, void Function(Timer timer) callback) {
     int milliseconds = duration.inMilliseconds;
     if (milliseconds < 0) milliseconds = 0;
     return TimerImpl.periodic(milliseconds, callback);

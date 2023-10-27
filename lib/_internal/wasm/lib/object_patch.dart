@@ -10,11 +10,12 @@ external void _setHash(Object obj, int hash);
 
 @patch
 class Object {
+  @override
   @patch
   external bool operator ==(Object other);
 
   // Random number generator used to generate identity hash codes.
-  static final _hashCodeRnd = new Random();
+  static final _hashCodeRnd = Random();
 
   static int _objectHashCode(Object obj) {
     var result = _getHash(obj);
@@ -30,6 +31,7 @@ class Object {
     return result;
   }
 
+  @override
   @patch
   int get hashCode => _objectHashCode(this);
 
@@ -43,9 +45,11 @@ class Object {
   @pragma("wasm:prefer-inline")
   static List<_Type> _getTypeArguments(Object object) => object._typeArguments;
 
+  @override
   @patch
   external Type get runtimeType;
 
+  @override
   @patch
   String toString() => _toString(this);
   // A statically dispatched version of Object.toString.
@@ -53,10 +57,11 @@ class Object {
     return "Instance of '${_getMasqueradedRuntimeType(obj)}'";
   }
 
+  @override
   @patch
   @pragma("wasm:entry-point")
   dynamic noSuchMethod(Invocation invocation) {
-    throw new NoSuchMethodError.withInvocation(this, invocation);
+    throw NoSuchMethodError.withInvocation(this, invocation);
   }
 
   // Used for `null.toString` tear-offs
@@ -66,6 +71,6 @@ class Object {
   // Used for `null.noSuchMethod` tear-offs
   @pragma("wasm:entry-point")
   static dynamic _nullNoSuchMethod(Invocation invocation) {
-    throw new NoSuchMethodError.withInvocation(null, invocation);
+    throw NoSuchMethodError.withInvocation(null, invocation);
   }
 }

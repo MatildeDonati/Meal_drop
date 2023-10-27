@@ -8,4 +8,4 @@ class _Patch {
   const _Patch();
 }
 
-const _Patch patch = const _Patch();
+const _Patch patch = _Patch();

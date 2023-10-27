@@ -154,7 +154,7 @@ final _subtypeCache = JS('', 'Symbol("_subtypeCache")');
 // TODO(jmesserly): we shouldn't implement Type here. It should be moved down
 // to AbstractFunctionType.
 class DartType implements Type {
-  String get name => this.toString();
+  String get name => toString();
 
   // TODO(jmesserly): these should never be reached, can be make them abstract?
   @notNull
@@ -173,12 +173,15 @@ class DartType implements Type {
 }
 
 class DynamicType extends DartType {
+  @override
   toString() => 'dynamic';
 
+  @override
   @notNull
   @JSExportName('is')
   bool is_T(object) => true;
 
+  @override
   @JSExportName('as')
   Object? as_T(Object? object) => object;
 }
@@ -257,12 +260,14 @@ class PackageJSType extends DartType {
   @override
   String toString() => _dartName;
 
+  @override
   @notNull
   @JSExportName('is')
   bool is_T(obj) =>
       obj != null &&
       (_isJsObject(obj) || isSubtypeOf(getReifiedType(obj), this));
 
+  @override
   @JSExportName('as')
   as_T(obj) => is_T(obj) ? obj : castError(obj, this);
 }
@@ -403,9 +408,11 @@ class NullableType extends DartType {
   @override
   String toString() => name;
 
+  @override
   @JSExportName('is')
   bool is_T(obj) => obj == null || JS<bool>('!', '#.is(#)', type, obj);
 
+  @override
   @JSExportName('as')
   as_T(obj) => obj == null || JS<bool>('!', '#.is(#)', type, obj)
       ? obj
@@ -424,6 +431,7 @@ class LegacyType extends DartType {
   @override
   String toString() => name;
 
+  @override
   @JSExportName('is')
   bool is_T(obj) {
     if (obj == null) {
@@ -437,6 +445,7 @@ class LegacyType extends DartType {
     return JS<bool>('!', '#.is(#)', type, obj);
   }
 
+  @override
   @JSExportName('as')
   as_T(obj) => obj == null || JS<bool>('!', '#.is(#)', type, obj)
       ? obj
@@ -456,12 +465,15 @@ final _never = NeverType();
 final _dynamic = DynamicType();
 
 class VoidType extends DartType {
+  @override
   toString() => 'void';
 
+  @override
   @notNull
   @JSExportName('is')
   bool is_T(object) => true;
 
+  @override
   @JSExportName('as')
   Object? as_T(Object? object) => object;
 }
@@ -471,6 +483,7 @@ final void_ = VoidType();
 
 // TODO(nshahan): Cleanup and consolidate NeverType, BottomType, bottom, _never.
 class BottomType extends DartType {
+  @override
   toString() => 'bottom';
 }
 
@@ -487,8 +500,10 @@ class _Type extends Type {
 
   _Type(this._type);
 
+  @override
   toString() => typeName(_type);
 
+  @override
   Type get runtimeType => Type;
 }
 
@@ -682,7 +697,7 @@ void _fillTypeVariable() {
 }
 
 @NoReifyGeneric()
-T _memoizeArray<T>(map, arr, T create()) => JS('', '''(() => {
+T _memoizeArray<T>(map, arr, T Function() create) => JS('', '''(() => {
   let len = $arr.length;
   $map = $_lookupNonTerminal($map, len);
   for (var i = 0; i < len-1; ++i) {
@@ -722,7 +737,7 @@ FunctionType _createSmall(returnType, List required) => JS('', '''(() => {
  }
  let result = map.get($returnType);
  if (result !== void 0) return result;
- result = ${new FunctionType(returnType, required, [], JS('', '{}'), JS('', '{}'))};
+ result = ${FunctionType(returnType, required, [], JS('', '{}'), JS('', '{}'))};
  map.set($returnType, result);
  return result;
 })()''');
@@ -781,6 +796,7 @@ class FunctionType extends AbstractFunctionType {
   FunctionType(this.returnType, this.args, this.optionals, this.named,
       this.requiredNamed);
 
+  @override
   toString() => name;
 
   int get requiredParameterCount => args.length;
@@ -811,6 +827,7 @@ class FunctionType extends AbstractFunctionType {
   Map<String, Object> getRequiredNamedParameters() =>
       _createNameMap(getOwnPropertyNames(requiredNamed).toList());
 
+  @override
   get name {
     if (_stringValue != null) return _stringValue!;
     var buffer = '(';
@@ -863,6 +880,7 @@ class FunctionType extends AbstractFunctionType {
     return buffer;
   }
 
+  @override
   @JSExportName('is')
   bool is_T(obj) {
     if (JS('!', 'typeof # == "function"', obj)) {
@@ -874,6 +892,7 @@ class FunctionType extends AbstractFunctionType {
     return false;
   }
 
+  @override
   @JSExportName('as')
   as_T(obj) {
     if (is_T(obj)) return obj;
@@ -885,10 +904,12 @@ class FunctionType extends AbstractFunctionType {
 
 /// A type variable, used by [GenericFunctionType] to represent a type formal.
 class TypeVariable extends DartType {
+  @override
   final String name;
 
   TypeVariable(this.name);
 
+  @override
   toString() => name;
 }
 
@@ -937,6 +958,7 @@ class GenericFunctionTypeIdentifier extends AbstractFunctionType {
   ///
   /// Type formal names may not correspond to those of the originating type.
   /// We should consider auto-generating these to avoid confusion.
+  @override
   toString() {
     if (_stringValue != null) return _stringValue!;
     String s = "<";
@@ -955,8 +977,8 @@ class GenericFunctionTypeIdentifier extends AbstractFunctionType {
       }
       s += " extends $bound";
     }
-    s += ">" + this.function.toString();
-    return this._stringValue = s;
+    s += ">$function";
+    return _stringValue = s;
   }
 }
 
@@ -1011,6 +1033,7 @@ class GenericFunctionType extends AbstractFunctionType {
         '!', '#.apply(null, #)', _instantiateTypeBounds, typeArgs);
   }
 
+  @override
   toString() {
     String s = "<";
     var typeFormals = this.typeFormals;
@@ -1023,7 +1046,7 @@ class GenericFunctionType extends AbstractFunctionType {
         s += " extends $bound";
       }
     }
-    s += ">" + instantiate(typeFormals).toString();
+    s += ">${instantiate(typeFormals)}";
     return s;
   }
 
@@ -1069,7 +1092,7 @@ class GenericFunctionType extends AbstractFunctionType {
     // not ground
     var partials = Map<TypeVariable, Object>.identity();
 
-    var typeBounds = this.instantiateTypeBounds(typeFormals);
+    var typeBounds = instantiateTypeBounds(typeFormals);
     for (var i = 0; i < typeFormals.length; i++) {
       var typeFormal = typeFormals[i];
       var bound = typeBounds[i];
@@ -1131,6 +1154,7 @@ class GenericFunctionType extends AbstractFunctionType {
     return defaults;
   }
 
+  @override
   @notNull
   @JSExportName('is')
   bool is_T(obj) {
@@ -1141,6 +1165,7 @@ class GenericFunctionType extends AbstractFunctionType {
     return false;
   }
 
+  @override
   @JSExportName('as')
   as_T(obj) {
     if (is_T(obj)) return obj;
@@ -1255,7 +1280,7 @@ String typeName(type) {
     if (JS<bool>('!', '!!#', tag)) {
       return 'Not a type: ' + JS<String>('!', '#.name', tag);
     }
-    return 'JSObject<' + JS<String>('!', '#.name', type) + '>';
+    return '${'JSObject<' + JS<String>('!', '#.name', type)}>';
   }
 }
 
@@ -1435,8 +1460,9 @@ bool _isBottom(type, @notNull bool strictMode) =>
 
 @notNull
 bool _isTop(type) {
-  if (_jsInstanceOf(type, NullableType))
+  if (_jsInstanceOf(type, NullableType)) {
     return JS('!', '#.type === #', type, Object);
+  }
 
   return _equalType(type, dynamic) || JS('!', '# === #', type, void_);
 }
@@ -1536,7 +1562,7 @@ bool _isSubtype(t1, t2, @notNull bool strictMode) {
   if (_equalType(t1, Null)) {
     if (_isFutureOr(t2)) {
       var t2TypeArg = JS('', '#[0]', getGenericArgs(t2));
-      return _isSubtype(typeRep<Null>(), t2TypeArg, strictMode);
+      return _isSubtype(typeRep<void>(), t2TypeArg, strictMode);
     }
 
     return _equalType(t2, Null) ||
@@ -1577,7 +1603,7 @@ bool _isSubtype(t1, t2, @notNull bool strictMode) {
   // "Left Nullable".
   if (_jsInstanceOf(t1, NullableType)) {
     return _isSubtype(JS<NullableType>('!', '#', t1).type, t2, strictMode) &&
-        _isSubtype(typeRep<Null>(), t2, strictMode);
+        _isSubtype(typeRep<void>(), t2, strictMode);
   }
 
   if (_isFutureOr(t2)) {
@@ -1592,7 +1618,7 @@ bool _isSubtype(t1, t2, @notNull bool strictMode) {
   // "Right Nullable".
   if (_jsInstanceOf(t2, NullableType)) {
     return _isSubtype(t1, JS<NullableType>('!', '#', t2).type, strictMode) ||
-        _isSubtype(t1, typeRep<Null>(), strictMode);
+        _isSubtype(t1, typeRep<void>(), strictMode);
   }
 
   // Abstract Record.
@@ -2155,10 +2181,8 @@ class _TypeInferrer {
           return false;
         }
       }
-      if (supertype is FunctionType) {
-        return _isFunctionSubtypeMatch(subtype, supertype);
-      }
-    }
+      return _isFunctionSubtypeMatch(subtype, supertype);
+        }
     return _isInterfaceSubtypeMatch(subtype, supertype);
   }
 
@@ -2179,13 +2203,13 @@ class TypeConstraint {
   Object? upper;
 
   void _constrainLower(Object type) {
-    var _lower = lower;
-    if (_lower != null) {
-      if (isSubtypeOf(_lower, type)) {
+    var lower = lower;
+    if (lower != null) {
+      if (isSubtypeOf(lower, type)) {
         // nothing to do, existing lower bound is lower than the new one.
         return;
       }
-      if (!isSubtypeOf(type, _lower)) {
+      if (!isSubtypeOf(type, lower)) {
         // Neither bound is lower and we don't have GLB, so use bottom type.
         type = unwrapType(Null);
       }
@@ -2194,13 +2218,13 @@ class TypeConstraint {
   }
 
   void _constrainUpper(Object type) {
-    var _upper = upper;
-    if (_upper != null) {
-      if (isSubtypeOf(type, _upper)) {
+    var upper = upper;
+    if (upper != null) {
+      if (isSubtypeOf(type, upper)) {
         // nothing to do, existing upper bound is higher than the new one.
         return;
       }
-      if (!isSubtypeOf(_upper, type)) {
+      if (!isSubtypeOf(upper, type)) {
         // Neither bound is higher and we don't have LUB, so use top type.
         type = unwrapType(Object);
       }
@@ -2208,6 +2232,7 @@ class TypeConstraint {
     upper = type;
   }
 
+  @override
   String toString() => '${typeName(lower)} <: <type> <: ${typeName(upper)}';
 }
 
@@ -2292,10 +2317,11 @@ class RecordType extends DartType {
     var canonicalized =
         _canonicalizeArray(JS('', '#', types), _recordTypeArrayFieldMap);
     var keys = JS('', '[#, #]', shape, canonicalized);
-    var createType = () => RecordType._(shape, canonicalized);
+    createType() => RecordType._(shape, canonicalized);
     return _memoizeArray(_recordTypeTypeMap, keys, createType);
   }
 
+  @override
   String toString() {
     if (_printed != null) return _printed!;
 
@@ -2326,9 +2352,10 @@ class RecordType extends DartType {
     return _printed!;
   }
 
+  @override
   @JSExportName('is')
   bool is_T(obj) {
-    if (!(obj is RecordImpl)) return false;
+    if (obj is! RecordImpl) return false;
     if (shape != obj.shape) return false;
     if (types.length != obj.values.length) {
       return false;
@@ -2341,6 +2368,7 @@ class RecordType extends DartType {
     return true;
   }
 
+  @override
   @JSExportName('as')
   as_T(obj) {
     if (is_T(obj)) return obj;

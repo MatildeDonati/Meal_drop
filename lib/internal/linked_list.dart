@@ -6,19 +6,21 @@ part of dart._internal;
 
 /// A rudimentary linked list.
 class LinkedList<T extends LinkedListEntry<T>> extends Iterable<T> {
+  @override
   T get first => _first as T;
   T? _first;
 
+  @override
   T get last => _last as T;
   T? _last;
 
+  @override
   int length = 0;
 
+  @override
   bool get isEmpty => length == 0;
 
-  /**
-   * Adds [newLast] to the end of this linked list.
-   */
+  /// Adds [newLast] to the end of this linked list.
   void add(T newLast) {
     assert(newLast._next == null && newLast._previous == null);
     if (_last != null) {
@@ -33,9 +35,7 @@ class LinkedList<T extends LinkedListEntry<T>> extends Iterable<T> {
     length++;
   }
 
-  /**
-   * Adds [newFirst] to the beginning of this linked list.
-   */
+  /// Adds [newFirst] to the beginning of this linked list.
   void addFirst(T newFirst) {
     if (_first != null) {
       assert(_first!._previous == null);
@@ -49,13 +49,11 @@ class LinkedList<T extends LinkedListEntry<T>> extends Iterable<T> {
     length++;
   }
 
-  /**
-   * Removes the given [node] from this list.
-   *
-   * If the entry is not in this linked list nothing happens.
-   *
-   * Also see [LinkedListEntry.unlink].
-   */
+  /// Removes the given [node] from this list.
+  ///
+  /// If the entry is not in this linked list nothing happens.
+  ///
+  /// Also see [LinkedListEntry.unlink].
   void remove(T node) {
     if (node._list != this) return;
     length--;
@@ -75,7 +73,8 @@ class LinkedList<T extends LinkedListEntry<T>> extends Iterable<T> {
     node._list = null;
   }
 
-  Iterator<T> get iterator => new _LinkedListIterator<T>(this);
+  @override
+  Iterator<T> get iterator => _LinkedListIterator<T>(this);
 }
 
 class LinkedListEntry<T extends LinkedListEntry<T>> {
@@ -83,13 +82,11 @@ class LinkedListEntry<T extends LinkedListEntry<T>> {
   T? _previous;
   LinkedList<T>? _list;
 
-  /**
-   * Unlinks the element from its linked list.
-   *
-   * If the entry is not in a linked list, does nothing. Otherwise, this
-   * is equivalent to calling [LinkedList.remove] on the list this entry
-   * is currently in.
-   */
+  /// Unlinks the element from its linked list.
+  ///
+  /// If the entry is not in a linked list, does nothing. Otherwise, this
+  /// is equivalent to calling [LinkedList.remove] on the list this entry
+  /// is currently in.
   void unlink() {
     _list?.remove(this as T);
   }
@@ -99,6 +96,7 @@ class _LinkedListIterator<T extends LinkedListEntry<T>> implements Iterator<T> {
   /// The current element of the iterator.
   T? _current;
 
+  @override
   T get current => _current as T;
 
   /// The list the iterator iterates over.
@@ -111,16 +109,17 @@ class _LinkedListIterator<T extends LinkedListEntry<T>> implements Iterator<T> {
   LinkedList<T>? _list;
 
   _LinkedListIterator(LinkedList<T> list) : _list = list {
-    if (list.length == 0) _list = null;
+    if (list.isEmpty) _list = null;
   }
 
+  @override
   bool moveNext() {
     // current is null if the iterator hasn't started iterating, or if the
     // iteration is finished. In the first case, the [_list] field is not null.
     if (_current == null) {
       var list = _list;
       if (list == null) return false;
-      assert(list.length > 0);
+      assert(list.isNotEmpty);
       _current = list.first;
       _list = null;
       return true;

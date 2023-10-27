@@ -4,7 +4,6 @@
 
 // Patch file for dart:collection classes.
 import 'dart:_foreign_helper' show JS;
-import 'dart:_internal' show patch;
 import 'dart:_js_helper'
     show
         fillLiteralMap,
@@ -24,33 +23,27 @@ const int _mask30 = 0x3fffffff; // Low 30 bits.
 class HashMap<K, V> {
   @patch
   factory HashMap(
-      {bool equals(K key1, K key2)?,
-      int hashCode(K key)?,
+      {bool Function(K key1, K key2)? equals,
+      int Function(K key)? hashCode,
       bool isValidKey(potentialKey)?}) {
     if (isValidKey == null) {
       if (hashCode == null) {
         if (equals == null) {
-          return new _HashMap<K, V>();
+          return _HashMap<K, V>();
         }
         hashCode = _defaultHashCode;
       } else {
         if (identical(identityHashCode, hashCode) &&
             identical(identical, equals)) {
-          return new _IdentityHashMap<K, V>();
+          return _IdentityHashMap<K, V>();
         }
-        if (equals == null) {
-          equals = _defaultEquals;
-        }
+        equals ??= _defaultEquals;
       }
     } else {
-      if (hashCode == null) {
-        hashCode = _defaultHashCode;
-      }
-      if (equals == null) {
-        equals = _defaultEquals;
-      }
+      hashCode ??= _defaultHashCode;
+      equals ??= _defaultEquals;
     }
-    return new _CustomHashMap<K, V>(equals, hashCode, isValidKey);
+    return _CustomHashMap<K, V>(equals, hashCode, isValidKey);
   }
 
   @patch
@@ -85,11 +78,11 @@ base class _HashMap<K, V> extends MapBase<K, V> implements HashMap<K, V> {
   bool get isNotEmpty => !isEmpty;
 
   Iterable<K> get keys {
-    return new _HashMapKeyIterable<K>(this);
+    return _HashMapKeyIterable<K>(this);
   }
 
   Iterable<V> get values {
-    return new MappedIterable<K, V>(keys, (each) => this[each] as V);
+    return MappedIterable<K, V>(keys, (each) => this[each] as V);
   }
 
   bool containsKey(Object? key) {
@@ -176,7 +169,7 @@ base class _HashMap<K, V> extends MapBase<K, V> implements HashMap<K, V> {
     }
   }
 
-  V putIfAbsent(K key, V ifAbsent()) {
+  V putIfAbsent(K key, V Function() ifAbsent) {
     if (containsKey(key)) return this[key] as V;
     V value = ifAbsent();
     this[key] = value;
@@ -218,13 +211,13 @@ base class _HashMap<K, V> extends MapBase<K, V> implements HashMap<K, V> {
     }
   }
 
-  void forEach(void action(K key, V value)) {
+  void forEach(void Function(K key, V value) action) {
     List keys = _computeKeys();
     for (int i = 0, length = keys.length; i < length; i++) {
       var key = JS('var', '#[#]', keys, i);
       action(key, this[key] as V);
       if (JS('bool', '# !== #', keys, _keys)) {
-        throw new ConcurrentModificationError(this);
+        throw ConcurrentModificationError(this);
       }
     }
   }
@@ -382,6 +375,7 @@ base class _HashMap<K, V> extends MapBase<K, V> implements HashMap<K, V> {
 }
 
 base class _IdentityHashMap<K, V> extends _HashMap<K, V> {
+  @override
   int _computeHashCode(var key) {
     // We force the hash codes to be unsigned 30-bit integers to avoid
     // issues with problematic keys like '__proto__'. Another option
@@ -389,6 +383,7 @@ base class _IdentityHashMap<K, V> extends _HashMap<K, V> {
     return JS('int', '# & #', identityHashCode(key), _mask30);
   }
 
+  @override
   int _findBucketIndex(var bucket, var key) {
     if (bucket == null) return -1;
     int length = JS('int', '#.length', bucket);
@@ -407,25 +402,30 @@ base class _CustomHashMap<K, V> extends _HashMap<K, V> {
   _CustomHashMap(this._equals, this._hashCode, bool validKey(potentialKey)?)
       : _validKey = (validKey != null) ? validKey : ((v) => v is K);
 
+  @override
   V? operator [](Object? key) {
     if (!_validKey(key)) return null;
     return super._get(key);
   }
 
+  @override
   void operator []=(K key, V value) {
     super._set(key, value);
   }
 
+  @override
   bool containsKey(Object? key) {
     if (!_validKey(key)) return false;
     return super._containsKey(key);
   }
 
+  @override
   V? remove(Object? key) {
     if (!_validKey(key)) return null;
     return super._remove(key);
   }
 
+  @override
   int _computeHashCode(var key) {
     // We force the hash codes to be unsigned 30-bit integers to avoid
     // issues with problematic keys like '__proto__'. Another option
@@ -433,6 +433,7 @@ base class _CustomHashMap<K, V> extends _HashMap<K, V> {
     return JS('int', '# & #', _hashCode(key), _mask30);
   }
 
+  @override
   int _findBucketIndex(var bucket, var key) {
     if (bucket == null) return -1;
     int length = JS('int', '#.length', bucket);
@@ -447,24 +448,30 @@ class _HashMapKeyIterable<E> extends EfficientLengthIterable<E> {
   final _HashMap _map;
   _HashMapKeyIterable(this._map);
 
+  @override
   int get length => _map._length;
+  @override
   bool get isEmpty => _map._length == 0;
+  @override
   bool get isNotEmpty => _map._length != 0;
 
+  @override
   Iterator<E> get iterator {
-    return new _HashMapKeyIterator<E>(_map, _map._computeKeys());
+    return _HashMapKeyIterator<E>(_map, _map._computeKeys());
   }
 
+  @override
   bool contains(Object? element) {
     return _map.containsKey(element);
   }
 
-  void forEach(void f(E element)) {
+  @override
+  void forEach(void Function(E element) f) {
     List keys = _map._computeKeys();
     for (int i = 0, length = JS('int', '#.length', keys); i < length; i++) {
       f(JS('var', '#[#]', keys, i));
       if (JS('bool', '# !== #', keys, _map._keys)) {
-        throw new ConcurrentModificationError(_map);
+        throw ConcurrentModificationError(_map);
       }
     }
   }
@@ -478,13 +485,15 @@ class _HashMapKeyIterator<E> implements Iterator<E> {
 
   _HashMapKeyIterator(this._map, this._keys);
 
+  @override
   E get current => _current as E;
 
+  @override
   bool moveNext() {
     var keys = _keys;
     int offset = _offset;
     if (JS('bool', '# !== #', keys, _map._keys)) {
-      throw new ConcurrentModificationError(_map);
+      throw ConcurrentModificationError(_map);
     } else if (offset >= JS('int', '#.length', keys)) {
       _current = null;
       return false;
@@ -503,13 +512,13 @@ class _HashMapKeyIterator<E> implements Iterator<E> {
 class LinkedHashMap<K, V> {
   @patch
   factory LinkedHashMap(
-      {bool equals(K key1, K key2)?,
-      int hashCode(K key)?,
+      {bool Function(K key1, K key2)? equals,
+      int Function(K key)? hashCode,
       bool isValidKey(potentialKey)?}) {
     if (isValidKey == null) {
       if (hashCode == null) {
         if (equals == null) {
-          return new JsLinkedHashMap<K, V>();
+          return JsLinkedHashMap<K, V>();
         }
         hashCode = _defaultHashCode;
       } else {
@@ -517,19 +526,13 @@ class LinkedHashMap<K, V> {
             identical(identical, equals)) {
           return JsIdentityLinkedHashMap<K, V>();
         }
-        if (equals == null) {
-          equals = _defaultEquals;
-        }
+        equals ??= _defaultEquals;
       }
     } else {
-      if (hashCode == null) {
-        hashCode = _defaultHashCode;
-      }
-      if (equals == null) {
-        equals = _defaultEquals;
-      }
+      hashCode ??= _defaultHashCode;
+      equals ??= _defaultEquals;
     }
-    return new _LinkedCustomHashMap<K, V>(equals, hashCode, isValidKey);
+    return _LinkedCustomHashMap<K, V>(equals, hashCode, isValidKey);
   }
 
   @patch
@@ -538,7 +541,7 @@ class LinkedHashMap<K, V> {
   // Private factory constructor called by generated code for map literals.
   @pragma('dart2js:noInline')
   factory LinkedHashMap._literal(List keyValuePairs) {
-    return fillLiteralMap(keyValuePairs, new JsLinkedHashMap<K, V>());
+    return fillLiteralMap(keyValuePairs, JsLinkedHashMap<K, V>());
   }
 
   // Private factory constructor called by generated code for map literals.
@@ -546,7 +549,7 @@ class LinkedHashMap<K, V> {
   @pragma('dart2js:noInline')
   @pragma('dart2js:noSideEffects')
   factory LinkedHashMap._empty() {
-    return new JsLinkedHashMap<K, V>();
+    return JsLinkedHashMap<K, V>();
   }
 
   // Private factory static function called by generated code for map literals.
@@ -554,13 +557,13 @@ class LinkedHashMap<K, V> {
   @pragma('dart2js:noThrows')
   @pragma('dart2js:noInline')
   @pragma('dart2js:noSideEffects')
-  static _makeEmpty() => new JsLinkedHashMap();
+  static _makeEmpty() => JsLinkedHashMap();
 
   // Private factory static function called by generated code for map literals.
   // This version is for map literals without type parameters.
   @pragma('dart2js:noInline')
   static _makeLiteral(keyValuePairs) =>
-      fillLiteralMap(keyValuePairs, new JsLinkedHashMap());
+      fillLiteralMap(keyValuePairs, JsLinkedHashMap());
 }
 
 // TODO(sra): Move to same library as JsLinkedHashMap and make the `internalXXX`
@@ -615,33 +618,27 @@ base class _LinkedCustomHashMap<K, V> extends JsLinkedHashMap<K, V> {
 class HashSet<E> {
   @patch
   factory HashSet(
-      {bool equals(E e1, E e2)?,
-      int hashCode(E e)?,
+      {bool Function(E e1, E e2)? equals,
+      int Function(E e)? hashCode,
       bool isValidKey(potentialKey)?}) {
     if (isValidKey == null) {
       if (hashCode == null) {
         if (equals == null) {
-          return new _HashSet<E>();
+          return _HashSet<E>();
         }
         hashCode = _defaultHashCode;
       } else {
         if (identical(identityHashCode, hashCode) &&
             identical(identical, equals)) {
-          return new _IdentityHashSet<E>();
+          return _IdentityHashSet<E>();
         }
-        if (equals == null) {
-          equals = _defaultEquals;
-        }
+        equals ??= _defaultEquals;
       }
     } else {
-      if (hashCode == null) {
-        hashCode = _defaultHashCode;
-      }
-      if (equals == null) {
-        equals = _defaultEquals;
-      }
+      hashCode ??= _defaultHashCode;
+      equals ??= _defaultEquals;
     }
-    return new _CustomHashSet<E>(equals, hashCode, isValidKey);
+    return _CustomHashSet<E>(equals, hashCode, isValidKey);
   }
 
   @patch
@@ -672,12 +669,12 @@ base class _HashSet<E> extends _SetBase<E> implements HashSet<E> {
 
   _HashSet();
 
-  Set<E> _newSet() => new _HashSet<E>();
-  Set<R> _newSimilarSet<R>() => new _HashSet<R>();
+  Set<E> _newSet() => _HashSet<E>();
+  Set<R> _newSimilarSet<R>() => _HashSet<R>();
 
   // Iterable.
   Iterator<E> get iterator {
-    return new _HashSetIterator<E>(this, _computeElements());
+    return _HashSetIterator<E>(this, _computeElements());
   }
 
   int get length => _length;
@@ -931,9 +928,12 @@ base class _HashSet<E> extends _SetBase<E> implements HashSet<E> {
 }
 
 base class _IdentityHashSet<E> extends _HashSet<E> {
-  Set<E> _newSet() => new _IdentityHashSet<E>();
-  Set<R> _newSimilarSet<R>() => new _IdentityHashSet<R>();
+  @override
+  Set<E> _newSet() => _IdentityHashSet<E>();
+  @override
+  Set<R> _newSimilarSet<R>() => _IdentityHashSet<R>();
 
+  @override
   int _computeHashCode(var key) {
     // We force the hash codes to be unsigned 30-bit integers to avoid
     // issues with problematic keys like '__proto__'. Another option
@@ -941,6 +941,7 @@ base class _IdentityHashSet<E> extends _HashSet<E> {
     return JS('int', '# & #', identityHashCode(key), _mask30);
   }
 
+  @override
   int _findBucketIndex(var bucket, var element) {
     if (bucket == null) return -1;
     int length = JS('int', '#.length', bucket);
@@ -952,15 +953,18 @@ base class _IdentityHashSet<E> extends _HashSet<E> {
 }
 
 base class _CustomHashSet<E> extends _HashSet<E> {
-  _Equality<E> _equality;
-  _Hasher<E> _hasher;
-  _Predicate _validKey;
+  final _Equality<E> _equality;
+  final _Hasher<E> _hasher;
+  final _Predicate _validKey;
   _CustomHashSet(this._equality, this._hasher, bool validKey(potentialKey)?)
       : _validKey = (validKey != null) ? validKey : ((x) => x is E);
 
-  Set<E> _newSet() => new _CustomHashSet<E>(_equality, _hasher, _validKey);
-  Set<R> _newSimilarSet<R>() => new _HashSet<R>();
+  @override
+  Set<E> _newSet() => _CustomHashSet<E>(_equality, _hasher, _validKey);
+  @override
+  Set<R> _newSimilarSet<R>() => _HashSet<R>();
 
+  @override
   int _findBucketIndex(var bucket, var element) {
     if (bucket == null) return -1;
     int length = JS('int', '#.length', bucket);
@@ -970,6 +974,7 @@ base class _CustomHashSet<E> extends _HashSet<E> {
     return -1;
   }
 
+  @override
   int _computeHashCode(var element) {
     // We force the hash codes to be unsigned 30-bit integers to avoid
     // issues with problematic elements like '__proto__'. Another
@@ -978,18 +983,22 @@ base class _CustomHashSet<E> extends _HashSet<E> {
     return JS('int', '# & #', _hasher(element), _mask30);
   }
 
+  @override
   bool add(E object) => super._add(object);
 
+  @override
   bool contains(Object? object) {
     if (!_validKey(object)) return false;
     return super._contains(object);
   }
 
+  @override
   E? lookup(Object? object) {
     if (!_validKey(object)) return null;
     return super._lookup(object);
   }
 
+  @override
   bool remove(Object? object) {
     if (!_validKey(object)) return false;
     return super._remove(object);
@@ -1005,13 +1014,15 @@ class _HashSetIterator<E> implements Iterator<E> {
 
   _HashSetIterator(this._set, this._elements);
 
+  @override
   E get current => _current as E;
 
+  @override
   bool moveNext() {
     var elements = _elements;
     int offset = _offset;
     if (JS('bool', '# !== #', elements, _set._elements)) {
-      throw new ConcurrentModificationError(_set);
+      throw ConcurrentModificationError(_set);
     } else if (offset >= JS('int', '#.length', elements)) {
       _current = null;
       return false;
@@ -1030,33 +1041,27 @@ class _HashSetIterator<E> implements Iterator<E> {
 class LinkedHashSet<E> {
   @patch
   factory LinkedHashSet(
-      {bool equals(E e1, E e2)?,
-      int hashCode(E e)?,
+      {bool Function(E e1, E e2)? equals,
+      int Function(E e)? hashCode,
       bool isValidKey(potentialKey)?}) {
     if (isValidKey == null) {
       if (hashCode == null) {
         if (equals == null) {
-          return new _LinkedHashSet<E>();
+          return _LinkedHashSet<E>();
         }
         hashCode = _defaultHashCode;
       } else {
         if (identical(identityHashCode, hashCode) &&
             identical(identical, equals)) {
-          return new _LinkedIdentityHashSet<E>();
+          return _LinkedIdentityHashSet<E>();
         }
-        if (equals == null) {
-          equals = _defaultEquals;
-        }
+        equals ??= _defaultEquals;
       }
     } else {
-      if (hashCode == null) {
-        hashCode = _defaultHashCode;
-      }
-      if (equals == null) {
-        equals = _defaultEquals;
-      }
+      hashCode ??= _defaultHashCode;
+      equals ??= _defaultEquals;
     }
-    return new _LinkedCustomHashSet<E>(equals, hashCode, isValidKey);
+    return _LinkedCustomHashSet<E>(equals, hashCode, isValidKey);
   }
 
   @patch
@@ -1066,25 +1071,25 @@ class LinkedHashSet<E> {
   @pragma('dart2js:noThrows')
   @pragma('dart2js:noInline')
   @pragma('dart2js:noSideEffects')
-  factory LinkedHashSet._empty() => new _LinkedHashSet<E>();
+  factory LinkedHashSet._empty() => _LinkedHashSet<E>();
 
   // Private factory constructor called by generated code for set literals.
   @pragma('dart2js:noInline')
   factory LinkedHashSet._literal(List values) =>
-      fillLiteralSet(values, new _LinkedHashSet<E>());
+      fillLiteralSet(values, _LinkedHashSet<E>());
 
   // Private factory static function called by generated code for set literals.
   // This version is for set literals without type parameters.
   @pragma('dart2js:noThrows')
   @pragma('dart2js:noInline')
   @pragma('dart2js:noSideEffects')
-  static _makeEmpty() => new _LinkedHashSet();
+  static _makeEmpty() => _LinkedHashSet();
 
   // Private factory static function called by generated code for set literals.
   // This version is for set literals without type parameters.
   @pragma('dart2js:noInline')
   static _makeLiteral(List values) =>
-      fillLiteralSet(values, new _LinkedHashSet());
+      fillLiteralSet(values, _LinkedHashSet());
 }
 
 base class _LinkedHashSet<E> extends _SetBase<E> implements LinkedHashSet<E> {
@@ -1115,8 +1120,8 @@ base class _LinkedHashSet<E> extends _SetBase<E> implements LinkedHashSet<E> {
 
   _LinkedHashSet();
 
-  Set<E> _newSet() => new _LinkedHashSet<E>();
-  Set<R> _newSimilarSet<R>() => new _LinkedHashSet<R>();
+  Set<E> _newSet() => _LinkedHashSet<E>();
+  Set<R> _newSimilarSet<R>() => _LinkedHashSet<R>();
 
   void _unsupported(String operation) {
     throw 'LinkedHashSet: unsupported $operation';
@@ -1124,7 +1129,7 @@ base class _LinkedHashSet<E> extends _SetBase<E> implements LinkedHashSet<E> {
 
   // Iterable.
   Iterator<E> get iterator {
-    return new _LinkedHashSetIterator(this, _modifications);
+    return _LinkedHashSetIterator(this, _modifications);
   }
 
   int get length => _length;
@@ -1171,13 +1176,13 @@ base class _LinkedHashSet<E> extends _SetBase<E> implements LinkedHashSet<E> {
     return JS<_LinkedHashSetCell>('', '#[#]', bucket, index)._element;
   }
 
-  void forEach(void action(E element)) {
+  void forEach(void Function(E element) action) {
     _LinkedHashSetCell? cell = _first;
     int modifications = _modifications;
     while (cell != null) {
       action(cell._element);
       if (modifications != _modifications) {
-        throw new ConcurrentModificationError(this);
+        throw ConcurrentModificationError(this);
       }
       cell = cell._next;
     }
@@ -1185,13 +1190,13 @@ base class _LinkedHashSet<E> extends _SetBase<E> implements LinkedHashSet<E> {
 
   E get first {
     var first = _first;
-    if (first == null) throw new StateError("No elements");
+    if (first == null) throw StateError("No elements");
     return first._element;
   }
 
   E get last {
     var last = _last;
-    if (last == null) throw new StateError("No elements");
+    if (last == null) throw StateError("No elements");
     return last._element;
   }
 
@@ -1253,15 +1258,15 @@ base class _LinkedHashSet<E> extends _SetBase<E> implements LinkedHashSet<E> {
     return true;
   }
 
-  void removeWhere(bool test(E element)) {
+  void removeWhere(bool Function(E element) test) {
     _filterWhere(test, true);
   }
 
-  void retainWhere(bool test(E element)) {
+  void retainWhere(bool Function(E element) test) {
     _filterWhere(test, false);
   }
 
-  void _filterWhere(bool test(E element), bool removeMatching) {
+  void _filterWhere(bool Function(E element) test, bool removeMatching) {
     _LinkedHashSetCell? cell = _first;
     while (cell != null) {
       E element = cell._element;
@@ -1269,7 +1274,7 @@ base class _LinkedHashSet<E> extends _SetBase<E> implements LinkedHashSet<E> {
       int modifications = _modifications;
       bool shouldRemove = (removeMatching == test(element));
       if (modifications != _modifications) {
-        throw new ConcurrentModificationError(this);
+        throw ConcurrentModificationError(this);
       }
       if (shouldRemove) remove(element);
       cell = next;
@@ -1309,7 +1314,7 @@ base class _LinkedHashSet<E> extends _SetBase<E> implements LinkedHashSet<E> {
 
   // Create a new cell and link it in as the last one in the list.
   _LinkedHashSetCell _newLinkedCell(E element) {
-    _LinkedHashSetCell cell = new _LinkedHashSetCell(element);
+    _LinkedHashSetCell cell = _LinkedHashSetCell(element);
     if (_first == null) {
       _first = _last = cell;
     } else {
@@ -1405,9 +1410,12 @@ base class _LinkedHashSet<E> extends _SetBase<E> implements LinkedHashSet<E> {
 }
 
 base class _LinkedIdentityHashSet<E> extends _LinkedHashSet<E> {
-  Set<E> _newSet() => new _LinkedIdentityHashSet<E>();
-  Set<R> _newSimilarSet<R>() => new _LinkedIdentityHashSet<R>();
+  @override
+  Set<E> _newSet() => _LinkedIdentityHashSet<E>();
+  @override
+  Set<R> _newSimilarSet<R>() => _LinkedIdentityHashSet<R>();
 
+  @override
   int _computeHashCode(var key) {
     // We force the hash codes to be unsigned 30-bit integers to avoid
     // issues with problematic keys like '__proto__'. Another option
@@ -1415,6 +1423,7 @@ base class _LinkedIdentityHashSet<E> extends _LinkedHashSet<E> {
     return JS('int', '# & #', identityHashCode(key), _mask30);
   }
 
+  @override
   int _findBucketIndex(var bucket, var element) {
     if (bucket == null) return -1;
     int length = JS('int', '#.length', bucket);
@@ -1427,17 +1436,20 @@ base class _LinkedIdentityHashSet<E> extends _LinkedHashSet<E> {
 }
 
 base class _LinkedCustomHashSet<E> extends _LinkedHashSet<E> {
-  _Equality<E> _equality;
-  _Hasher<E> _hasher;
-  _Predicate _validKey;
+  final _Equality<E> _equality;
+  final _Hasher<E> _hasher;
+  final _Predicate _validKey;
   _LinkedCustomHashSet(
       this._equality, this._hasher, bool validKey(potentialKey)?)
       : _validKey = (validKey != null) ? validKey : ((x) => x is E);
 
+  @override
   Set<E> _newSet() =>
-      new _LinkedCustomHashSet<E>(_equality, _hasher, _validKey);
-  Set<R> _newSimilarSet<R>() => new _LinkedHashSet<R>();
+      _LinkedCustomHashSet<E>(_equality, _hasher, _validKey);
+  @override
+  Set<R> _newSimilarSet<R>() => _LinkedHashSet<R>();
 
+  @override
   int _findBucketIndex(var bucket, var element) {
     if (bucket == null) return -1;
     int length = JS('int', '#.length', bucket);
@@ -1448,6 +1460,7 @@ base class _LinkedCustomHashSet<E> extends _LinkedHashSet<E> {
     return -1;
   }
 
+  @override
   int _computeHashCode(var element) {
     // We force the hash codes to be unsigned 30-bit integers to avoid
     // issues with problematic elements like '__proto__'. Another
@@ -1456,18 +1469,22 @@ base class _LinkedCustomHashSet<E> extends _LinkedHashSet<E> {
     return JS('int', '# & #', _hasher(element), _mask30);
   }
 
+  @override
   bool add(E element) => super._add(element);
 
+  @override
   bool contains(Object? object) {
     if (!_validKey(object)) return false;
     return super._contains(object);
   }
 
+  @override
   E? lookup(Object? object) {
     if (!_validKey(object)) return null;
     return super._lookup(object);
   }
 
+  @override
   bool remove(Object? object) {
     if (!_validKey(object)) return false;
     return super._remove(object);
@@ -1509,12 +1526,14 @@ class _LinkedHashSetIterator<E> implements Iterator<E> {
     _cell = _set._first;
   }
 
+  @override
   E get current => _current as E;
 
+  @override
   bool moveNext() {
     var cell = _cell;
     if (_modifications != _set._modifications) {
-      throw new ConcurrentModificationError(_set);
+      throw ConcurrentModificationError(_set);
     } else if (cell == null) {
       _current = null;
       return false;

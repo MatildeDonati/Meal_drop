@@ -7,31 +7,27 @@ part of dart._js_helper;
 // Helper method used by internal libraries.
 regExpGetNative(JSSyntaxRegExp regexp) => regexp._nativeRegExp;
 
-/**
- * Returns a native version of the RegExp with the global flag set.
- *
- * The RegExp's `lastIndex` property is zero when it is returned.
- *
- * The returned regexp is shared, and its `lastIndex` property may be
- * modified by other uses, so the returned regexp must be used immediately
- * when it's returned, with no user-provided code run in between.
- */
+/// Returns a native version of the RegExp with the global flag set.
+///
+/// The RegExp's `lastIndex` property is zero when it is returned.
+///
+/// The returned regexp is shared, and its `lastIndex` property may be
+/// modified by other uses, so the returned regexp must be used immediately
+/// when it's returned, with no user-provided code run in between.
 regExpGetGlobalNative(JSSyntaxRegExp regexp) {
   var nativeRegexp = regexp._nativeGlobalVersion;
   JS("void", "#.lastIndex = 0", nativeRegexp);
   return nativeRegexp;
 }
 
-/**
- * Computes the number of captures in a regexp.
- *
- * This currently involves creating a new RegExp object with a different
- * source and running it against the empty string (the last part is usually
- * fast).
- *
- * The JSSyntaxRegExp could cache the result, and set the cache any time
- * it finds a match.
- */
+/// Computes the number of captures in a regexp.
+///
+/// This currently involves creating a new RegExp object with a different
+/// source and running it against the empty string (the last part is usually
+/// fast).
+///
+/// The JSSyntaxRegExp could cache the result, and set the cache any time
+/// it finds a match.
 int regExpCaptureCount(JSSyntaxRegExp regexp) {
   var nativeAnchoredRegExp = regexp._nativeAnchoredVersion;
   JSExtendableArray match =
@@ -42,11 +38,13 @@ int regExpCaptureCount(JSSyntaxRegExp regexp) {
 }
 
 class JSSyntaxRegExp implements RegExp {
+  @override
   final String pattern;
   final _nativeRegExp;
   var _nativeGlobalRegExp;
   var _nativeAnchoredRegExp;
 
+  @override
   String toString() =>
       'RegExp/$pattern/' + JS<String>('!', '#.flags', _nativeRegExp);
 
@@ -55,8 +53,8 @@ class JSSyntaxRegExp implements RegExp {
       bool caseSensitive = true,
       bool unicode = false,
       bool dotAll = false})
-      : this.pattern = source,
-        this._nativeRegExp = makeNative(
+      : pattern = source,
+        _nativeRegExp = makeNative(
             source, multiLine, caseSensitive, unicode, dotAll, false);
 
   get _nativeGlobalVersion {
@@ -115,6 +113,7 @@ class JSSyntaxRegExp implements RegExp {
     throw FormatException("Illegal RegExp pattern: $source, $errorMessage");
   }
 
+  @override
   RegExpMatch? firstMatch(@nullCheck String string) {
     // This isn't reified List<String?>?, but it's safe to use as long as we use
     // it locally and don't expose it to user code.
@@ -123,17 +122,20 @@ class JSSyntaxRegExp implements RegExp {
     return _MatchImplementation(this, m);
   }
 
+  @override
   @notNull
   bool hasMatch(@nullCheck String string) {
     return JS<bool>('!', r'#.test(#)', _nativeRegExp, string);
   }
 
+  @override
   String? stringMatch(String string) {
     var match = firstMatch(string);
     if (match != null) return match.group(0);
     return null;
   }
 
+  @override
   Iterable<RegExpMatch> allMatches(@nullCheck String string,
       [@nullCheck int start = 0]) {
     if (start < 0 || start > string.length) {
@@ -166,6 +168,7 @@ class JSSyntaxRegExp implements RegExp {
     return _MatchImplementation(this, match);
   }
 
+  @override
   Match? matchAsPrefix(String string, [int start = 0]) {
     if (start < 0 || start > string.length) {
       throw RangeError.range(start, 0, string.length);
@@ -173,13 +176,18 @@ class JSSyntaxRegExp implements RegExp {
     return _execAnchored(string, start);
   }
 
+  @override
   bool get isMultiLine => _isMultiLine;
+  @override
   bool get isCaseSensitive => _isCaseSensitive;
+  @override
   bool get isUnicode => _isUnicode;
+  @override
   bool get isDotAll => _isDotAll;
 }
 
 class _MatchImplementation implements RegExpMatch {
+  @override
   final RegExp pattern;
   // Contains a JS RegExp match object that is an Array with extra "index" and
   // "input" properties. The array contains Strings but the values at indices
@@ -193,14 +201,21 @@ class _MatchImplementation implements RegExpMatch {
     assert(JS("var", "#.index", _match) is int);
   }
 
+  @override
   String get input => JS("String", "#.input", _match);
+  @override
   int get start => JS("int", "#.index", _match);
+  @override
   int get end => start + _match[0]!.length;
 
+  @override
   String? group(int index) => _match[index];
+  @override
   String? operator [](int index) => group(index);
+  @override
   int get groupCount => _match.length - 1;
 
+  @override
   List<String?> groups(List<int> groups) {
     List<String?> out = [];
     for (int i in groups) {
@@ -209,6 +224,7 @@ class _MatchImplementation implements RegExpMatch {
     return out;
   }
 
+  @override
   String? namedGroup(String name) {
     var groups = JS<Object?>('Object|Null', '#.groups', _match);
     if (groups != null) {
@@ -220,13 +236,14 @@ class _MatchImplementation implements RegExpMatch {
     throw ArgumentError.value(name, "name", "Not a capture group name");
   }
 
+  @override
   Iterable<String> get groupNames {
     var groups = JS<Object?>('Object|Null', '#.groups', _match);
     if (groups != null) {
       var keys = JSArray<String>.of(JS('', 'Object.keys(#)', groups));
       return SubListIterable(keys, 0, null);
     }
-    return Iterable.empty();
+    return const Iterable.empty();
   }
 }
 
@@ -237,6 +254,7 @@ class _AllMatchesIterable extends Iterable<RegExpMatch> {
 
   _AllMatchesIterable(this._re, this._string, this._start);
 
+  @override
   Iterator<RegExpMatch> get iterator =>
       _AllMatchesIterator(_re, _string, _start);
 }
@@ -249,6 +267,7 @@ class _AllMatchesIterator implements Iterator<RegExpMatch> {
 
   _AllMatchesIterator(this._regExp, this._string, this._nextIndex);
 
+  @override
   RegExpMatch get current => _current as RegExpMatch;
 
   static bool _isLeadSurrogate(int c) {
@@ -259,6 +278,7 @@ class _AllMatchesIterator implements Iterator<RegExpMatch> {
     return c >= 0xdc00 && c <= 0xdfff;
   }
 
+  @override
   bool moveNext() {
     var string = _string;
     if (string == null) return false;
@@ -289,7 +309,7 @@ class _AllMatchesIterator implements Iterator<RegExpMatch> {
   }
 }
 
-/** Find the first match of [regExp] in [string] at or after [start]. */
+/// Find the first match of [regExp] in [string] at or after [start].
 RegExpMatch? firstMatchAfter(JSSyntaxRegExp regExp, String string, int start) {
   return regExp._execGlobal(string, start);
 }

@@ -2,9 +2,7 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import "dart:_internal" show mix64, patch;
 
-import "dart:typed_data" show Uint32List;
 
 /// There are no parts of this patch library.
 
@@ -149,7 +147,7 @@ class Random {
   factory Random([int? seed]) {
     var state = _Random._setupSeed((seed == null) ? _Random._nextSeed() : seed);
     // Crank a couple of times to distribute the seed bits a bit further.
-    return new _Random._withState(state)
+    return _Random._withState(state)
       .._nextState()
       .._nextState()
       .._nextState()
@@ -183,13 +181,13 @@ class _Random implements Random {
   // fail with --throw_on_javascript_int_overflow.
   // TODO(regis): Implement in Dart and remove Random_nextState in math.cc.
   void _nextState() {
-    const _A = 0xffffda61;
-    _state = _A * _stateLow + _stateHigh;
+    const A = 0xffffda61;
+    _state = A * _stateLow + _stateHigh;
   }
 
   int nextInt(int max) {
     if (max <= 0 || max > _POW2_32) {
-      throw new RangeError.range(
+      throw RangeError.range(
           max, 1, _POW2_32, "max", "Must be positive and <= 2^32");
     }
     if ((max & -max) == max) {
@@ -222,7 +220,7 @@ class _Random implements Random {
   static const _POW2_27_D = 1.0 * (1 << 27);
 
   // Use a singleton Random object to get a new seed if no seed was passed.
-  static final _prng = new _Random._withState(_initialSeed());
+  static final _prng = _Random._withState(_initialSeed());
 
   static int _setupSeed(int seed) => mix64(seed);
 
@@ -252,8 +250,8 @@ class _SecureRandom implements Random {
     if (byteCount == 0) {
       return 0; // Not random if max == 1.
     }
-    var rnd;
-    var result;
+    int rnd;
+    int result;
     do {
       rnd = _getBytes(byteCount);
       result = rnd % max;

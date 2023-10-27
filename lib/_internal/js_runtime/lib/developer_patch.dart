@@ -4,7 +4,6 @@
 
 // Patch file for dart:developer library.
 
-import 'dart:_internal' show patch;
 import 'dart:_foreign_helper' show JS;
 import 'dart:async' show Zone;
 import 'dart:isolate';
@@ -143,7 +142,7 @@ final class _FakeUserTag implements UserTag {
     return old;
   }
 
-  static final UserTag _defaultTag = new _FakeUserTag('Default');
+  static final UserTag _defaultTag = _FakeUserTag('Default');
 }
 
 var _currentTag = _FakeUserTag._defaultTag;

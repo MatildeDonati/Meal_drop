@@ -37,11 +37,13 @@ int regExpCaptureCount(JSSyntaxRegExp regexp) {
 }
 
 class JSSyntaxRegExp implements RegExp {
+  @override
   final String pattern;
   final _nativeRegExp;
   var _nativeGlobalRegExp;
   var _nativeAnchoredRegExp;
 
+  @override
   String toString() =>
       'RegExp/$pattern/' + JS('String', '#.flags', _nativeRegExp);
 
@@ -50,8 +52,8 @@ class JSSyntaxRegExp implements RegExp {
       bool caseSensitive = true,
       bool unicode = false,
       bool dotAll = false})
-      : this.pattern = source,
-        this._nativeRegExp = makeNative(
+      : pattern = source,
+        _nativeRegExp = makeNative(
             source, multiLine, caseSensitive, unicode, dotAll, false);
 
   get _nativeGlobalVersion {
@@ -106,33 +108,37 @@ class JSSyntaxRegExp implements RegExp {
     // The returned value is the JavaScript exception. Turn it into a
     // Dart exception.
     String errorMessage = JS('String', r'String(#)', regexp);
-    throw new FormatException('Illegal RegExp pattern ($errorMessage)', source);
+    throw FormatException('Illegal RegExp pattern ($errorMessage)', source);
   }
 
+  @override
   RegExpMatch? firstMatch(String string) {
     JSArray? m = JS('JSExtendableArray|Null', r'#.exec(#)', _nativeRegExp,
         checkString(string));
     if (m == null) return null;
-    return new _MatchImplementation(this, m);
+    return _MatchImplementation(this, m);
   }
 
+  @override
   bool hasMatch(String string) {
     return JS('bool', r'#.test(#)', _nativeRegExp, checkString(string));
   }
 
+  @override
   String? stringMatch(String string) {
     var match = firstMatch(string);
     if (match != null) return match.group(0);
     return null;
   }
 
+  @override
   Iterable<RegExpMatch> allMatches(String string, [int start = 0]) {
     checkString(string);
     checkInt(start);
     if (start < 0 || start > string.length) {
-      throw new RangeError.range(start, 0, string.length);
+      throw RangeError.range(start, 0, string.length);
     }
-    return new _AllMatchesIterable(this, string, start);
+    return _AllMatchesIterable(this, string, start);
   }
 
   RegExpMatch? _execGlobal(String string, int start) {
@@ -140,7 +146,7 @@ class JSSyntaxRegExp implements RegExp {
     JS('void', '#.lastIndex = #', regexp, start);
     JSArray? match = JS('JSExtendableArray|Null', '#.exec(#)', regexp, string);
     if (match == null) return null;
-    return new _MatchImplementation(this, match);
+    return _MatchImplementation(this, match);
   }
 
   RegExpMatch? _execAnchored(String string, int start) {
@@ -151,23 +157,29 @@ class JSSyntaxRegExp implements RegExp {
     // If the last capture group participated, the original regexp did not
     // match at the start position.
     if (match.removeLast() != null) return null;
-    return new _MatchImplementation(this, match);
+    return _MatchImplementation(this, match);
   }
 
+  @override
   RegExpMatch? matchAsPrefix(String string, [int start = 0]) {
     if (start < 0 || start > string.length) {
-      throw new RangeError.range(start, 0, string.length);
+      throw RangeError.range(start, 0, string.length);
     }
     return _execAnchored(string, start);
   }
 
+  @override
   bool get isMultiLine => _isMultiLine;
+  @override
   bool get isCaseSensitive => _isCaseSensitive;
+  @override
   bool get isUnicode => _isUnicode;
+  @override
   bool get isDotAll => _isDotAll;
 }
 
 class _MatchImplementation implements RegExpMatch {
+  @override
   final RegExp pattern;
   // Contains a JS RegExp match object.
   // It is an Array of String values with extra 'index' and 'input' properties.
@@ -183,23 +195,30 @@ class _MatchImplementation implements RegExpMatch {
     assert(JS('var', '#.index', _match) is int);
   }
 
+  @override
   String get input => JS('String', '#.input', _match);
 
+  @override
   int get start =>
       JS('returns:int;depends:none;effects:none;gvn:true', '#.index', _match);
 
+  @override
   int get end => (start +
       JS('returns:int;depends:none;effects:none;gvn:true', '#[0].length',
           _match)) as int;
 
   // The JS below changes the static type to avoid an implicit cast.
   // TODO(sra): Find a nicer way to do this, e.g. unsafeCast.
+  @override
   String? group(int index) => JS('String|Null', '#', _match[index]);
 
+  @override
   String? operator [](int index) => group(index);
 
+  @override
   int get groupCount => _match.length - 1;
 
+  @override
   List<String?> groups(List<int> groups) {
     List<String?> out = [];
     for (int i in groups) {
@@ -208,6 +227,7 @@ class _MatchImplementation implements RegExpMatch {
     return out;
   }
 
+  @override
   String? namedGroup(String name) {
     var groups = JS('=Object|Null', '#.groups', _match);
     if (groups != null) {
@@ -219,14 +239,15 @@ class _MatchImplementation implements RegExpMatch {
     throw ArgumentError.value(name, "name", "Not a capture group name");
   }
 
+  @override
   Iterable<String> get groupNames {
     var groups = JS('=Object|Null', '#.groups', _match);
     if (groups != null) {
-      var keys = new JSArray<String>.markGrowable(
+      var keys = JSArray<String>.markGrowable(
           JS('returns:JSExtendableArray;new:true', 'Object.keys(#)', groups));
       return SubListIterable(keys, 0, null);
     }
-    return Iterable.empty();
+    return const Iterable.empty();
   }
 }
 
@@ -237,8 +258,9 @@ class _AllMatchesIterable extends Iterable<RegExpMatch> {
 
   _AllMatchesIterable(this._re, this._string, this._start);
 
+  @override
   Iterator<RegExpMatch> get iterator =>
-      new _AllMatchesIterator(_re, _string, _start);
+      _AllMatchesIterator(_re, _string, _start);
 }
 
 class _AllMatchesIterator implements Iterator<RegExpMatch> {
@@ -249,6 +271,7 @@ class _AllMatchesIterator implements Iterator<RegExpMatch> {
 
   _AllMatchesIterator(this._regExp, this._string, this._nextIndex);
 
+  @override
   RegExpMatch get current => _current as RegExpMatch;
 
   static bool _isLeadSurrogate(int c) {
@@ -259,6 +282,7 @@ class _AllMatchesIterator implements Iterator<RegExpMatch> {
     return c >= 0xdc00 && c <= 0xdfff;
   }
 
+  @override
   bool moveNext() {
     var string = _string;
     if (string == null) return false;

@@ -4,13 +4,11 @@
 
 library metadata;
 
-/**
- * An annotation used to mark a feature as only being supported by a subset
- * of the browsers that Dart supports by default.
- *
- * If an API is not annotated with [SupportedBrowser] then it is assumed to
- * work on all browsers Dart supports.
- */
+/// An annotation used to mark a feature as only being supported by a subset
+/// of the browsers that Dart supports by default.
+///
+/// If an API is not annotated with [SupportedBrowser] then it is assumed to
+/// work on all browsers Dart supports.
 class SupportedBrowser {
   static const String CHROME = "Chrome";
   static const String FIREFOX = "Firefox";
@@ -28,43 +26,35 @@ class SupportedBrowser {
   const SupportedBrowser(this.browserName, [this.minimumVersion]);
 }
 
-/**
- * An annotation used to mark an API as being experimental.
- *
- * An API is considered to be experimental if it is still going through the
- * process of stabilizing and is subject to change or removal.
- *
- * See also:
- *
- * * [W3C recommendation](http://en.wikipedia.org/wiki/W3C_recommendation)
- */
+/// An annotation used to mark an API as being experimental.
+///
+/// An API is considered to be experimental if it is still going through the
+/// process of stabilizing and is subject to change or removal.
+///
+/// See also:
+///
+/// * [W3C recommendation](http://en.wikipedia.org/wiki/W3C_recommendation)
 class Experimental {
   const Experimental();
 }
 
-/**
- * Annotation that specifies that a member is editable through generate files.
- *
- * This is used for API generation.
- *
- * [name] should be formatted as `interface.member`.
- */
+/// Annotation that specifies that a member is editable through generate files.
+///
+/// This is used for API generation.
+///
+/// [name] should be formatted as `interface.member`.
 class DomName {
   final String name;
   const DomName(this.name);
 }
 
-/**
- * Metadata that specifies that the member is editable through generated files.
- */
+/// Metadata that specifies that the member is editable through generated files.
 class DocsEditable {
   const DocsEditable();
 }
 
-/**
- * Annotation that indicates that an API is not expected to change but has
- * not undergone enough testing to be considered stable.
- */
+/// Annotation that indicates that an API is not expected to change but has
+/// not undergone enough testing to be considered stable.
 class Unstable {
   const Unstable();
 }

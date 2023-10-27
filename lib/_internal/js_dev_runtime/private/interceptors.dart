@@ -23,44 +23,47 @@ abstract class Interceptor {
   const Interceptor();
 
   // Use native JS toString method instead of standard Dart Object.toString.
+  @override
   String toString() => JS<String>('!', '#.toString()', this);
 }
 
-/**
- * The interceptor class for [bool].
- */
+/// The interceptor class for [bool].
 @JsPeerInterface(name: 'Boolean')
 final class JSBool extends Interceptor implements bool, TrustedGetRuntimeType {
   const JSBool();
 
   // Note: if you change this, also change the function [S].
+  @override
   @notNull
   String toString() => JS<String>('!', r'String(#)', this);
 
   // The values here are SMIs, co-prime and differ about half of the bit
   // positions, including the low bit, so they are different mod 2^k.
+  @override
   @notNull
   int get hashCode => this ? (2 * 3 * 23 * 3761) : (269 * 811);
 
+  @override
   @notNull
   bool operator &(@nullCheck bool other) =>
       JS<bool>('!', "# && #", other, this);
 
+  @override
   @notNull
   bool operator |(@nullCheck bool other) =>
       JS<bool>('!', "# || #", other, this);
 
+  @override
   @notNull
   bool operator ^(@nullCheck bool other) => !identical(this, other);
 
+  @override
   Type get runtimeType => bool;
 }
 
-/**
- * The supertype for JSString and JSArray. Used by the backend as to
- * have a type mask that contains the objects that we can use the
- * native JS [] operator and length on.
- */
+/// The supertype for JSString and JSArray. Used by the backend as to
+/// have a type mask that contains the objects that we can use the
+/// native JS [] operator and length on.
 abstract class JSIndexable<E> {
   int get length;
   E operator [](int index);
@@ -143,15 +146,18 @@ class JSNoSuchMethodError extends NativeError implements NoSuchMethodError {
     return match != null ? match[1] : null;
   }
 
+  @override
   String dartStack() {
     var stack = super.dartStack();
     // Strip TypeError from first line.
-    stack = toString() + '\n' + stack.split('\n').sublist(1).join('\n');
+    stack = '${toString()}\n${stack.split('\n').sublist(1).join('\n')}';
     return stack;
   }
 
+  @override
   StackTrace get stackTrace => dart.stackTrace(this);
 
+  @override
   String toString() {
     String message = JS('!', '#.message', this);
     var callTarget = _functionCallTarget(message);
@@ -173,6 +179,7 @@ class JSNoSuchMethodError extends NativeError implements NoSuchMethodError {
 
 @JsPeerInterface(name: 'Function')
 class JSFunction extends Interceptor {
+  @override
   toString() {
     // If the function is a Type object, we should just display the type name.
     //
@@ -187,6 +194,7 @@ class JSFunction extends Interceptor {
 
   // TODO(nshahan): We can remove these if we canonicalize all tearoffs and no
   // longer support weak null safety "same type" equality.
+  @override
   operator ==(other) {
     // Basic function values (no generics, no bound instances) are represented
     // as the original functions so reference equality is sufficient.
@@ -262,6 +270,7 @@ class JSFunction extends Interceptor {
         otherFn);
   }
 
+  @override
   get hashCode {
     var boundObj = JS<Object?>('', '#._boundObject', this);
     if (boundObj == null) return identityHashCode(this);
@@ -271,6 +280,7 @@ class JSFunction extends Interceptor {
     return (hash * 31 + identityHashCode(boundMethod)) & 0x1fffffff;
   }
 
+  @override
   Type get runtimeType => JS_GET_FLAG('NEW_RUNTIME_TYPES')
       ? rti.createRuntimeType(JS<rti.Rti>('!', '#', dart.getReifiedType(this)))
       : dart.wrapType(dart.getReifiedType(this));
@@ -278,7 +288,9 @@ class JSFunction extends Interceptor {
 
 /// A class used for implementing `null` tear-offs.
 class JSNull {
+  @override
   toString() => 'null';
+  @override
   noSuchMethod(Invocation i) => dart.defaultNoSuchMethod(null, i);
 }
 
@@ -288,12 +300,17 @@ final Object jsNull = JSNull();
 // it to be picked up as an extension type.
 @JsPeerInterface(name: 'RangeError')
 class JSRangeError extends JavaScriptObject implements ArgumentError {
+  @override
   StackTrace get stackTrace => dart.stackTrace(this);
 
+  @override
   get invalidValue => null;
+  @override
   get name => null;
+  @override
   get message => JS<String>('!', '#.message', this);
 
+  @override
   String toString() => "Invalid argument: $message";
 }
 

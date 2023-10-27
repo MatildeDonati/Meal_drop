@@ -47,11 +47,11 @@ class DateTime {
   @patch
   DateTime._internal(int year, int month, int day, int hour, int minute,
       int second, int millisecond, int microsecond, bool isUtc)
-      : this.isUtc = checkNotNullable(isUtc, "isUtc"),
-        this._value = _brokenDownDateToValue(year, month, day, hour, minute,
+      : isUtc = checkNotNullable(isUtc, "isUtc"),
+        _value = _brokenDownDateToValue(year, month, day, hour, minute,
                 second, millisecond, microsecond, isUtc) ??
             -1 {
-    if (_value == -1) throw new ArgumentError();
+    if (_value == -1) throw ArgumentError();
   }
 
   static int _validateMilliseconds(int millisecondsSinceEpoch) =>
@@ -79,11 +79,12 @@ class DateTime {
 
   @patch
   Duration get timeZoneOffset {
-    if (isUtc) return new Duration();
+    if (isUtc) return const Duration();
     int offsetInSeconds = _timeZoneOffsetInSeconds(microsecondsSinceEpoch);
-    return new Duration(seconds: offsetInSeconds);
+    return Duration(seconds: offsetInSeconds);
   }
 
+  @override
   @patch
   bool operator ==(dynamic other) =>
       other is DateTime &&
@@ -104,21 +105,21 @@ class DateTime {
   int compareTo(DateTime other) =>
       _value.compareTo(other.microsecondsSinceEpoch);
 
-  /** The first list contains the days until each month in non-leap years. The
-    * second list contains the days in leap years. */
-  static const List<List<int>> _DAYS_UNTIL_MONTH = const [
-    const [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334],
-    const [0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335]
+  /// The first list contains the days until each month in non-leap years. The
+  /// second list contains the days in leap years.
+  static const List<List<int>> _DAYS_UNTIL_MONTH = [
+    [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334],
+    [0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335]
   ];
 
   static List<int> _computeUpperPart(int localMicros) {
-    const int DAYS_IN_4_YEARS = 4 * 365 + 1;
-    const int DAYS_IN_100_YEARS = 25 * DAYS_IN_4_YEARS - 1;
-    const int DAYS_IN_400_YEARS = 4 * DAYS_IN_100_YEARS + 1;
-    const int DAYS_1970_TO_2000 = 30 * 365 + 7;
-    const int DAYS_OFFSET =
-        1000 * DAYS_IN_400_YEARS + 5 * DAYS_IN_400_YEARS - DAYS_1970_TO_2000;
-    const int YEARS_OFFSET = 400000;
+    const int daysIn4Years = 4 * 365 + 1;
+    const int daysIn100Years = 25 * daysIn4Years - 1;
+    const int daysIn400Years = 4 * daysIn100Years + 1;
+    const int days1970To2000 = 30 * 365 + 7;
+    const int daysOffset =
+        1000 * daysIn400Years + 5 * daysIn400Years - days1970To2000;
+    const int yearsOffset = 400000;
 
     int resultYear = 0;
     int resultMonth = 0;
@@ -128,16 +129,16 @@ class DateTime {
     final int daysSince1970 =
         _flooredDivision(localMicros, Duration.microsecondsPerDay);
     int days = daysSince1970;
-    days += DAYS_OFFSET;
-    resultYear = 400 * (days ~/ DAYS_IN_400_YEARS) - YEARS_OFFSET;
-    days = unsafeCast<int>(days.remainder(DAYS_IN_400_YEARS));
+    days += daysOffset;
+    resultYear = 400 * (days ~/ daysIn400Years) - yearsOffset;
+    days = unsafeCast<int>(days.remainder(daysIn400Years));
     days--;
-    int yd1 = days ~/ DAYS_IN_100_YEARS;
-    days = unsafeCast<int>(days.remainder(DAYS_IN_100_YEARS));
+    int yd1 = days ~/ daysIn100Years;
+    days = unsafeCast<int>(days.remainder(daysIn100Years));
     resultYear += 100 * yd1;
     days++;
-    int yd2 = days ~/ DAYS_IN_4_YEARS;
-    days = unsafeCast<int>(days.remainder(DAYS_IN_4_YEARS));
+    int yd2 = days ~/ daysIn4Years;
+    days = unsafeCast<int>(days.remainder(daysIn4Years));
     resultYear += 4 * yd2;
     days--;
     int yd3 = days ~/ 365;
@@ -178,7 +179,7 @@ class DateTime {
             DateTime.daysPerWeek) +
         DateTime.monday;
 
-    List<int> list = new List<int>.filled(_YEAR_INDEX + 1, 0);
+    List<int> list = List<int>.filled(_YEAR_INDEX + 1, 0);
     list[_MICROSECOND_INDEX] = resultMicrosecond;
     list[_MILLISECOND_INDEX] = resultMillisecond;
     list[_SECOND_INDEX] = resultSecond;
@@ -197,19 +198,19 @@ class DateTime {
 
   @patch
   DateTime add(Duration duration) {
-    return new DateTime._withValue(_value + duration.inMicroseconds,
+    return DateTime._withValue(_value + duration.inMicroseconds,
         isUtc: isUtc);
   }
 
   @patch
   DateTime subtract(Duration duration) {
-    return new DateTime._withValue(_value - duration.inMicroseconds,
+    return DateTime._withValue(_value - duration.inMicroseconds,
         isUtc: isUtc);
   }
 
   @patch
   Duration difference(DateTime other) {
-    return new Duration(microseconds: _value - other.microsecondsSinceEpoch);
+    return Duration(microseconds: _value - other.microsecondsSinceEpoch);
   }
 
   @patch
@@ -246,21 +247,19 @@ class DateTime {
   @patch
   int get year => _parts[_YEAR_INDEX];
 
-  /**
-   * Returns the amount of microseconds in UTC that represent the same values
-   * as [this].
-   *
-   * Say `t` is the result of this function, then
-   * * `this.year == new DateTime.fromMicrosecondsSinceEpoch(t, true).year`,
-   * * `this.month == new DateTime.fromMicrosecondsSinceEpoch(t, true).month`,
-   * * `this.day == new DateTime.fromMicrosecondsSinceEpoch(t, true).day`,
-   * * `this.hour == new DateTime.fromMicrosecondsSinceEpoch(t, true).hour`,
-   * * ...
-   *
-   * Daylight savings is computed as if the date was computed in [1970..2037].
-   * If [this] lies outside this range then it is a year with similar
-   * properties (leap year, weekdays) is used instead.
-   */
+  /// Returns the amount of microseconds in UTC that represent the same values
+  /// as [this].
+  ///
+  /// Say `t` is the result of this function, then
+  /// * `this.year == new DateTime.fromMicrosecondsSinceEpoch(t, true).year`,
+  /// * `this.month == new DateTime.fromMicrosecondsSinceEpoch(t, true).month`,
+  /// * `this.day == new DateTime.fromMicrosecondsSinceEpoch(t, true).day`,
+  /// * `this.hour == new DateTime.fromMicrosecondsSinceEpoch(t, true).hour`,
+  /// * ...
+  ///
+  /// Daylight savings is computed as if the date was computed in [1970..2037].
+  /// If [this] lies outside this range then it is a year with similar
+  /// properties (leap year, weekdays) is used instead.
   int get _localDateInUtcMicros {
     int micros = _value;
     if (isUtc) return micros;
@@ -341,14 +340,12 @@ class DateTime {
     return (_dayFromYear(y) + 4) % 7;
   }
 
-  /**
-   * Returns a year in the range 2008-2035 matching
-   * * leap year, and
-   * * week day of first day.
-   *
-   * Leap seconds are ignored.
-   * Adapted from V8's date implementation. See ECMA 262 - 15.9.1.9.
-   */
+  /// Returns a year in the range 2008-2035 matching
+  /// * leap year, and
+  /// * week day of first day.
+  ///
+  /// Leap seconds are ignored.
+  /// Adapted from V8's date implementation. See ECMA 262 - 15.9.1.9.
   static int _equivalentYear(int year) {
     // Returns year y so that _weekDay(y) == _weekDay(year).
     // _weekDay returns the week day (in range 0 - 6).
@@ -368,45 +365,41 @@ class DateTime {
     return 2008 + (recentYear - 2008) % 28;
   }
 
-  /**
-   * Returns the UTC year for the corresponding [secondsSinceEpoch].
-   * It is relatively fast for values in the range 0 to year 2098.
-   *
-   * Code is adapted from V8.
-   */
+  /// Returns the UTC year for the corresponding [secondsSinceEpoch].
+  /// It is relatively fast for values in the range 0 to year 2098.
+  ///
+  /// Code is adapted from V8.
   static int _yearsFromSecondsSinceEpoch(int secondsSinceEpoch) {
-    const int DAYS_IN_4_YEARS = 4 * 365 + 1;
-    const int DAYS_IN_100_YEARS = 25 * DAYS_IN_4_YEARS - 1;
-    const int DAYS_YEAR_2098 = DAYS_IN_100_YEARS + 6 * DAYS_IN_4_YEARS;
+    const int daysIn4Years = 4 * 365 + 1;
+    const int daysIn100Years = 25 * daysIn4Years - 1;
+    const int daysYear2098 = daysIn100Years + 6 * daysIn4Years;
 
     int days = secondsSinceEpoch ~/ Duration.secondsPerDay;
-    if (days > 0 && days < DAYS_YEAR_2098) {
+    if (days > 0 && days < daysYear2098) {
       // According to V8 this fast case works for dates from 1970 to 2099.
-      return 1970 + (4 * days + 2) ~/ DAYS_IN_4_YEARS;
+      return 1970 + (4 * days + 2) ~/ daysIn4Years;
     }
     int micros = secondsSinceEpoch * Duration.microsecondsPerSecond;
     return _computeUpperPart(micros)[_YEAR_INDEX];
   }
 
-  /**
-   * Returns a date in seconds that is equivalent to the given
-   * date in microseconds [microsecondsSinceEpoch]. An equivalent
-   * date has the same fields (`month`, `day`, etc.) as the given
-   * date, but the `year` is in the range [1901..2038].
-   *
-   * * The time since the beginning of the year is the same.
-   * * If the given date is in a leap year then the returned
-   *   seconds are in a leap year, too.
-   * * The week day of given date is the same as the one for the
-   *   returned date.
-   */
+  /// Returns a date in seconds that is equivalent to the given
+  /// date in microseconds [microsecondsSinceEpoch]. An equivalent
+  /// date has the same fields (`month`, `day`, etc.) as the given
+  /// date, but the `year` is in the range [1901..2038].
+  ///
+  /// * The time since the beginning of the year is the same.
+  /// * If the given date is in a leap year then the returned
+  ///   seconds are in a leap year, too.
+  /// * The week day of given date is the same as the one for the
+  ///   returned date.
   static int _equivalentSeconds(int microsecondsSinceEpoch) {
-    const int CUT_OFF_SECONDS = 0x7FFFFFFF;
+    const int cutOffSeconds = 0x7FFFFFFF;
 
     int secondsSinceEpoch = _flooredDivision(
         microsecondsSinceEpoch, Duration.microsecondsPerSecond);
 
-    if (secondsSinceEpoch.abs() > CUT_OFF_SECONDS) {
+    if (secondsSinceEpoch.abs() > cutOffSeconds) {
       int year = _yearsFromSecondsSinceEpoch(secondsSinceEpoch);
       int days = _dayFromYear(year);
       int equivalentYear = _equivalentYear(year);

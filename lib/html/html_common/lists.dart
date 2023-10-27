@@ -5,11 +5,9 @@
 part of html_common;
 
 class Lists {
-  /**
-   * Returns the index in the array [a] of the given [element], starting
-   * the search at index [startIndex] to [endIndex] (exclusive).
-   * Returns -1 if [element] is not found.
-   */
+  /// Returns the index in the array [a] of the given [element], starting
+  /// the search at index [startIndex] to [endIndex] (exclusive).
+  /// Returns -1 if [element] is not found.
   static int indexOf(List a, Object element, int startIndex, int endIndex) {
     if (startIndex >= a.length) {
       return -1;
@@ -25,11 +23,9 @@ class Lists {
     return -1;
   }
 
-  /**
-   * Returns the last index in the array [a] of the given [element], starting
-   * the search at index [startIndex] to 0.
-   * Returns -1 if [element] is not found.
-   */
+  /// Returns the last index in the array [a] of the given [element], starting
+  /// the search at index [startIndex] to 0.
+  /// Returns -1 if [element] is not found.
   static int lastIndexOf(List a, Object element, int startIndex) {
     if (startIndex < 0) {
       return -1;
@@ -45,17 +41,15 @@ class Lists {
     return -1;
   }
 
-  /**
-   * Returns a sub list copy of this list, from [start] to
-   * [end] ([end] not inclusive).
-   * Returns an empty list if [length] is 0.
-   * It is an error if indices are not valid for the list, or
-   * if [end] is before [start].
-   */
+  /// Returns a sub list copy of this list, from [start] to
+  /// [end] ([end] not inclusive).
+  /// Returns an empty list if [length] is 0.
+  /// It is an error if indices are not valid for the list, or
+  /// if [end] is before [start].
   static List getRange(List a, int start, int end, List accumulator) {
-    if (start < 0) throw new RangeError.value(start);
-    if (end < start) throw new RangeError.value(end);
-    if (end > a.length) throw new RangeError.value(end);
+    if (start < 0) throw RangeError.value(start);
+    if (end < start) throw RangeError.value(end);
+    if (end > a.length) throw RangeError.value(end);
     for (int i = start; i < end; i++) {
       accumulator.add(a[i]);
     }
@@ -63,9 +57,7 @@ class Lists {
   }
 }
 
-/**
- * For accessing underlying node lists, for dart:js interop.
- */
+/// For accessing underlying node lists, for dart:js interop.
 abstract class NodeListWrapper {
   List<Node> get rawList;
 }

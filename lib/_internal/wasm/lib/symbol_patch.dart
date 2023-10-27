@@ -14,8 +14,9 @@ class Symbol {
   // TODO(http://dartbug.com/46716): Recognize Symbol in the VM.
   @patch
   @pragma("wasm:entry-point")
-  const Symbol(String name) : this._name = name;
+  const Symbol(String name) : _name = name;
 
+  @override
   @patch
   String toString() => 'Symbol("${computeUnmangledName(this)}")';
 
@@ -30,14 +31,14 @@ class Symbol {
     // Class._constructor@xxx -> Class._constructor
     // _Class@xxx._constructor@xxx -> _Class._constructor
     // lib._S@xxx with lib._M1@xxx, lib._M2@xxx -> lib._S with lib._M1, lib._M2
-    StringBuffer result = new StringBuffer();
-    bool add_setter_suffix = false;
+    StringBuffer result = StringBuffer();
+    bool addSetterSuffix = false;
     var pos = 0;
     if (string.length >= 4 && string[3] == ':') {
       // Drop 'get:' or 'set:' prefix.
       pos = 4;
       if (string[0] == 's') {
-        add_setter_suffix = true;
+        addSetterSuffix = true;
       }
     }
     // Skip everything between AT and PERIOD, SPACE, COMMA or END
@@ -53,13 +54,14 @@ class Symbol {
         result.write(char);
       }
     }
-    if (add_setter_suffix) {
+    if (addSetterSuffix) {
       result.write('=');
     }
     return result.toString();
   }
 
   // Must be kept in sync with Symbol::CanonicalizeHash in object.cc.
+  @override
   @patch
   int get hashCode {
     const arbitraryPrime = 664597;

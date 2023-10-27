@@ -52,7 +52,7 @@ final class RecordImpl implements Record {
 
   @override
   bool operator ==(Object? other) {
-    if (!(other is RecordImpl)) return false;
+    if (other is! RecordImpl) return false;
     if (shape != other.shape) return false;
     if (values.length != other.values.length) {
       return false;
@@ -67,9 +67,7 @@ final class RecordImpl implements Record {
 
   @override
   int get hashCode {
-    if (_hashCode == null) {
-      _hashCode = Object.hashAll([shape, ...values]);
-    }
+    _hashCode ??= Object.hashAll([shape, ...values]);
     return _hashCode!;
   }
 
@@ -90,11 +88,11 @@ final class RecordImpl implements Record {
     buffer.write('(');
     for (var i = 0; i < count; i++) {
       if (i >= posCount) {
-        buffer.write('${shape.named![i - posCount]}');
+        buffer.write(shape.named![i - posCount]);
         buffer.write(': ');
       }
       var value = values[i];
-      buffer.write(safe ? Primitives.safeToString(value) : '${value}');
+      buffer.write(safe ? Primitives.safeToString(value) : '$value');
       if (i < count - 1) buffer.write(', ');
     }
     buffer.write(')');

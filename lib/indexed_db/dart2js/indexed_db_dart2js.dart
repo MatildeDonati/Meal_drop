@@ -68,7 +68,6 @@ import 'dart:async';
 import 'dart:html';
 import 'dart:html_common';
 import 'dart:_native_typed_data';
-import 'dart:typed_data';
 import 'dart:_js_helper' show Creates, Returns, JSName, Native;
 import 'dart:_foreign_helper' show JS;
 import 'dart:_interceptors' show JavaScriptObject, JSExtendableArray;
@@ -146,15 +145,13 @@ class _KeyRangeFactoryProvider {
 // What is required is to ensure that an Lists in the key are actually
 // JavaScript arrays, and any Dates are JavaScript Dates.
 
-/**
- * Converts a native IDBKey into a Dart object.
- *
- * May return the original input.  May mutate the original input (but will be
- * idempotent if mutation occurs).  It is assumed that this conversion happens
- * on native IDBKeys on all paths that return IDBKeys from native DOM calls.
- *
- * If necessary, JavaScript Dates are converted into Dart Dates.
- */
+/// Converts a native IDBKey into a Dart object.
+///
+/// May return the original input.  May mutate the original input (but will be
+/// idempotent if mutation occurs).  It is assumed that this conversion happens
+/// on native IDBKeys on all paths that return IDBKeys from native DOM calls.
+///
+/// If necessary, JavaScript Dates are converted into Dart Dates.
 _convertNativeToDart_IDBKey(nativeKey) {
   containsDate(object) {
     if (isJavaScriptDate(object)) return true;
@@ -167,20 +164,18 @@ _convertNativeToDart_IDBKey(nativeKey) {
   }
 
   if (containsDate(nativeKey)) {
-    throw new UnimplementedError('Key containing DateTime');
+    throw UnimplementedError('Key containing DateTime');
   }
   // TODO: Cache conversion somewhere?
   return nativeKey;
 }
 
-/**
- * Converts a Dart object into a valid IDBKey.
- *
- * May return the original input.  Does not mutate input.
- *
- * If necessary, [dartKey] may be copied to ensure all lists are converted into
- * JavaScript Arrays and Dart Dates into JavaScript Dates.
- */
+/// Converts a Dart object into a valid IDBKey.
+///
+/// May return the original input.  Does not mutate input.
+///
+/// If necessary, [dartKey] may be copied to ensure all lists are converted into
+/// JavaScript Arrays and Dart Dates into JavaScript Dates.
 _convertDartToNative_IDBKey(dartKey) {
   // TODO: Implement.
   return dartKey;
@@ -193,8 +188,8 @@ _convertNativeToDart_IDBAny(object) {
 
 // TODO(sra): Add DateTime.
 const String _idbKey = 'JSExtendableArray|=Object|num|String';
-const _annotation_Creates_IDBKey = const Creates(_idbKey);
-const _annotation_Returns_IDBKey = const Returns(_idbKey);
+const _annotation_Creates_IDBKey = Creates(_idbKey);
+const _annotation_Returns_IDBKey = Returns(_idbKey);
 // Copyright (c) 2013, the Dart project authors.  Please see the AUTHORS file
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
@@ -206,7 +201,7 @@ class Cursor extends JavaScriptObject {
     try {
       return _completeRequest(_delete());
     } catch (e, stacktrace) {
-      return new Future.error(e, stacktrace);
+      return Future.error(e, stacktrace);
     }
   }
 
@@ -214,7 +209,7 @@ class Cursor extends JavaScriptObject {
     try {
       return _completeRequest(_update(value));
     } catch (e, stacktrace) {
-      return new Future.error(e, stacktrace);
+      return Future.error(e, stacktrace);
     }
   }
 
@@ -229,7 +224,7 @@ class Cursor extends JavaScriptObject {
 
   // To suppress missing implicit constructor warnings.
   factory Cursor._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   String? get direction native;
@@ -270,10 +265,10 @@ class Cursor extends JavaScriptObject {
 class CursorWithValue extends Cursor {
   // To suppress missing implicit constructor warnings.
   factory CursorWithValue._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
-  dynamic get value => _convertNativeToDart_IDBAny(this._get_value);
+  dynamic get value => _convertNativeToDart_IDBAny(_get_value);
   @JSName('value')
   @annotation_Creates_SerializedScriptValue
   @annotation_Returns_SerializedScriptValue
@@ -283,10 +278,8 @@ class CursorWithValue extends Cursor {
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-/**
- * An indexed database object for storing client-side data
- * in web apps.
- */
+/// An indexed database object for storing client-side data
+/// in web apps.
 @SupportedBrowser(SupportedBrowser.CHROME)
 @SupportedBrowser(SupportedBrowser.FIREFOX, '15')
 @SupportedBrowser(SupportedBrowser.IE, '10')
@@ -305,9 +298,9 @@ class Database extends EventTarget {
     return _createObjectStore(name, options);
   }
 
-  Transaction transaction(storeName_OR_storeNames, String mode) {
+  Transaction transaction(storenameOrStorenames, String mode) {
     if (mode != 'readonly' && mode != 'readwrite') {
-      throw new ArgumentError(mode);
+      throw ArgumentError(mode);
     }
 
     // TODO(sra): Ensure storeName_OR_storeNames is a string or List<String>,
@@ -316,12 +309,12 @@ class Database extends EventTarget {
     // Try and create a transaction with a string mode.  Browsers that expect a
     // numeric mode tend to convert the string into a number.  This fails
     // silently, resulting in zero ('readonly').
-    return _transaction(storeName_OR_storeNames, mode);
+    return _transaction(storenameOrStorenames, mode);
   }
 
   Transaction transactionStore(String storeName, String mode) {
     if (mode != 'readonly' && mode != 'readwrite') {
-      throw new ArgumentError(mode);
+      throw ArgumentError(mode);
     }
     // Try and create a transaction with a string mode.  Browsers that expect a
     // numeric mode tend to convert the string into a number.  This fails
@@ -331,7 +324,7 @@ class Database extends EventTarget {
 
   Transaction transactionList(List<String> storeNames, String mode) {
     if (mode != 'readonly' && mode != 'readwrite') {
-      throw new ArgumentError(mode);
+      throw ArgumentError(mode);
     }
     List storeNames_1 = convertDartToNative_StringArray(storeNames);
     return _transaction(storeNames_1, mode);
@@ -339,7 +332,7 @@ class Database extends EventTarget {
 
   Transaction transactionStores(DomStringList storeNames, String mode) {
     if (mode != 'readonly' && mode != 'readwrite') {
-      throw new ArgumentError(mode);
+      throw ArgumentError(mode);
     }
     return _transaction(storeNames, mode);
   }
@@ -349,44 +342,36 @@ class Database extends EventTarget {
 
   // To suppress missing implicit constructor warnings.
   factory Database._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
-  /**
-   * Static factory designed to expose `abort` events to event
-   * handlers that are not necessarily instances of [Database].
-   *
-   * See [EventStreamProvider] for usage information.
-   */
+  /// Static factory designed to expose `abort` events to event
+  /// handlers that are not necessarily instances of [Database].
+  ///
+  /// See [EventStreamProvider] for usage information.
   static const EventStreamProvider<Event> abortEvent =
-      const EventStreamProvider<Event>('abort');
+      EventStreamProvider<Event>('abort');
 
-  /**
-   * Static factory designed to expose `close` events to event
-   * handlers that are not necessarily instances of [Database].
-   *
-   * See [EventStreamProvider] for usage information.
-   */
+  /// Static factory designed to expose `close` events to event
+  /// handlers that are not necessarily instances of [Database].
+  ///
+  /// See [EventStreamProvider] for usage information.
   static const EventStreamProvider<Event> closeEvent =
-      const EventStreamProvider<Event>('close');
+      EventStreamProvider<Event>('close');
 
-  /**
-   * Static factory designed to expose `error` events to event
-   * handlers that are not necessarily instances of [Database].
-   *
-   * See [EventStreamProvider] for usage information.
-   */
+  /// Static factory designed to expose `error` events to event
+  /// handlers that are not necessarily instances of [Database].
+  ///
+  /// See [EventStreamProvider] for usage information.
   static const EventStreamProvider<Event> errorEvent =
-      const EventStreamProvider<Event>('error');
+      EventStreamProvider<Event>('error');
 
-  /**
-   * Static factory designed to expose `versionchange` events to event
-   * handlers that are not necessarily instances of [Database].
-   *
-   * See [EventStreamProvider] for usage information.
-   */
+  /// Static factory designed to expose `versionchange` events to event
+  /// handlers that are not necessarily instances of [Database].
+  ///
+  /// See [EventStreamProvider] for usage information.
   static const EventStreamProvider<VersionChangeEvent> versionChangeEvent =
-      const EventStreamProvider<VersionChangeEvent>('versionchange');
+      EventStreamProvider<VersionChangeEvent>('versionchange');
 
   String? get name native;
 
@@ -434,7 +419,7 @@ class Database extends EventTarget {
 
 // WARNING: Do not edit - generated code.
 
-typedef void ObserverCallback(ObserverChanges changes);
+typedef ObserverCallback = void Function(ObserverChanges changes);
 // Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
@@ -445,9 +430,7 @@ typedef void ObserverCallback(ObserverChanges changes);
 @Unstable()
 @Native("IDBFactory")
 class IdbFactory extends JavaScriptObject {
-  /**
-   * Checks to see if Indexed DB is supported on the current platform.
-   */
+  /// Checks to see if Indexed DB is supported on the current platform.
   static bool get supported {
     return JS(
         'bool',
@@ -458,10 +441,10 @@ class IdbFactory extends JavaScriptObject {
 
   Future<Database> open(String name,
       {int? version,
-      void onUpgradeNeeded(VersionChangeEvent event)?,
-      void onBlocked(Event event)?}) {
+      void Function(VersionChangeEvent event)? onUpgradeNeeded,
+      void Function(Event event)? onBlocked}) {
     if ((version == null) != (onUpgradeNeeded == null)) {
-      return new Future.error(new ArgumentError(
+      return Future.error(ArgumentError(
           'version and onUpgradeNeeded must be specified together'));
     }
     try {
@@ -480,37 +463,35 @@ class IdbFactory extends JavaScriptObject {
       }
       return _completeRequest(request);
     } catch (e, stacktrace) {
-      return new Future.error(e, stacktrace);
+      return Future.error(e, stacktrace);
     }
   }
 
-  Future<IdbFactory> deleteDatabase(String name, {void onBlocked(Event e)?}) {
+  Future<IdbFactory> deleteDatabase(String name, {void Function(Event e)? onBlocked}) {
     try {
       var request = _deleteDatabase(name);
 
       if (onBlocked != null) {
         request.onBlocked.listen(onBlocked);
       }
-      var completer = new Completer<IdbFactory>.sync();
+      var completer = Completer<IdbFactory>.sync();
       request.onSuccess.listen((e) {
         completer.complete(this);
       });
       request.onError.listen(completer.completeError);
       return completer.future;
     } catch (e, stacktrace) {
-      return new Future.error(e, stacktrace);
+      return Future.error(e, stacktrace);
     }
   }
 
-  /**
-   * Deprecated. Always returns `false`.
-   */
+  /// Deprecated. Always returns `false`.
   @Deprecated('No longer supported on modern browsers. Always returns false.')
   bool get supportsDatabaseNames => false;
 
   // To suppress missing implicit constructor warnings.
   factory IdbFactory._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   int cmp(Object first, Object second) native;
@@ -525,12 +506,10 @@ class IdbFactory extends JavaScriptObject {
   OpenDBRequest _open(String name, [int? version]) native;
 }
 
-/**
- * Ties a request to a completer, so the completer is completed when it succeeds
- * and errors out when the request errors.
- */
+/// Ties a request to a completer, so the completer is completed when it succeeds
+/// and errors out when the request errors.
 Future<T> _completeRequest<T>(Request request) {
-  var completer = new Completer<T>.sync();
+  var completer = Completer<T>.sync();
   // TODO: make sure that completer.complete is synchronous as transactions
   // may be committed if the result is not processed immediately.
   request.onSuccess.listen((e) {
@@ -547,12 +526,12 @@ Future<T> _completeRequest<T>(Request request) {
 @Unstable()
 @Native("IDBIndex")
 class Index extends JavaScriptObject {
-  Future<int> count([key_OR_range]) {
+  Future<int> count([keyOrRange]) {
     try {
-      var request = _count(key_OR_range);
+      var request = _count(keyOrRange);
       return _completeRequest(request);
     } catch (e, stacktrace) {
-      return new Future.error(e, stacktrace);
+      return Future.error(e, stacktrace);
     }
   }
 
@@ -562,7 +541,7 @@ class Index extends JavaScriptObject {
 
       return _completeRequest(request);
     } catch (e, stacktrace) {
-      return new Future.error(e, stacktrace);
+      return Future.error(e, stacktrace);
     }
   }
 
@@ -572,69 +551,65 @@ class Index extends JavaScriptObject {
 
       return _completeRequest(request);
     } catch (e, stacktrace) {
-      return new Future.error(e, stacktrace);
+      return Future.error(e, stacktrace);
     }
   }
 
-  /**
-   * Creates a stream of cursors over the records in this object store.
-   *
-   * See also:
-   *
-   * * [ObjectStore.openCursor]
-   */
+  /// Creates a stream of cursors over the records in this object store.
+  ///
+  /// See also:
+  ///
+  /// * [ObjectStore.openCursor]
   Stream<CursorWithValue> openCursor(
       {key, KeyRange? range, String? direction, bool? autoAdvance}) {
-    var key_OR_range = null;
+    var keyOrRange;
     if (key != null) {
       if (range != null) {
-        throw new ArgumentError('Cannot specify both key and range.');
+        throw ArgumentError('Cannot specify both key and range.');
       }
-      key_OR_range = key;
+      keyOrRange = key;
     } else {
-      key_OR_range = range;
+      keyOrRange = range;
     }
-    var request;
+    Request request;
     if (direction == null) {
       // FIXME: Passing in "next" should be unnecessary.
-      request = _openCursor(key_OR_range, "next");
+      request = _openCursor(keyOrRange, "next");
     } else {
-      request = _openCursor(key_OR_range, direction);
+      request = _openCursor(keyOrRange, direction);
     }
     return ObjectStore._cursorStreamFromResult(request, autoAdvance);
   }
 
-  /**
-   * Creates a stream of cursors over the records in this object store.
-   *
-   * See also:
-   *
-   * * [ObjectStore.openCursor]
-   */
+  /// Creates a stream of cursors over the records in this object store.
+  ///
+  /// See also:
+  ///
+  /// * [ObjectStore.openCursor]
   Stream<Cursor> openKeyCursor(
       {key, KeyRange? range, String? direction, bool? autoAdvance}) {
-    var key_OR_range = null;
+    var keyOrRange;
     if (key != null) {
       if (range != null) {
-        throw new ArgumentError('Cannot specify both key and range.');
+        throw ArgumentError('Cannot specify both key and range.');
       }
-      key_OR_range = key;
+      keyOrRange = key;
     } else {
-      key_OR_range = range;
+      keyOrRange = range;
     }
-    var request;
+    Request request;
     if (direction == null) {
       // FIXME: Passing in "next" should be unnecessary.
-      request = _openKeyCursor(key_OR_range, "next");
+      request = _openKeyCursor(keyOrRange, "next");
     } else {
-      request = _openKeyCursor(key_OR_range, direction);
+      request = _openKeyCursor(keyOrRange, direction);
     }
     return ObjectStore._cursorStreamFromResult(request, autoAdvance);
   }
 
   // To suppress missing implicit constructor warnings.
   factory Index._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   @annotation_Creates_SerializedScriptValue
@@ -705,7 +680,7 @@ class KeyRange extends JavaScriptObject {
 
   // To suppress missing implicit constructor warnings.
   factory KeyRange._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   @annotation_Creates_SerializedScriptValue
@@ -742,7 +717,7 @@ class KeyRange extends JavaScriptObject {
 class ObjectStore extends JavaScriptObject {
   Future add(value, [key]) {
     try {
-      var request;
+      Request request;
       if (key != null) {
         request = _add(value, key);
       } else {
@@ -750,7 +725,7 @@ class ObjectStore extends JavaScriptObject {
       }
       return _completeRequest(request);
     } catch (e, stacktrace) {
-      return new Future.error(e, stacktrace);
+      return Future.error(e, stacktrace);
     }
   }
 
@@ -758,30 +733,30 @@ class ObjectStore extends JavaScriptObject {
     try {
       return _completeRequest(_clear());
     } catch (e, stacktrace) {
-      return new Future.error(e, stacktrace);
+      return Future.error(e, stacktrace);
     }
   }
 
-  Future delete(key_OR_keyRange) {
+  Future delete(keyOrKeyrange) {
     try {
-      return _completeRequest(_delete(key_OR_keyRange));
+      return _completeRequest(_delete(keyOrKeyrange));
     } catch (e, stacktrace) {
-      return new Future.error(e, stacktrace);
+      return Future.error(e, stacktrace);
     }
   }
 
-  Future<int> count([key_OR_range]) {
+  Future<int> count([keyOrRange]) {
     try {
-      var request = _count(key_OR_range);
+      var request = _count(keyOrRange);
       return _completeRequest(request);
     } catch (e, stacktrace) {
-      return new Future.error(e, stacktrace);
+      return Future.error(e, stacktrace);
     }
   }
 
   Future put(value, [key]) {
     try {
-      var request;
+      Request request;
       if (key != null) {
         request = _put(value, key);
       } else {
@@ -789,7 +764,7 @@ class ObjectStore extends JavaScriptObject {
       }
       return _completeRequest(request);
     } catch (e, stacktrace) {
-      return new Future.error(e, stacktrace);
+      return Future.error(e, stacktrace);
     }
   }
 
@@ -799,49 +774,47 @@ class ObjectStore extends JavaScriptObject {
 
       return _completeRequest(request);
     } catch (e, stacktrace) {
-      return new Future.error(e, stacktrace);
+      return Future.error(e, stacktrace);
     }
   }
 
-  /**
-   * Creates a stream of cursors over the records in this object store.
-   *
-   * **The stream must be manually advanced by calling [Cursor.next] after
-   * each item or by specifying autoAdvance to be true.**
-   *
-   *     var cursors = objectStore.openCursor().listen(
-   *       (cursor) {
-   *         // ...some processing with the cursor
-   *         cursor.next(); // advance onto the next cursor.
-   *       },
-   *       onDone: () {
-   *         // called when there are no more cursors.
-   *         print('all done!');
-   *       });
-   *
-   * Asynchronous operations which are not related to the current transaction
-   * will cause the transaction to automatically be committed-- all processing
-   * must be done synchronously unless they are additional async requests to
-   * the current transaction.
-   */
+  /// Creates a stream of cursors over the records in this object store.
+  ///
+  /// **The stream must be manually advanced by calling [Cursor.next] after
+  /// each item or by specifying autoAdvance to be true.**
+  ///
+  ///     var cursors = objectStore.openCursor().listen(
+  ///       (cursor) {
+  ///         // ...some processing with the cursor
+  ///         cursor.next(); // advance onto the next cursor.
+  ///       },
+  ///       onDone: () {
+  ///         // called when there are no more cursors.
+  ///         print('all done!');
+  ///       });
+  ///
+  /// Asynchronous operations which are not related to the current transaction
+  /// will cause the transaction to automatically be committed-- all processing
+  /// must be done synchronously unless they are additional async requests to
+  /// the current transaction.
   Stream<CursorWithValue> openCursor(
       {key, KeyRange? range, String? direction, bool? autoAdvance}) {
-    var key_OR_range = null;
+    var keyOrRange;
     if (key != null) {
       if (range != null) {
-        throw new ArgumentError('Cannot specify both key and range.');
+        throw ArgumentError('Cannot specify both key and range.');
       }
-      key_OR_range = key;
+      keyOrRange = key;
     } else {
-      key_OR_range = range;
+      keyOrRange = range;
     }
 
     // TODO: try/catch this and return a stream with an immediate error.
-    var request;
+    Request request;
     if (direction == null) {
-      request = _openCursor(key_OR_range);
+      request = _openCursor(keyOrRange);
     } else {
-      request = _openCursor(key_OR_range, direction);
+      request = _openCursor(keyOrRange, direction);
     }
     return _cursorStreamFromResult(request, autoAdvance);
   }
@@ -860,7 +833,7 @@ class ObjectStore extends JavaScriptObject {
 
   // To suppress missing implicit constructor warnings.
   factory ObjectStore._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   bool? get autoIncrement native;
@@ -972,15 +945,13 @@ class ObjectStore extends JavaScriptObject {
   @_annotation_Creates_IDBKey
   Request _put_2(value) native;
 
-  /**
-   * Helper for iterating over cursors in a request.
-   */
+  /// Helper for iterating over cursors in a request.
   static Stream<T> _cursorStreamFromResult<T extends Cursor>(
       Request request, bool? autoAdvance) {
     // TODO: need to guarantee that the controller provides the values
     // immediately as waiting until the next tick will cause the transaction to
     // close.
-    var controller = new StreamController<T>(sync: true);
+    var controller = StreamController<T>(sync: true);
 
     //TODO: Report stacktrace once issue 4061 is resolved.
     request.onError.listen(controller.addError);
@@ -1007,7 +978,7 @@ class ObjectStore extends JavaScriptObject {
 class Observation extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory Observation._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   Object? get key native;
@@ -1024,7 +995,7 @@ class Observation extends JavaScriptObject {
 class Observer extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory Observer._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory Observer(ObserverCallback callback) {
@@ -1053,7 +1024,7 @@ class Observer extends JavaScriptObject {
 class ObserverChanges extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory ObserverChanges._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   Database? get database native;
@@ -1071,26 +1042,22 @@ class ObserverChanges extends JavaScriptObject {
 class OpenDBRequest extends Request {
   // To suppress missing implicit constructor warnings.
   factory OpenDBRequest._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
-  /**
-   * Static factory designed to expose `blocked` events to event
-   * handlers that are not necessarily instances of [OpenDBRequest].
-   *
-   * See [EventStreamProvider] for usage information.
-   */
+  /// Static factory designed to expose `blocked` events to event
+  /// handlers that are not necessarily instances of [OpenDBRequest].
+  ///
+  /// See [EventStreamProvider] for usage information.
   static const EventStreamProvider<Event> blockedEvent =
-      const EventStreamProvider<Event>('blocked');
+      EventStreamProvider<Event>('blocked');
 
-  /**
-   * Static factory designed to expose `upgradeneeded` events to event
-   * handlers that are not necessarily instances of [OpenDBRequest].
-   *
-   * See [EventStreamProvider] for usage information.
-   */
+  /// Static factory designed to expose `upgradeneeded` events to event
+  /// handlers that are not necessarily instances of [OpenDBRequest].
+  ///
+  /// See [EventStreamProvider] for usage information.
   static const EventStreamProvider<VersionChangeEvent> upgradeNeededEvent =
-      const EventStreamProvider<VersionChangeEvent>('upgradeneeded');
+      EventStreamProvider<VersionChangeEvent>('upgradeneeded');
 
   /// Stream of `blocked` events handled by this [OpenDBRequest].
   Stream<Event> get onBlocked => blockedEvent.forTarget(this);
@@ -1108,32 +1075,28 @@ class OpenDBRequest extends Request {
 class Request extends EventTarget {
   // To suppress missing implicit constructor warnings.
   factory Request._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
-  /**
-   * Static factory designed to expose `error` events to event
-   * handlers that are not necessarily instances of [Request].
-   *
-   * See [EventStreamProvider] for usage information.
-   */
+  /// Static factory designed to expose `error` events to event
+  /// handlers that are not necessarily instances of [Request].
+  ///
+  /// See [EventStreamProvider] for usage information.
   static const EventStreamProvider<Event> errorEvent =
-      const EventStreamProvider<Event>('error');
+      EventStreamProvider<Event>('error');
 
-  /**
-   * Static factory designed to expose `success` events to event
-   * handlers that are not necessarily instances of [Request].
-   *
-   * See [EventStreamProvider] for usage information.
-   */
+  /// Static factory designed to expose `success` events to event
+  /// handlers that are not necessarily instances of [Request].
+  ///
+  /// See [EventStreamProvider] for usage information.
   static const EventStreamProvider<Event> successEvent =
-      const EventStreamProvider<Event>('success');
+      EventStreamProvider<Event>('success');
 
   DomException? get error native;
 
   String? get readyState native;
 
-  dynamic get result => _convertNativeToDart_IDBAny(this._get_result);
+  dynamic get result => _convertNativeToDart_IDBAny(_get_result);
   @JSName('result')
   @Creates('Null')
   dynamic get _get_result native;
@@ -1156,25 +1119,23 @@ class Request extends EventTarget {
 @Unstable()
 @Native("IDBTransaction")
 class Transaction extends EventTarget {
-  /**
-   * Provides a Future which will be completed once the transaction has
-   * completed.
-   *
-   * The future will error if an error occurs on the transaction or if the
-   * transaction is aborted.
-   */
+  /// Provides a Future which will be completed once the transaction has
+  /// completed.
+  ///
+  /// The future will error if an error occurs on the transaction or if the
+  /// transaction is aborted.
   Future<Database> get completed {
-    var completer = new Completer<Database>();
+    var completer = Completer<Database>();
 
-    this.onComplete.first.then((_) {
+    onComplete.first.then((_) {
       completer.complete(db);
     });
 
-    this.onError.first.then((e) {
+    onError.first.then((e) {
       completer.completeError(e);
     });
 
-    this.onAbort.first.then((e) {
+    onAbort.first.then((e) {
       // Avoid completing twice if an error occurs.
       if (!completer.isCompleted) {
         completer.completeError(e);
@@ -1186,35 +1147,29 @@ class Transaction extends EventTarget {
 
   // To suppress missing implicit constructor warnings.
   factory Transaction._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
-  /**
-   * Static factory designed to expose `abort` events to event
-   * handlers that are not necessarily instances of [Transaction].
-   *
-   * See [EventStreamProvider] for usage information.
-   */
+  /// Static factory designed to expose `abort` events to event
+  /// handlers that are not necessarily instances of [Transaction].
+  ///
+  /// See [EventStreamProvider] for usage information.
   static const EventStreamProvider<Event> abortEvent =
-      const EventStreamProvider<Event>('abort');
+      EventStreamProvider<Event>('abort');
 
-  /**
-   * Static factory designed to expose `complete` events to event
-   * handlers that are not necessarily instances of [Transaction].
-   *
-   * See [EventStreamProvider] for usage information.
-   */
+  /// Static factory designed to expose `complete` events to event
+  /// handlers that are not necessarily instances of [Transaction].
+  ///
+  /// See [EventStreamProvider] for usage information.
   static const EventStreamProvider<Event> completeEvent =
-      const EventStreamProvider<Event>('complete');
+      EventStreamProvider<Event>('complete');
 
-  /**
-   * Static factory designed to expose `error` events to event
-   * handlers that are not necessarily instances of [Transaction].
-   *
-   * See [EventStreamProvider] for usage information.
-   */
+  /// Static factory designed to expose `error` events to event
+  /// handlers that are not necessarily instances of [Transaction].
+  ///
+  /// See [EventStreamProvider] for usage information.
   static const EventStreamProvider<Event> errorEvent =
-      const EventStreamProvider<Event>('error');
+      EventStreamProvider<Event>('error');
 
   Database? get db native;
 
@@ -1248,7 +1203,7 @@ class Transaction extends EventTarget {
 class VersionChangeEvent extends Event {
   // To suppress missing implicit constructor warnings.
   factory VersionChangeEvent._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory VersionChangeEvent(String type, [Map? eventInitDict]) {
@@ -1278,6 +1233,7 @@ class VersionChangeEvent extends Event {
   @Returns('int|String|Null')
   int? get oldVersion native;
 
+  @override
   @JSName('target')
   OpenDBRequest get target native;
 }

@@ -4,8 +4,6 @@
 library dart.dom.web_gl;
 
 import 'dart:async';
-import 'dart:collection' hide LinkedList, LinkedListEntry;
-import 'dart:_internal' show FixedLengthListMixin;
 import 'dart:html';
 import 'dart:html_common';
 import 'dart:_native_typed_data';
@@ -27,7 +25,7 @@ import 'dart:_interceptors' show JavaScriptObject, JSExtendableArray;
 class ActiveInfo extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory ActiveInfo._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   String get name native;
@@ -44,7 +42,7 @@ class ActiveInfo extends JavaScriptObject {
 class AngleInstancedArrays extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory AngleInstancedArrays._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   static const int VERTEX_ATTRIB_ARRAY_DIVISOR_ANGLE = 0x88FE;
@@ -69,7 +67,7 @@ class AngleInstancedArrays extends JavaScriptObject {
 class Buffer extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory Buffer._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 }
 // Copyright (c) 2013, the Dart project authors.  Please see the AUTHORS file
@@ -80,7 +78,7 @@ class Buffer extends JavaScriptObject {
 class Canvas extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory Canvas._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   @JSName('canvas')
@@ -98,7 +96,7 @@ class Canvas extends JavaScriptObject {
 class ColorBufferFloat extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory ColorBufferFloat._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 }
 // Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
@@ -109,7 +107,7 @@ class ColorBufferFloat extends JavaScriptObject {
 class CompressedTextureAstc extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory CompressedTextureAstc._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   static const int COMPRESSED_RGBA_ASTC_10x10_KHR = 0x93BB;
@@ -176,7 +174,7 @@ class CompressedTextureAstc extends JavaScriptObject {
 class CompressedTextureAtc extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory CompressedTextureAtc._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   static const int COMPRESSED_RGBA_ATC_EXPLICIT_ALPHA_WEBGL = 0x8C93;
@@ -193,7 +191,7 @@ class CompressedTextureAtc extends JavaScriptObject {
 class CompressedTextureETC1 extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory CompressedTextureETC1._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   static const int COMPRESSED_RGB_ETC1_WEBGL = 0x8D64;
@@ -206,7 +204,7 @@ class CompressedTextureETC1 extends JavaScriptObject {
 class CompressedTextureEtc extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory CompressedTextureEtc._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   static const int COMPRESSED_R11_EAC = 0x9270;
@@ -237,7 +235,7 @@ class CompressedTextureEtc extends JavaScriptObject {
 class CompressedTexturePvrtc extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory CompressedTexturePvrtc._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   static const int COMPRESSED_RGBA_PVRTC_2BPPV1_IMG = 0x8C03;
@@ -256,7 +254,7 @@ class CompressedTexturePvrtc extends JavaScriptObject {
 class CompressedTextureS3TC extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory CompressedTextureS3TC._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   static const int COMPRESSED_RGBA_S3TC_DXT1_EXT = 0x83F1;
@@ -275,7 +273,7 @@ class CompressedTextureS3TC extends JavaScriptObject {
 class CompressedTextureS3TCsRgb extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory CompressedTextureS3TCsRgb._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   static const int COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT = 0x8C4D;
@@ -295,7 +293,7 @@ class CompressedTextureS3TCsRgb extends JavaScriptObject {
 class ContextEvent extends Event {
   // To suppress missing implicit constructor warnings.
   factory ContextEvent._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory ContextEvent(String type, [Map? eventInit]) {
@@ -320,7 +318,7 @@ class ContextEvent extends Event {
 class DebugRendererInfo extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory DebugRendererInfo._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   static const int UNMASKED_RENDERER_WEBGL = 0x9246;
@@ -335,7 +333,7 @@ class DebugRendererInfo extends JavaScriptObject {
 class DebugShaders extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory DebugShaders._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   String? getTranslatedShaderSource(Shader shader) native;
@@ -348,7 +346,7 @@ class DebugShaders extends JavaScriptObject {
 class DepthTexture extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory DepthTexture._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   static const int UNSIGNED_INT_24_8_WEBGL = 0x84FA;
@@ -361,7 +359,7 @@ class DepthTexture extends JavaScriptObject {
 class DrawBuffers extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory DrawBuffers._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   @JSName('drawBuffersWEBGL')
@@ -375,7 +373,7 @@ class DrawBuffers extends JavaScriptObject {
 class EXTsRgb extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory EXTsRgb._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   static const int FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING_EXT = 0x8210;
@@ -394,7 +392,7 @@ class EXTsRgb extends JavaScriptObject {
 class ExtBlendMinMax extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory ExtBlendMinMax._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   static const int MAX_EXT = 0x8008;
@@ -409,7 +407,7 @@ class ExtBlendMinMax extends JavaScriptObject {
 class ExtColorBufferFloat extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory ExtColorBufferFloat._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 }
 // Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
@@ -420,7 +418,7 @@ class ExtColorBufferFloat extends JavaScriptObject {
 class ExtColorBufferHalfFloat extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory ExtColorBufferHalfFloat._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 }
 // Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
@@ -431,7 +429,7 @@ class ExtColorBufferHalfFloat extends JavaScriptObject {
 class ExtDisjointTimerQuery extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory ExtDisjointTimerQuery._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   static const int CURRENT_QUERY_EXT = 0x8865;
@@ -480,7 +478,7 @@ class ExtDisjointTimerQuery extends JavaScriptObject {
 class ExtDisjointTimerQueryWebGL2 extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory ExtDisjointTimerQueryWebGL2._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   static const int GPU_DISJOINT_EXT = 0x8FBB;
@@ -502,7 +500,7 @@ class ExtDisjointTimerQueryWebGL2 extends JavaScriptObject {
 class ExtFragDepth extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory ExtFragDepth._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 }
 // Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
@@ -513,7 +511,7 @@ class ExtFragDepth extends JavaScriptObject {
 class ExtShaderTextureLod extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory ExtShaderTextureLod._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 }
 // Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
@@ -524,7 +522,7 @@ class ExtShaderTextureLod extends JavaScriptObject {
 class ExtTextureFilterAnisotropic extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory ExtTextureFilterAnisotropic._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   static const int MAX_TEXTURE_MAX_ANISOTROPY_EXT = 0x84FF;
@@ -540,7 +538,7 @@ class ExtTextureFilterAnisotropic extends JavaScriptObject {
 class Framebuffer extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory Framebuffer._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 }
 // Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
@@ -551,7 +549,7 @@ class Framebuffer extends JavaScriptObject {
 class GetBufferSubDataAsync extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory GetBufferSubDataAsync._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   Future getBufferSubDataAsync(int target, int srcByteOffset, TypedData dstData,
@@ -567,7 +565,7 @@ class GetBufferSubDataAsync extends JavaScriptObject {
 class LoseContext extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory LoseContext._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   void loseContext() native;
@@ -582,7 +580,7 @@ class LoseContext extends JavaScriptObject {
 class OesElementIndexUint extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory OesElementIndexUint._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 }
 // Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
@@ -593,7 +591,7 @@ class OesElementIndexUint extends JavaScriptObject {
 class OesStandardDerivatives extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory OesStandardDerivatives._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   static const int FRAGMENT_SHADER_DERIVATIVE_HINT_OES = 0x8B8B;
@@ -606,7 +604,7 @@ class OesStandardDerivatives extends JavaScriptObject {
 class OesTextureFloat extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory OesTextureFloat._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 }
 // Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
@@ -617,7 +615,7 @@ class OesTextureFloat extends JavaScriptObject {
 class OesTextureFloatLinear extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory OesTextureFloatLinear._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 }
 // Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
@@ -628,7 +626,7 @@ class OesTextureFloatLinear extends JavaScriptObject {
 class OesTextureHalfFloat extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory OesTextureHalfFloat._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   static const int HALF_FLOAT_OES = 0x8D61;
@@ -641,7 +639,7 @@ class OesTextureHalfFloat extends JavaScriptObject {
 class OesTextureHalfFloatLinear extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory OesTextureHalfFloatLinear._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 }
 // Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
@@ -652,7 +650,7 @@ class OesTextureHalfFloatLinear extends JavaScriptObject {
 class OesVertexArrayObject extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory OesVertexArrayObject._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   static const int VERTEX_ARRAY_BINDING_OES = 0x85B5;
@@ -678,7 +676,7 @@ class OesVertexArrayObject extends JavaScriptObject {
 class Program extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory Program._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 }
 // Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
@@ -689,7 +687,7 @@ class Program extends JavaScriptObject {
 class Query extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory Query._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 }
 // Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
@@ -701,7 +699,7 @@ class Query extends JavaScriptObject {
 class Renderbuffer extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory Renderbuffer._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 }
 // Copyright (c) 2013, the Dart project authors.  Please see the AUTHORS file
@@ -716,12 +714,13 @@ class RenderingContext extends JavaScriptObject
     implements CanvasRenderingContext {
   // To suppress missing implicit constructor warnings.
   factory RenderingContext._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   /// Checks if this type is supported on the current platform.
   static bool get supported => JS('bool', '!!(window.WebGLRenderingContext)');
 
+  @override
   CanvasElement get canvas native;
 
   // From WebGLRenderingContextBase
@@ -755,7 +754,7 @@ class RenderingContext extends JavaScriptObject
   void blendFuncSeparate(int srcRGB, int dstRGB, int srcAlpha, int dstAlpha)
       native;
 
-  void bufferData(int target, data_OR_size, int usage) native;
+  void bufferData(int target, dataOrSize, int usage) native;
 
   void bufferSubData(int target, int offset, data) native;
 
@@ -979,38 +978,38 @@ class RenderingContext extends JavaScriptObject
       int target,
       int level,
       int internalformat,
-      int format_OR_width,
-      int height_OR_type,
-      bitmap_OR_border_OR_canvas_OR_image_OR_pixels_OR_video,
+      int formatOrWidth,
+      int heightOrType,
+      bitmapOrBorderOrCanvasOrImageOrPixelsOrVideo,
       [int? format,
       int? type,
       TypedData? pixels]) {
     if (type != null &&
         format != null &&
-        (bitmap_OR_border_OR_canvas_OR_image_OR_pixels_OR_video is int)) {
+        (bitmapOrBorderOrCanvasOrImageOrPixelsOrVideo is int)) {
       _texImage2D_1(
           target,
           level,
           internalformat,
-          format_OR_width,
-          height_OR_type,
-          bitmap_OR_border_OR_canvas_OR_image_OR_pixels_OR_video,
+          formatOrWidth,
+          heightOrType,
+          bitmapOrBorderOrCanvasOrImageOrPixelsOrVideo,
           format,
           type,
           pixels);
       return;
     }
-    if ((bitmap_OR_border_OR_canvas_OR_image_OR_pixels_OR_video is ImageData) &&
+    if ((bitmapOrBorderOrCanvasOrImageOrPixelsOrVideo is ImageData) &&
         format == null &&
         type == null &&
         pixels == null) {
       var pixels_1 = convertDartToNative_ImageData(
-          bitmap_OR_border_OR_canvas_OR_image_OR_pixels_OR_video);
-      _texImage2D_2(target, level, internalformat, format_OR_width,
-          height_OR_type, pixels_1);
+          bitmapOrBorderOrCanvasOrImageOrPixelsOrVideo);
+      _texImage2D_2(target, level, internalformat, formatOrWidth,
+          heightOrType, pixels_1);
       return;
     }
-    if ((bitmap_OR_border_OR_canvas_OR_image_OR_pixels_OR_video
+    if ((bitmapOrBorderOrCanvasOrImageOrPixelsOrVideo
             is ImageElement) &&
         format == null &&
         type == null &&
@@ -1019,12 +1018,12 @@ class RenderingContext extends JavaScriptObject
           target,
           level,
           internalformat,
-          format_OR_width,
-          height_OR_type,
-          bitmap_OR_border_OR_canvas_OR_image_OR_pixels_OR_video);
+          formatOrWidth,
+          heightOrType,
+          bitmapOrBorderOrCanvasOrImageOrPixelsOrVideo);
       return;
     }
-    if ((bitmap_OR_border_OR_canvas_OR_image_OR_pixels_OR_video
+    if ((bitmapOrBorderOrCanvasOrImageOrPixelsOrVideo
             is CanvasElement) &&
         format == null &&
         type == null &&
@@ -1033,12 +1032,12 @@ class RenderingContext extends JavaScriptObject
           target,
           level,
           internalformat,
-          format_OR_width,
-          height_OR_type,
-          bitmap_OR_border_OR_canvas_OR_image_OR_pixels_OR_video);
+          formatOrWidth,
+          heightOrType,
+          bitmapOrBorderOrCanvasOrImageOrPixelsOrVideo);
       return;
     }
-    if ((bitmap_OR_border_OR_canvas_OR_image_OR_pixels_OR_video
+    if ((bitmapOrBorderOrCanvasOrImageOrPixelsOrVideo
             is VideoElement) &&
         format == null &&
         type == null &&
@@ -1047,12 +1046,12 @@ class RenderingContext extends JavaScriptObject
           target,
           level,
           internalformat,
-          format_OR_width,
-          height_OR_type,
-          bitmap_OR_border_OR_canvas_OR_image_OR_pixels_OR_video);
+          formatOrWidth,
+          heightOrType,
+          bitmapOrBorderOrCanvasOrImageOrPixelsOrVideo);
       return;
     }
-    if ((bitmap_OR_border_OR_canvas_OR_image_OR_pixels_OR_video
+    if ((bitmapOrBorderOrCanvasOrImageOrPixelsOrVideo
             is ImageBitmap) &&
         format == null &&
         type == null &&
@@ -1061,12 +1060,12 @@ class RenderingContext extends JavaScriptObject
           target,
           level,
           internalformat,
-          format_OR_width,
-          height_OR_type,
-          bitmap_OR_border_OR_canvas_OR_image_OR_pixels_OR_video);
+          formatOrWidth,
+          heightOrType,
+          bitmapOrBorderOrCanvasOrImageOrPixelsOrVideo);
       return;
     }
-    throw new ArgumentError("Incorrect number or type of arguments");
+    throw ArgumentError("Incorrect number or type of arguments");
   }
 
   @JSName('texImage2D')
@@ -1097,35 +1096,35 @@ class RenderingContext extends JavaScriptObject
       int level,
       int xoffset,
       int yoffset,
-      int format_OR_width,
-      int height_OR_type,
-      bitmap_OR_canvas_OR_format_OR_image_OR_pixels_OR_video,
+      int formatOrWidth,
+      int heightOrType,
+      bitmapOrCanvasOrFormatOrImageOrPixelsOrVideo,
       [int? type,
       TypedData? pixels]) {
     if (type != null &&
-        (bitmap_OR_canvas_OR_format_OR_image_OR_pixels_OR_video is int)) {
+        (bitmapOrCanvasOrFormatOrImageOrPixelsOrVideo is int)) {
       _texSubImage2D_1(
           target,
           level,
           xoffset,
           yoffset,
-          format_OR_width,
-          height_OR_type,
-          bitmap_OR_canvas_OR_format_OR_image_OR_pixels_OR_video,
+          formatOrWidth,
+          heightOrType,
+          bitmapOrCanvasOrFormatOrImageOrPixelsOrVideo,
           type,
           pixels);
       return;
     }
-    if ((bitmap_OR_canvas_OR_format_OR_image_OR_pixels_OR_video is ImageData) &&
+    if ((bitmapOrCanvasOrFormatOrImageOrPixelsOrVideo is ImageData) &&
         type == null &&
         pixels == null) {
       var pixels_1 = convertDartToNative_ImageData(
-          bitmap_OR_canvas_OR_format_OR_image_OR_pixels_OR_video);
-      _texSubImage2D_2(target, level, xoffset, yoffset, format_OR_width,
-          height_OR_type, pixels_1);
+          bitmapOrCanvasOrFormatOrImageOrPixelsOrVideo);
+      _texSubImage2D_2(target, level, xoffset, yoffset, formatOrWidth,
+          heightOrType, pixels_1);
       return;
     }
-    if ((bitmap_OR_canvas_OR_format_OR_image_OR_pixels_OR_video
+    if ((bitmapOrCanvasOrFormatOrImageOrPixelsOrVideo
             is ImageElement) &&
         type == null &&
         pixels == null) {
@@ -1134,12 +1133,12 @@ class RenderingContext extends JavaScriptObject
           level,
           xoffset,
           yoffset,
-          format_OR_width,
-          height_OR_type,
-          bitmap_OR_canvas_OR_format_OR_image_OR_pixels_OR_video);
+          formatOrWidth,
+          heightOrType,
+          bitmapOrCanvasOrFormatOrImageOrPixelsOrVideo);
       return;
     }
-    if ((bitmap_OR_canvas_OR_format_OR_image_OR_pixels_OR_video
+    if ((bitmapOrCanvasOrFormatOrImageOrPixelsOrVideo
             is CanvasElement) &&
         type == null &&
         pixels == null) {
@@ -1148,12 +1147,12 @@ class RenderingContext extends JavaScriptObject
           level,
           xoffset,
           yoffset,
-          format_OR_width,
-          height_OR_type,
-          bitmap_OR_canvas_OR_format_OR_image_OR_pixels_OR_video);
+          formatOrWidth,
+          heightOrType,
+          bitmapOrCanvasOrFormatOrImageOrPixelsOrVideo);
       return;
     }
-    if ((bitmap_OR_canvas_OR_format_OR_image_OR_pixels_OR_video
+    if ((bitmapOrCanvasOrFormatOrImageOrPixelsOrVideo
             is VideoElement) &&
         type == null &&
         pixels == null) {
@@ -1162,12 +1161,12 @@ class RenderingContext extends JavaScriptObject
           level,
           xoffset,
           yoffset,
-          format_OR_width,
-          height_OR_type,
-          bitmap_OR_canvas_OR_format_OR_image_OR_pixels_OR_video);
+          formatOrWidth,
+          heightOrType,
+          bitmapOrCanvasOrFormatOrImageOrPixelsOrVideo);
       return;
     }
-    if ((bitmap_OR_canvas_OR_format_OR_image_OR_pixels_OR_video
+    if ((bitmapOrCanvasOrFormatOrImageOrPixelsOrVideo
             is ImageBitmap) &&
         type == null &&
         pixels == null) {
@@ -1176,12 +1175,12 @@ class RenderingContext extends JavaScriptObject
           level,
           xoffset,
           yoffset,
-          format_OR_width,
-          height_OR_type,
-          bitmap_OR_canvas_OR_format_OR_image_OR_pixels_OR_video);
+          formatOrWidth,
+          heightOrType,
+          bitmapOrCanvasOrFormatOrImageOrPixelsOrVideo);
       return;
     }
-    throw new ArgumentError("Incorrect number or type of arguments");
+    throw ArgumentError("Incorrect number or type of arguments");
   }
 
   @JSName('texSubImage2D')
@@ -1274,14 +1273,12 @@ class RenderingContext extends JavaScriptObject
     _readPixels(x, y, width, height, format, type, pixels);
   }
 
-  /**
-   * Sets the currently bound texture to [data].
-   *
-   * [data] can be either an [ImageElement], a
-   * [CanvasElement], a [VideoElement], [TypedData] or an [ImageData] object.
-   *
-   * This is deprecated in favor of [texImage2D].
-   */
+  /// Sets the currently bound texture to [data].
+  ///
+  /// [data] can be either an [ImageElement], a
+  /// [CanvasElement], a [VideoElement], [TypedData] or an [ImageData] object.
+  ///
+  /// This is deprecated in favor of [texImage2D].
   @Deprecated("Use texImage2D")
   void texImage2DUntyped(int targetTexture, int levelOfDetail,
       int internalFormat, int format, int type, data) {
@@ -1289,11 +1286,9 @@ class RenderingContext extends JavaScriptObject
         targetTexture, levelOfDetail, internalFormat, format, type, data);
   }
 
-  /**
-   * Sets the currently bound texture to [data].
-   *
-   * This is deprecated in favour of [texImage2D].
-   */
+  /// Sets the currently bound texture to [data].
+  ///
+  /// This is deprecated in favour of [texImage2D].
   @Deprecated("Use texImage2D")
   void texImage2DTyped(int targetTexture, int levelOfDetail, int internalFormat,
       int width, int height, int border, int format, int type, TypedData data) {
@@ -1301,13 +1296,11 @@ class RenderingContext extends JavaScriptObject
         border, format, type, data);
   }
 
-  /**
-   * Updates a sub-rectangle of the currently bound texture to [data].
-   *
-   * [data] can be either an [ImageElement], a
-   * [CanvasElement], a [VideoElement], [TypedData] or an [ImageData] object.
-   *
-   */
+  /// Updates a sub-rectangle of the currently bound texture to [data].
+  ///
+  /// [data] can be either an [ImageElement], a
+  /// [CanvasElement], a [VideoElement], [TypedData] or an [ImageData] object.
+  ///
   @Deprecated("Use texSubImage2D")
   void texSubImage2DUntyped(int targetTexture, int levelOfDetail, int xOffset,
       int yOffset, int format, int type, data) {
@@ -1315,9 +1308,7 @@ class RenderingContext extends JavaScriptObject
         targetTexture, levelOfDetail, xOffset, yOffset, format, type, data);
   }
 
-  /**
-   * Updates a sub-rectangle of the currently bound texture to [data].
-   */
+  /// Updates a sub-rectangle of the currently bound texture to [data].
   @Deprecated("Use texSubImage2D")
   void texSubImage2DTyped(
       int targetTexture,
@@ -1334,17 +1325,13 @@ class RenderingContext extends JavaScriptObject
         format, type, data);
   }
 
-  /**
-   * Set the bufferData to [data].
-   */
+  /// Set the bufferData to [data].
   @Deprecated("Use bufferData")
   void bufferDataTyped(int target, TypedData data, int usage) {
     bufferData(target, data, usage);
   }
 
-  /**
-   * Set the bufferSubData to [data].
-   */
+  /// Set the bufferSubData to [data].
   @Deprecated("Use bufferSubData")
   void bufferSubDataTyped(int target, int offset, TypedData data) {
     bufferSubData(target, offset, data);
@@ -1359,7 +1346,7 @@ class RenderingContext2 extends JavaScriptObject
     implements _WebGL2RenderingContextBase, _WebGLRenderingContextBase {
   // To suppress missing implicit constructor warnings.
   factory RenderingContext2._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   Canvas? get canvas native;
@@ -1562,7 +1549,7 @@ class RenderingContext2 extends JavaScriptObject
 
   @JSName('readPixels')
   void readPixels2(int x, int y, int width, int height, int format, int type,
-      dstData_OR_offset,
+      dstdataOrOffset,
       [int? offset]) native;
 
   void renderbufferStorageMultisample(int target, int samples,
@@ -1583,9 +1570,9 @@ class RenderingContext2 extends JavaScriptObject
       int border,
       int format,
       int type,
-      bitmap_OR_canvas_OR_data_OR_image_OR_offset_OR_srcData_OR_video,
+      bitmapOrCanvasOrDataOrImageOrOffsetOrSrcdataOrVideo,
       [int? srcOffset]) {
-    if ((bitmap_OR_canvas_OR_data_OR_image_OR_offset_OR_srcData_OR_video
+    if ((bitmapOrCanvasOrDataOrImageOrOffsetOrSrcdataOrVideo
             is int) &&
         srcOffset == null) {
       _texImage2D2_1(
@@ -1597,19 +1584,19 @@ class RenderingContext2 extends JavaScriptObject
           border,
           format,
           type,
-          bitmap_OR_canvas_OR_data_OR_image_OR_offset_OR_srcData_OR_video);
+          bitmapOrCanvasOrDataOrImageOrOffsetOrSrcdataOrVideo);
       return;
     }
-    if ((bitmap_OR_canvas_OR_data_OR_image_OR_offset_OR_srcData_OR_video
+    if ((bitmapOrCanvasOrDataOrImageOrOffsetOrSrcdataOrVideo
             is ImageData) &&
         srcOffset == null) {
       var data_1 = convertDartToNative_ImageData(
-          bitmap_OR_canvas_OR_data_OR_image_OR_offset_OR_srcData_OR_video);
+          bitmapOrCanvasOrDataOrImageOrOffsetOrSrcdataOrVideo);
       _texImage2D2_2(target, level, internalformat, width, height, border,
           format, type, data_1);
       return;
     }
-    if ((bitmap_OR_canvas_OR_data_OR_image_OR_offset_OR_srcData_OR_video
+    if ((bitmapOrCanvasOrDataOrImageOrOffsetOrSrcdataOrVideo
             is ImageElement) &&
         srcOffset == null) {
       _texImage2D2_3(
@@ -1621,10 +1608,10 @@ class RenderingContext2 extends JavaScriptObject
           border,
           format,
           type,
-          bitmap_OR_canvas_OR_data_OR_image_OR_offset_OR_srcData_OR_video);
+          bitmapOrCanvasOrDataOrImageOrOffsetOrSrcdataOrVideo);
       return;
     }
-    if ((bitmap_OR_canvas_OR_data_OR_image_OR_offset_OR_srcData_OR_video
+    if ((bitmapOrCanvasOrDataOrImageOrOffsetOrSrcdataOrVideo
             is CanvasElement) &&
         srcOffset == null) {
       _texImage2D2_4(
@@ -1636,10 +1623,10 @@ class RenderingContext2 extends JavaScriptObject
           border,
           format,
           type,
-          bitmap_OR_canvas_OR_data_OR_image_OR_offset_OR_srcData_OR_video);
+          bitmapOrCanvasOrDataOrImageOrOffsetOrSrcdataOrVideo);
       return;
     }
-    if ((bitmap_OR_canvas_OR_data_OR_image_OR_offset_OR_srcData_OR_video
+    if ((bitmapOrCanvasOrDataOrImageOrOffsetOrSrcdataOrVideo
             is VideoElement) &&
         srcOffset == null) {
       _texImage2D2_5(
@@ -1651,10 +1638,10 @@ class RenderingContext2 extends JavaScriptObject
           border,
           format,
           type,
-          bitmap_OR_canvas_OR_data_OR_image_OR_offset_OR_srcData_OR_video);
+          bitmapOrCanvasOrDataOrImageOrOffsetOrSrcdataOrVideo);
       return;
     }
-    if ((bitmap_OR_canvas_OR_data_OR_image_OR_offset_OR_srcData_OR_video
+    if ((bitmapOrCanvasOrDataOrImageOrOffsetOrSrcdataOrVideo
             is ImageBitmap) &&
         srcOffset == null) {
       _texImage2D2_6(
@@ -1666,11 +1653,11 @@ class RenderingContext2 extends JavaScriptObject
           border,
           format,
           type,
-          bitmap_OR_canvas_OR_data_OR_image_OR_offset_OR_srcData_OR_video);
+          bitmapOrCanvasOrDataOrImageOrOffsetOrSrcdataOrVideo);
       return;
     }
     if (srcOffset != null &&
-        (bitmap_OR_canvas_OR_data_OR_image_OR_offset_OR_srcData_OR_video
+        (bitmapOrCanvasOrDataOrImageOrOffsetOrSrcdataOrVideo
             is TypedData)) {
       _texImage2D2_7(
           target,
@@ -1681,11 +1668,11 @@ class RenderingContext2 extends JavaScriptObject
           border,
           format,
           type,
-          bitmap_OR_canvas_OR_data_OR_image_OR_offset_OR_srcData_OR_video,
+          bitmapOrCanvasOrDataOrImageOrOffsetOrSrcdataOrVideo,
           srcOffset);
       return;
     }
-    throw new ArgumentError("Incorrect number or type of arguments");
+    throw ArgumentError("Incorrect number or type of arguments");
   }
 
   @JSName('texImage2D')
@@ -1720,9 +1707,9 @@ class RenderingContext2 extends JavaScriptObject
       int border,
       int format,
       int type,
-      bitmap_OR_canvas_OR_data_OR_image_OR_offset_OR_pixels_OR_video,
+      bitmapOrCanvasOrDataOrImageOrOffsetOrPixelsOrVideo,
       [int? srcOffset]) {
-    if ((bitmap_OR_canvas_OR_data_OR_image_OR_offset_OR_pixels_OR_video
+    if ((bitmapOrCanvasOrDataOrImageOrOffsetOrPixelsOrVideo
             is int) &&
         srcOffset == null) {
       _texImage3D_1(
@@ -1735,19 +1722,19 @@ class RenderingContext2 extends JavaScriptObject
           border,
           format,
           type,
-          bitmap_OR_canvas_OR_data_OR_image_OR_offset_OR_pixels_OR_video);
+          bitmapOrCanvasOrDataOrImageOrOffsetOrPixelsOrVideo);
       return;
     }
-    if ((bitmap_OR_canvas_OR_data_OR_image_OR_offset_OR_pixels_OR_video
+    if ((bitmapOrCanvasOrDataOrImageOrOffsetOrPixelsOrVideo
             is ImageData) &&
         srcOffset == null) {
       var data_1 = convertDartToNative_ImageData(
-          bitmap_OR_canvas_OR_data_OR_image_OR_offset_OR_pixels_OR_video);
+          bitmapOrCanvasOrDataOrImageOrOffsetOrPixelsOrVideo);
       _texImage3D_2(target, level, internalformat, width, height, depth, border,
           format, type, data_1);
       return;
     }
-    if ((bitmap_OR_canvas_OR_data_OR_image_OR_offset_OR_pixels_OR_video
+    if ((bitmapOrCanvasOrDataOrImageOrOffsetOrPixelsOrVideo
             is ImageElement) &&
         srcOffset == null) {
       _texImage3D_3(
@@ -1760,10 +1747,10 @@ class RenderingContext2 extends JavaScriptObject
           border,
           format,
           type,
-          bitmap_OR_canvas_OR_data_OR_image_OR_offset_OR_pixels_OR_video);
+          bitmapOrCanvasOrDataOrImageOrOffsetOrPixelsOrVideo);
       return;
     }
-    if ((bitmap_OR_canvas_OR_data_OR_image_OR_offset_OR_pixels_OR_video
+    if ((bitmapOrCanvasOrDataOrImageOrOffsetOrPixelsOrVideo
             is CanvasElement) &&
         srcOffset == null) {
       _texImage3D_4(
@@ -1776,10 +1763,10 @@ class RenderingContext2 extends JavaScriptObject
           border,
           format,
           type,
-          bitmap_OR_canvas_OR_data_OR_image_OR_offset_OR_pixels_OR_video);
+          bitmapOrCanvasOrDataOrImageOrOffsetOrPixelsOrVideo);
       return;
     }
-    if ((bitmap_OR_canvas_OR_data_OR_image_OR_offset_OR_pixels_OR_video
+    if ((bitmapOrCanvasOrDataOrImageOrOffsetOrPixelsOrVideo
             is VideoElement) &&
         srcOffset == null) {
       _texImage3D_5(
@@ -1792,10 +1779,10 @@ class RenderingContext2 extends JavaScriptObject
           border,
           format,
           type,
-          bitmap_OR_canvas_OR_data_OR_image_OR_offset_OR_pixels_OR_video);
+          bitmapOrCanvasOrDataOrImageOrOffsetOrPixelsOrVideo);
       return;
     }
-    if ((bitmap_OR_canvas_OR_data_OR_image_OR_offset_OR_pixels_OR_video
+    if ((bitmapOrCanvasOrDataOrImageOrOffsetOrPixelsOrVideo
             is ImageBitmap) &&
         srcOffset == null) {
       _texImage3D_6(
@@ -1808,12 +1795,12 @@ class RenderingContext2 extends JavaScriptObject
           border,
           format,
           type,
-          bitmap_OR_canvas_OR_data_OR_image_OR_offset_OR_pixels_OR_video);
+          bitmapOrCanvasOrDataOrImageOrOffsetOrPixelsOrVideo);
       return;
     }
-    if ((bitmap_OR_canvas_OR_data_OR_image_OR_offset_OR_pixels_OR_video
+    if ((bitmapOrCanvasOrDataOrImageOrOffsetOrPixelsOrVideo
                 is TypedData ||
-            bitmap_OR_canvas_OR_data_OR_image_OR_offset_OR_pixels_OR_video ==
+            bitmapOrCanvasOrDataOrImageOrOffsetOrPixelsOrVideo ==
                 null) &&
         srcOffset == null) {
       _texImage3D_7(
@@ -1826,11 +1813,11 @@ class RenderingContext2 extends JavaScriptObject
           border,
           format,
           type,
-          bitmap_OR_canvas_OR_data_OR_image_OR_offset_OR_pixels_OR_video);
+          bitmapOrCanvasOrDataOrImageOrOffsetOrPixelsOrVideo);
       return;
     }
     if (srcOffset != null &&
-        (bitmap_OR_canvas_OR_data_OR_image_OR_offset_OR_pixels_OR_video
+        (bitmapOrCanvasOrDataOrImageOrOffsetOrPixelsOrVideo
             is TypedData)) {
       _texImage3D_8(
           target,
@@ -1842,11 +1829,11 @@ class RenderingContext2 extends JavaScriptObject
           border,
           format,
           type,
-          bitmap_OR_canvas_OR_data_OR_image_OR_offset_OR_pixels_OR_video,
+          bitmapOrCanvasOrDataOrImageOrOffsetOrPixelsOrVideo,
           srcOffset);
       return;
     }
-    throw new ArgumentError("Incorrect number or type of arguments");
+    throw ArgumentError("Incorrect number or type of arguments");
   }
 
   @JSName('texImage3D')
@@ -1889,9 +1876,9 @@ class RenderingContext2 extends JavaScriptObject
       int height,
       int format,
       int type,
-      bitmap_OR_canvas_OR_data_OR_image_OR_offset_OR_srcData_OR_video,
+      bitmapOrCanvasOrDataOrImageOrOffsetOrSrcdataOrVideo,
       [int? srcOffset]) {
-    if ((bitmap_OR_canvas_OR_data_OR_image_OR_offset_OR_srcData_OR_video
+    if ((bitmapOrCanvasOrDataOrImageOrOffsetOrSrcdataOrVideo
             is int) &&
         srcOffset == null) {
       _texSubImage2D2_1(
@@ -1903,19 +1890,19 @@ class RenderingContext2 extends JavaScriptObject
           height,
           format,
           type,
-          bitmap_OR_canvas_OR_data_OR_image_OR_offset_OR_srcData_OR_video);
+          bitmapOrCanvasOrDataOrImageOrOffsetOrSrcdataOrVideo);
       return;
     }
-    if ((bitmap_OR_canvas_OR_data_OR_image_OR_offset_OR_srcData_OR_video
+    if ((bitmapOrCanvasOrDataOrImageOrOffsetOrSrcdataOrVideo
             is ImageData) &&
         srcOffset == null) {
       var data_1 = convertDartToNative_ImageData(
-          bitmap_OR_canvas_OR_data_OR_image_OR_offset_OR_srcData_OR_video);
+          bitmapOrCanvasOrDataOrImageOrOffsetOrSrcdataOrVideo);
       _texSubImage2D2_2(
           target, level, xoffset, yoffset, width, height, format, type, data_1);
       return;
     }
-    if ((bitmap_OR_canvas_OR_data_OR_image_OR_offset_OR_srcData_OR_video
+    if ((bitmapOrCanvasOrDataOrImageOrOffsetOrSrcdataOrVideo
             is ImageElement) &&
         srcOffset == null) {
       _texSubImage2D2_3(
@@ -1927,10 +1914,10 @@ class RenderingContext2 extends JavaScriptObject
           height,
           format,
           type,
-          bitmap_OR_canvas_OR_data_OR_image_OR_offset_OR_srcData_OR_video);
+          bitmapOrCanvasOrDataOrImageOrOffsetOrSrcdataOrVideo);
       return;
     }
-    if ((bitmap_OR_canvas_OR_data_OR_image_OR_offset_OR_srcData_OR_video
+    if ((bitmapOrCanvasOrDataOrImageOrOffsetOrSrcdataOrVideo
             is CanvasElement) &&
         srcOffset == null) {
       _texSubImage2D2_4(
@@ -1942,10 +1929,10 @@ class RenderingContext2 extends JavaScriptObject
           height,
           format,
           type,
-          bitmap_OR_canvas_OR_data_OR_image_OR_offset_OR_srcData_OR_video);
+          bitmapOrCanvasOrDataOrImageOrOffsetOrSrcdataOrVideo);
       return;
     }
-    if ((bitmap_OR_canvas_OR_data_OR_image_OR_offset_OR_srcData_OR_video
+    if ((bitmapOrCanvasOrDataOrImageOrOffsetOrSrcdataOrVideo
             is VideoElement) &&
         srcOffset == null) {
       _texSubImage2D2_5(
@@ -1957,10 +1944,10 @@ class RenderingContext2 extends JavaScriptObject
           height,
           format,
           type,
-          bitmap_OR_canvas_OR_data_OR_image_OR_offset_OR_srcData_OR_video);
+          bitmapOrCanvasOrDataOrImageOrOffsetOrSrcdataOrVideo);
       return;
     }
-    if ((bitmap_OR_canvas_OR_data_OR_image_OR_offset_OR_srcData_OR_video
+    if ((bitmapOrCanvasOrDataOrImageOrOffsetOrSrcdataOrVideo
             is ImageBitmap) &&
         srcOffset == null) {
       _texSubImage2D2_6(
@@ -1972,11 +1959,11 @@ class RenderingContext2 extends JavaScriptObject
           height,
           format,
           type,
-          bitmap_OR_canvas_OR_data_OR_image_OR_offset_OR_srcData_OR_video);
+          bitmapOrCanvasOrDataOrImageOrOffsetOrSrcdataOrVideo);
       return;
     }
     if (srcOffset != null &&
-        (bitmap_OR_canvas_OR_data_OR_image_OR_offset_OR_srcData_OR_video
+        (bitmapOrCanvasOrDataOrImageOrOffsetOrSrcdataOrVideo
             is TypedData)) {
       _texSubImage2D2_7(
           target,
@@ -1987,11 +1974,11 @@ class RenderingContext2 extends JavaScriptObject
           height,
           format,
           type,
-          bitmap_OR_canvas_OR_data_OR_image_OR_offset_OR_srcData_OR_video,
+          bitmapOrCanvasOrDataOrImageOrOffsetOrSrcdataOrVideo,
           srcOffset);
       return;
     }
-    throw new ArgumentError("Incorrect number or type of arguments");
+    throw ArgumentError("Incorrect number or type of arguments");
   }
 
   @JSName('texSubImage2D')
@@ -2027,9 +2014,9 @@ class RenderingContext2 extends JavaScriptObject
       int depth,
       int format,
       int type,
-      bitmap_OR_canvas_OR_data_OR_image_OR_offset_OR_pixels_OR_video,
+      bitmapOrCanvasOrDataOrImageOrOffsetOrPixelsOrVideo,
       [int? srcOffset]) {
-    if ((bitmap_OR_canvas_OR_data_OR_image_OR_offset_OR_pixels_OR_video
+    if ((bitmapOrCanvasOrDataOrImageOrOffsetOrPixelsOrVideo
             is int) &&
         srcOffset == null) {
       _texSubImage3D_1(
@@ -2043,19 +2030,19 @@ class RenderingContext2 extends JavaScriptObject
           depth,
           format,
           type,
-          bitmap_OR_canvas_OR_data_OR_image_OR_offset_OR_pixels_OR_video);
+          bitmapOrCanvasOrDataOrImageOrOffsetOrPixelsOrVideo);
       return;
     }
-    if ((bitmap_OR_canvas_OR_data_OR_image_OR_offset_OR_pixels_OR_video
+    if ((bitmapOrCanvasOrDataOrImageOrOffsetOrPixelsOrVideo
             is ImageData) &&
         srcOffset == null) {
       var data_1 = convertDartToNative_ImageData(
-          bitmap_OR_canvas_OR_data_OR_image_OR_offset_OR_pixels_OR_video);
+          bitmapOrCanvasOrDataOrImageOrOffsetOrPixelsOrVideo);
       _texSubImage3D_2(target, level, xoffset, yoffset, zoffset, width, height,
           depth, format, type, data_1);
       return;
     }
-    if ((bitmap_OR_canvas_OR_data_OR_image_OR_offset_OR_pixels_OR_video
+    if ((bitmapOrCanvasOrDataOrImageOrOffsetOrPixelsOrVideo
             is ImageElement) &&
         srcOffset == null) {
       _texSubImage3D_3(
@@ -2069,10 +2056,10 @@ class RenderingContext2 extends JavaScriptObject
           depth,
           format,
           type,
-          bitmap_OR_canvas_OR_data_OR_image_OR_offset_OR_pixels_OR_video);
+          bitmapOrCanvasOrDataOrImageOrOffsetOrPixelsOrVideo);
       return;
     }
-    if ((bitmap_OR_canvas_OR_data_OR_image_OR_offset_OR_pixels_OR_video
+    if ((bitmapOrCanvasOrDataOrImageOrOffsetOrPixelsOrVideo
             is CanvasElement) &&
         srcOffset == null) {
       _texSubImage3D_4(
@@ -2086,10 +2073,10 @@ class RenderingContext2 extends JavaScriptObject
           depth,
           format,
           type,
-          bitmap_OR_canvas_OR_data_OR_image_OR_offset_OR_pixels_OR_video);
+          bitmapOrCanvasOrDataOrImageOrOffsetOrPixelsOrVideo);
       return;
     }
-    if ((bitmap_OR_canvas_OR_data_OR_image_OR_offset_OR_pixels_OR_video
+    if ((bitmapOrCanvasOrDataOrImageOrOffsetOrPixelsOrVideo
             is VideoElement) &&
         srcOffset == null) {
       _texSubImage3D_5(
@@ -2103,10 +2090,10 @@ class RenderingContext2 extends JavaScriptObject
           depth,
           format,
           type,
-          bitmap_OR_canvas_OR_data_OR_image_OR_offset_OR_pixels_OR_video);
+          bitmapOrCanvasOrDataOrImageOrOffsetOrPixelsOrVideo);
       return;
     }
-    if ((bitmap_OR_canvas_OR_data_OR_image_OR_offset_OR_pixels_OR_video
+    if ((bitmapOrCanvasOrDataOrImageOrOffsetOrPixelsOrVideo
             is ImageBitmap) &&
         srcOffset == null) {
       _texSubImage3D_6(
@@ -2120,10 +2107,10 @@ class RenderingContext2 extends JavaScriptObject
           depth,
           format,
           type,
-          bitmap_OR_canvas_OR_data_OR_image_OR_offset_OR_pixels_OR_video);
+          bitmapOrCanvasOrDataOrImageOrOffsetOrPixelsOrVideo);
       return;
     }
-    if ((bitmap_OR_canvas_OR_data_OR_image_OR_offset_OR_pixels_OR_video
+    if ((bitmapOrCanvasOrDataOrImageOrOffsetOrPixelsOrVideo
             is TypedData) &&
         srcOffset == null) {
       _texSubImage3D_7(
@@ -2137,11 +2124,11 @@ class RenderingContext2 extends JavaScriptObject
           depth,
           format,
           type,
-          bitmap_OR_canvas_OR_data_OR_image_OR_offset_OR_pixels_OR_video);
+          bitmapOrCanvasOrDataOrImageOrOffsetOrPixelsOrVideo);
       return;
     }
     if (srcOffset != null &&
-        (bitmap_OR_canvas_OR_data_OR_image_OR_offset_OR_pixels_OR_video
+        (bitmapOrCanvasOrDataOrImageOrOffsetOrPixelsOrVideo
             is TypedData)) {
       _texSubImage3D_8(
           target,
@@ -2154,11 +2141,11 @@ class RenderingContext2 extends JavaScriptObject
           depth,
           format,
           type,
-          bitmap_OR_canvas_OR_data_OR_image_OR_offset_OR_pixels_OR_video,
+          bitmapOrCanvasOrDataOrImageOrOffsetOrPixelsOrVideo,
           srcOffset);
       return;
     }
-    throw new ArgumentError("Incorrect number or type of arguments");
+    throw ArgumentError("Incorrect number or type of arguments");
   }
 
   @JSName('texSubImage3D')
@@ -2332,7 +2319,7 @@ class RenderingContext2 extends JavaScriptObject
   void blendFuncSeparate(int srcRGB, int dstRGB, int srcAlpha, int dstAlpha)
       native;
 
-  void bufferData(int target, data_OR_size, int usage) native;
+  void bufferData(int target, dataOrSize, int usage) native;
 
   void bufferSubData(int target, int offset, data) native;
 
@@ -2532,38 +2519,38 @@ class RenderingContext2 extends JavaScriptObject
       int target,
       int level,
       int internalformat,
-      int format_OR_width,
-      int height_OR_type,
-      bitmap_OR_border_OR_canvas_OR_image_OR_pixels_OR_video,
+      int formatOrWidth,
+      int heightOrType,
+      bitmapOrBorderOrCanvasOrImageOrPixelsOrVideo,
       [int? format,
       int? type,
       TypedData? pixels]) {
     if (type != null &&
         format != null &&
-        (bitmap_OR_border_OR_canvas_OR_image_OR_pixels_OR_video is int)) {
+        (bitmapOrBorderOrCanvasOrImageOrPixelsOrVideo is int)) {
       _texImage2D_1(
           target,
           level,
           internalformat,
-          format_OR_width,
-          height_OR_type,
-          bitmap_OR_border_OR_canvas_OR_image_OR_pixels_OR_video,
+          formatOrWidth,
+          heightOrType,
+          bitmapOrBorderOrCanvasOrImageOrPixelsOrVideo,
           format,
           type,
           pixels);
       return;
     }
-    if ((bitmap_OR_border_OR_canvas_OR_image_OR_pixels_OR_video is ImageData) &&
+    if ((bitmapOrBorderOrCanvasOrImageOrPixelsOrVideo is ImageData) &&
         format == null &&
         type == null &&
         pixels == null) {
       var pixels_1 = convertDartToNative_ImageData(
-          bitmap_OR_border_OR_canvas_OR_image_OR_pixels_OR_video);
-      _texImage2D_2(target, level, internalformat, format_OR_width,
-          height_OR_type, pixels_1);
+          bitmapOrBorderOrCanvasOrImageOrPixelsOrVideo);
+      _texImage2D_2(target, level, internalformat, formatOrWidth,
+          heightOrType, pixels_1);
       return;
     }
-    if ((bitmap_OR_border_OR_canvas_OR_image_OR_pixels_OR_video
+    if ((bitmapOrBorderOrCanvasOrImageOrPixelsOrVideo
             is ImageElement) &&
         format == null &&
         type == null &&
@@ -2572,12 +2559,12 @@ class RenderingContext2 extends JavaScriptObject
           target,
           level,
           internalformat,
-          format_OR_width,
-          height_OR_type,
-          bitmap_OR_border_OR_canvas_OR_image_OR_pixels_OR_video);
+          formatOrWidth,
+          heightOrType,
+          bitmapOrBorderOrCanvasOrImageOrPixelsOrVideo);
       return;
     }
-    if ((bitmap_OR_border_OR_canvas_OR_image_OR_pixels_OR_video
+    if ((bitmapOrBorderOrCanvasOrImageOrPixelsOrVideo
             is CanvasElement) &&
         format == null &&
         type == null &&
@@ -2586,12 +2573,12 @@ class RenderingContext2 extends JavaScriptObject
           target,
           level,
           internalformat,
-          format_OR_width,
-          height_OR_type,
-          bitmap_OR_border_OR_canvas_OR_image_OR_pixels_OR_video);
+          formatOrWidth,
+          heightOrType,
+          bitmapOrBorderOrCanvasOrImageOrPixelsOrVideo);
       return;
     }
-    if ((bitmap_OR_border_OR_canvas_OR_image_OR_pixels_OR_video
+    if ((bitmapOrBorderOrCanvasOrImageOrPixelsOrVideo
             is VideoElement) &&
         format == null &&
         type == null &&
@@ -2600,12 +2587,12 @@ class RenderingContext2 extends JavaScriptObject
           target,
           level,
           internalformat,
-          format_OR_width,
-          height_OR_type,
-          bitmap_OR_border_OR_canvas_OR_image_OR_pixels_OR_video);
+          formatOrWidth,
+          heightOrType,
+          bitmapOrBorderOrCanvasOrImageOrPixelsOrVideo);
       return;
     }
-    if ((bitmap_OR_border_OR_canvas_OR_image_OR_pixels_OR_video
+    if ((bitmapOrBorderOrCanvasOrImageOrPixelsOrVideo
             is ImageBitmap) &&
         format == null &&
         type == null &&
@@ -2614,12 +2601,12 @@ class RenderingContext2 extends JavaScriptObject
           target,
           level,
           internalformat,
-          format_OR_width,
-          height_OR_type,
-          bitmap_OR_border_OR_canvas_OR_image_OR_pixels_OR_video);
+          formatOrWidth,
+          heightOrType,
+          bitmapOrBorderOrCanvasOrImageOrPixelsOrVideo);
       return;
     }
-    throw new ArgumentError("Incorrect number or type of arguments");
+    throw ArgumentError("Incorrect number or type of arguments");
   }
 
   @JSName('texImage2D')
@@ -2650,35 +2637,35 @@ class RenderingContext2 extends JavaScriptObject
       int level,
       int xoffset,
       int yoffset,
-      int format_OR_width,
-      int height_OR_type,
-      bitmap_OR_canvas_OR_format_OR_image_OR_pixels_OR_video,
+      int formatOrWidth,
+      int heightOrType,
+      bitmapOrCanvasOrFormatOrImageOrPixelsOrVideo,
       [int? type,
       TypedData? pixels]) {
     if (type != null &&
-        (bitmap_OR_canvas_OR_format_OR_image_OR_pixels_OR_video is int)) {
+        (bitmapOrCanvasOrFormatOrImageOrPixelsOrVideo is int)) {
       _texSubImage2D_1(
           target,
           level,
           xoffset,
           yoffset,
-          format_OR_width,
-          height_OR_type,
-          bitmap_OR_canvas_OR_format_OR_image_OR_pixels_OR_video,
+          formatOrWidth,
+          heightOrType,
+          bitmapOrCanvasOrFormatOrImageOrPixelsOrVideo,
           type,
           pixels);
       return;
     }
-    if ((bitmap_OR_canvas_OR_format_OR_image_OR_pixels_OR_video is ImageData) &&
+    if ((bitmapOrCanvasOrFormatOrImageOrPixelsOrVideo is ImageData) &&
         type == null &&
         pixels == null) {
       var pixels_1 = convertDartToNative_ImageData(
-          bitmap_OR_canvas_OR_format_OR_image_OR_pixels_OR_video);
-      _texSubImage2D_2(target, level, xoffset, yoffset, format_OR_width,
-          height_OR_type, pixels_1);
+          bitmapOrCanvasOrFormatOrImageOrPixelsOrVideo);
+      _texSubImage2D_2(target, level, xoffset, yoffset, formatOrWidth,
+          heightOrType, pixels_1);
       return;
     }
-    if ((bitmap_OR_canvas_OR_format_OR_image_OR_pixels_OR_video
+    if ((bitmapOrCanvasOrFormatOrImageOrPixelsOrVideo
             is ImageElement) &&
         type == null &&
         pixels == null) {
@@ -2687,12 +2674,12 @@ class RenderingContext2 extends JavaScriptObject
           level,
           xoffset,
           yoffset,
-          format_OR_width,
-          height_OR_type,
-          bitmap_OR_canvas_OR_format_OR_image_OR_pixels_OR_video);
+          formatOrWidth,
+          heightOrType,
+          bitmapOrCanvasOrFormatOrImageOrPixelsOrVideo);
       return;
     }
-    if ((bitmap_OR_canvas_OR_format_OR_image_OR_pixels_OR_video
+    if ((bitmapOrCanvasOrFormatOrImageOrPixelsOrVideo
             is CanvasElement) &&
         type == null &&
         pixels == null) {
@@ -2701,12 +2688,12 @@ class RenderingContext2 extends JavaScriptObject
           level,
           xoffset,
           yoffset,
-          format_OR_width,
-          height_OR_type,
-          bitmap_OR_canvas_OR_format_OR_image_OR_pixels_OR_video);
+          formatOrWidth,
+          heightOrType,
+          bitmapOrCanvasOrFormatOrImageOrPixelsOrVideo);
       return;
     }
-    if ((bitmap_OR_canvas_OR_format_OR_image_OR_pixels_OR_video
+    if ((bitmapOrCanvasOrFormatOrImageOrPixelsOrVideo
             is VideoElement) &&
         type == null &&
         pixels == null) {
@@ -2715,12 +2702,12 @@ class RenderingContext2 extends JavaScriptObject
           level,
           xoffset,
           yoffset,
-          format_OR_width,
-          height_OR_type,
-          bitmap_OR_canvas_OR_format_OR_image_OR_pixels_OR_video);
+          formatOrWidth,
+          heightOrType,
+          bitmapOrCanvasOrFormatOrImageOrPixelsOrVideo);
       return;
     }
-    if ((bitmap_OR_canvas_OR_format_OR_image_OR_pixels_OR_video
+    if ((bitmapOrCanvasOrFormatOrImageOrPixelsOrVideo
             is ImageBitmap) &&
         type == null &&
         pixels == null) {
@@ -2729,12 +2716,12 @@ class RenderingContext2 extends JavaScriptObject
           level,
           xoffset,
           yoffset,
-          format_OR_width,
-          height_OR_type,
-          bitmap_OR_canvas_OR_format_OR_image_OR_pixels_OR_video);
+          formatOrWidth,
+          heightOrType,
+          bitmapOrCanvasOrFormatOrImageOrPixelsOrVideo);
       return;
     }
-    throw new ArgumentError("Incorrect number or type of arguments");
+    throw ArgumentError("Incorrect number or type of arguments");
   }
 
   @JSName('texSubImage2D')
@@ -2836,7 +2823,7 @@ class RenderingContext2 extends JavaScriptObject
 class Sampler extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory Sampler._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 }
 // Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
@@ -2847,7 +2834,7 @@ class Sampler extends JavaScriptObject {
 class Shader extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory Shader._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 }
 // Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
@@ -2858,7 +2845,7 @@ class Shader extends JavaScriptObject {
 class ShaderPrecisionFormat extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory ShaderPrecisionFormat._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   int get precision native;
@@ -2875,7 +2862,7 @@ class ShaderPrecisionFormat extends JavaScriptObject {
 class Sync extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory Sync._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 }
 // Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
@@ -2886,7 +2873,7 @@ class Sync extends JavaScriptObject {
 class Texture extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory Texture._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   bool? get lastUploadedVideoFrameWasSkipped native;
@@ -2905,7 +2892,7 @@ class Texture extends JavaScriptObject {
 class TimerQueryExt extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory TimerQueryExt._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 }
 // Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
@@ -2916,7 +2903,7 @@ class TimerQueryExt extends JavaScriptObject {
 class TransformFeedback extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory TransformFeedback._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 }
 // Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
@@ -2927,7 +2914,7 @@ class TransformFeedback extends JavaScriptObject {
 class UniformLocation extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory UniformLocation._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 }
 // Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
@@ -2938,7 +2925,7 @@ class UniformLocation extends JavaScriptObject {
 class VertexArrayObject extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory VertexArrayObject._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 }
 // Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
@@ -2949,7 +2936,7 @@ class VertexArrayObject extends JavaScriptObject {
 class VertexArrayObjectOes extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory VertexArrayObjectOes._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 }
 // Copyright (c) 2018, the Dart project authors.  Please see the AUTHORS file
@@ -2966,7 +2953,7 @@ class VertexArrayObjectOes extends JavaScriptObject {
 abstract class WebGL {
   // To suppress missing implicit constructor warnings.
   factory WebGL._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   static const int ACTIVE_ATTRIBUTES = 0x8B89;
@@ -4164,7 +4151,7 @@ abstract class _WebGL2RenderingContextBase extends JavaScriptObject
     implements _WebGLRenderingContextBase {
   // To suppress missing implicit constructor warnings.
   factory _WebGL2RenderingContextBase._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   // From WebGLRenderingContextBase
@@ -4176,6 +4163,6 @@ abstract class _WebGL2RenderingContextBase extends JavaScriptObject
 abstract class _WebGLRenderingContextBase extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory _WebGLRenderingContextBase._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 }

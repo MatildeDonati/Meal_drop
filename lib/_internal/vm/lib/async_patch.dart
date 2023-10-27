@@ -43,7 +43,7 @@ class _AsyncStarStreamController<T> {
   bool onListenReceived = false;
   bool isScheduled = false;
   bool isSuspendedAtYield = false;
-  _Future? cancellationFuture = null;
+  _Future? cancellationFuture;
 
   Stream<T> get stream {
     final Stream<T> local = controller.stream;
@@ -134,7 +134,7 @@ class _AsyncStarStreamController<T> {
     controller.close();
   }
 
-  _AsyncStarStreamController() : controller = new StreamController(sync: true) {
+  _AsyncStarStreamController() : controller = StreamController(sync: true) {
     controller.onListen = this.onListen;
     controller.onResume = this.onResume;
     controller.onCancel = this.onCancel;
@@ -157,7 +157,7 @@ class _AsyncStarStreamController<T> {
       return null;
     }
     if (cancellationFuture == null) {
-      cancellationFuture = new _Future();
+      cancellationFuture = _Future();
       // Only resume the generator if it is suspended at a yield.
       // Cancellation does not affect an async generator that is
       // suspended at an await.
@@ -177,7 +177,7 @@ class _StreamImpl<T> {
 }
 
 @pragma("vm:external-name", "AsyncStarMoveNext_debuggerStepCheck")
-external void _moveNextDebuggerStepCheck(Function async_op);
+external void _moveNextDebuggerStepCheck(Function asyncOp);
 
 @pragma("vm:entry-point")
 class _SuspendState {
@@ -486,6 +486,7 @@ class _SyncStarIterable<T> extends Iterable<T> {
 
   _SyncStarIterable();
 
+  @override
   Iterator<T> get iterator {
     return _SyncStarIterator<T>(_stateAtStart!._clone());
   }

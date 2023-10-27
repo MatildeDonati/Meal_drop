@@ -2,14 +2,7 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-/// Note: the VM concatenates all patch files into a single patch file. This
-/// file is the first patch in "dart:math" which contains all the imports used
-/// by patches of that library. We plan to change this when we have a shared
-/// front end and simply use parts.
 
-import "dart:_internal" show patch;
-
-import "dart:typed_data" show Uint32List;
 
 /// There are no parts of this patch library.
 
@@ -202,7 +195,7 @@ class Random {
   factory Random([int? seed]) {
     var state = _Random._setupSeed((seed == null) ? _Random._nextSeed() : seed);
     // Crank a couple of times to distribute the seed bits a bit further.
-    return new _Random._withState(state)
+    return _Random._withState(state)
       .._nextState()
       .._nextState()
       .._nextState()
@@ -223,15 +216,15 @@ class _Random implements Random {
   // The constant A is selected from "Numerical Recipes 3rd Edition" p.348 B1.
   void _nextState() {
     const A = 0xffffda61;
-    final state_lo = _state & 0xFFFFFFFF;
-    final state_hi = _state >>> 32;
-    _state = (A * state_lo) + state_hi;
+    final stateLo = _state & 0xFFFFFFFF;
+    final stateHi = _state >>> 32;
+    _state = (A * stateLo) + stateHi;
   }
 
   int nextInt(int max) {
     const limit = 0x3FFFFFFF;
     if ((max <= 0) || ((max > limit) && (max > _POW2_32))) {
-      throw new RangeError.range(
+      throw RangeError.range(
           max, 1, _POW2_32, "max", "Must be positive and <= 2^32");
     }
     if ((max & -max) == max) {
@@ -240,8 +233,8 @@ class _Random implements Random {
       return _state & 0xFFFFFFFF & (max - 1);
     }
 
-    var rnd32;
-    var result;
+    int rnd32;
+    int result;
     do {
       _nextState();
       rnd32 = _state & 0xFFFFFFFF;
@@ -264,7 +257,7 @@ class _Random implements Random {
   static const _POW2_27_D = 1.0 * (1 << 27);
 
   // Use a singleton Random object to get a new seed if no seed was passed.
-  static final _prng = new _Random._withState(_initialSeed());
+  static final _prng = _Random._withState(_initialSeed());
 
   // Thomas Wang 64-bit mix.
   // http://www.concentric.net/~Ttwang/tech/inthash.htm
@@ -311,8 +304,8 @@ class _SecureRandom implements Random {
     if (byteCount == 0) {
       return 0; // Not random if max == 1.
     }
-    var rnd;
-    var result;
+    int rnd;
+    int result;
     do {
       rnd = _getBytes(byteCount);
       result = rnd % max;

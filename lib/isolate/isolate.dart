@@ -35,6 +35,7 @@ class IsolateSpawnException implements Exception {
   final String message;
   @pragma("vm:entry-point")
   IsolateSpawnException(this.message);
+  @override
   String toString() => "IsolateSpawnException: $message";
 }
 
@@ -250,7 +251,7 @@ final class Isolate {
   ///
   /// The [debugName] is only used to name the new isolate for debugging.
   @Since("2.19")
-  static Future<R> run<R>(FutureOr<R> computation(), {String? debugName}) {
+  static Future<R> run<R>(FutureOr<R> Function() computation, {String? debugName}) {
     var result = Completer<R>();
     var resultPort = RawReceivePort();
     resultPort.handler = (response) {
@@ -386,7 +387,7 @@ final class Isolate {
   /// One can expect the base memory overhead of an isolate to be in the order
   /// of 30 kb.
   external static Future<Isolate> spawn<T>(
-      void entryPoint(T message), T message,
+      void Function(T message) entryPoint, T message,
       {bool paused = false,
       bool errorsAreFatal = true,
       SendPort? onExit,
@@ -707,12 +708,12 @@ final class Isolate {
     controller.onListen = () {
       RawReceivePort receivePort = RawReceivePort(handleError);
       port = receivePort;
-      this.addErrorListener(receivePort.sendPort);
+      addErrorListener(receivePort.sendPort);
     };
     controller.onCancel = () {
       var listenPort = port!;
       port = null;
-      this.removeErrorListener(listenPort.sendPort);
+      removeErrorListener(listenPort.sendPort);
       listenPort.close();
     };
     return controller.stream;
@@ -822,9 +823,11 @@ abstract interface class SendPort implements Capability {
 
   /// Tests whether [other] is a [SendPort] pointing to the same
   /// [ReceivePort] as this one.
+  @override
   bool operator ==(var other);
 
   /// A hash code for this send port that is consistent with the == operator.
+  @override
   int get hashCode;
 }
 
@@ -870,8 +873,9 @@ abstract interface class ReceivePort implements Stream<dynamic> {
   ///
   /// The [onDone] handler will be called when the stream closes.
   /// The stream closes when [close] is called.
+  @override
   StreamSubscription<dynamic> listen(void onData(var message)?,
-      {Function? onError, void onDone()?, bool? cancelOnError});
+      {Function? onError, void Function()? onDone, bool? cancelOnError});
 
   /// Closes the receive port.
   ///
@@ -928,7 +932,7 @@ abstract interface class RawReceivePort {
   /// the error becomes a top-level uncaught error in the [Zone.root] zone.
   // TODO(44659): Change parameter type to `void Function(Never)` to only
   // accept functions which can be called with one argument.
-  void set handler(Function? newHandler);
+  set handler(Function? newHandler);
 
   /// Closes the port.
   ///
@@ -946,10 +950,12 @@ abstract interface class RawReceivePort {
 /// as the original error, but has no other features of the original error.
 final class RemoteError implements Error {
   final String _description;
+  @override
   final StackTrace stackTrace;
   RemoteError(String description, String stackDescription)
       : _description = description,
         stackTrace = StackTrace.fromString(stackDescription);
+  @override
   String toString() => _description;
 }
 

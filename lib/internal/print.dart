@@ -4,14 +4,12 @@
 
 part of dart._internal;
 
-/**
- * This function is set by the first allocation of a Zone.
- *
- * Once the function is set the core `print` function calls this closure instead
- * of [printToConsole].
- *
- * This decouples the core library from the async library.
- */
-void Function(String)? printToZone = null;
+/// This function is set by the first allocation of a Zone.
+///
+/// Once the function is set the core `print` function calls this closure instead
+/// of [printToConsole].
+///
+/// This decouples the core library from the async library.
+void Function(String)? printToZone;
 
 external void printToConsole(String line);

@@ -6,7 +6,6 @@
 
 import 'dart:_foreign_helper' show JS, DART_CLOSURE_TO_JS;
 import 'dart:_interceptors' show DART_CLOSURE_PROPERTY_NAME;
-import 'dart:_internal' show patch;
 import 'dart:_js_helper'
     show
         isJSFunction,
@@ -56,7 +55,7 @@ _callDartFunctionFast(callback, List arguments) {
 }
 
 _callDartFunctionFastCaptureThis(callback, self, List arguments) {
-  return Function.apply(callback, [self]..addAll(arguments));
+  return Function.apply(callback, [self, ...arguments]);
 }
 
 @patch

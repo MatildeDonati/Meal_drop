@@ -5,8 +5,6 @@
 // Patch file for dart:collection classes.
 import 'dart:_foreign_helper' show JS, JSExportName;
 import 'dart:_runtime' as dart;
-import 'dart:_internal' show patch;
-import 'dart:_interceptors' show JSArray;
 import 'dart:_js_helper'
     show
         LinkedMap,
@@ -144,6 +142,7 @@ base class _HashSet<E> extends _InternalSet<E>
   /// Keys that use identity equality are stored directly. For other types of
   /// keys, we first look them up (by hashCode) in the [_keyMap] map, then
   /// we lookup the key in this map.
+  @override
   @notNull
   final _map = JS('', 'new Set()');
 
@@ -164,6 +163,7 @@ base class _HashSet<E> extends _InternalSet<E>
   // always unboxed (Smi) values. Modification detection will be missed if you
   // make exactly some multiple of 2^30 modifications between advances of an
   // iterator.
+  @override
   @notNull
   int _modifications = 0;
 
@@ -318,9 +318,13 @@ base class _ImmutableSet<E> extends _HashSet<E> {
     }
   }
 
+  @override
   bool add(E value) => throw _unsupported();
+  @override
   void addAll(Iterable<E> elements) => throw _unsupported();
+  @override
   void clear() => throw _unsupported();
+  @override
   bool remove(Object? value) => throw _unsupported();
 
   static Error _unsupported() =>
@@ -330,9 +334,11 @@ base class _ImmutableSet<E> extends _HashSet<E> {
 base class _IdentityHashSet<E> extends _InternalSet<E>
     implements HashSet<E>, LinkedHashSet<E> {
   /// The backing store for this set.
+  @override
   @notNull
   final _map = JS('', 'new Set()');
 
+  @override
   @notNull
   int _modifications = 0;
 
@@ -389,14 +395,17 @@ base class _IdentityHashSet<E> extends _InternalSet<E>
 }
 
 base class _CustomKeyHashSet<E> extends _CustomHashSet<E> {
-  _Predicate<Object?> _validKey;
+  final _Predicate<Object?> _validKey;
   _CustomKeyHashSet(_Equality<E> equals, _Hasher<E> hashCode, this._validKey)
       : super(equals, hashCode);
 
+  @override
   Set<E> _newSet() => _CustomKeyHashSet<E>(_equals, _hashCode, _validKey);
 
+  @override
   Set<R> _newSimilarSet<R>() => _HashSet<R>();
 
+  @override
   bool contains(Object? element) {
     // TODO(jmesserly): there is a subtle difference here compared to Dart 1.
     // See the comment on CustomKeyHashMap.containsKey for more information.
@@ -406,11 +415,13 @@ base class _CustomKeyHashSet<E> extends _CustomHashSet<E> {
     return super.contains(element);
   }
 
+  @override
   E? lookup(Object? element) {
     if (!_validKey(element)) return null;
     return super.lookup(element);
   }
 
+  @override
   bool remove(Object? element) {
     if (!_validKey(element)) return false;
     return super.remove(element);
@@ -419,8 +430,8 @@ base class _CustomKeyHashSet<E> extends _CustomHashSet<E> {
 
 base class _CustomHashSet<E> extends _InternalSet<E>
     implements HashSet<E>, LinkedHashSet<E> {
-  _Equality<E> _equals;
-  _Hasher<E> _hashCode;
+  final _Equality<E> _equals;
+  final _Hasher<E> _hashCode;
 
   // We track the number of modifications done to the key set of the
   // hash map to be able to throw when the map is modified while being
@@ -430,11 +441,13 @@ base class _CustomHashSet<E> extends _InternalSet<E>
   // always unboxed (Smi) values. Modification detection will be missed if you
   // make exactly some multiple of 2^30 modifications between advances of an
   // iterator.
+  @override
   @notNull
   int _modifications = 0;
 
   /// The backing store for this set, used to handle ordering.
   // TODO(jmesserly): a non-linked custom hash set could skip this.
+  @override
   @notNull
   final _map = JS('', 'new Set()');
 
@@ -496,7 +509,9 @@ base class _CustomHashSet<E> extends _InternalSet<E>
 
   void addAll(Iterable<E> objects) {
     // TODO(jmesserly): it'd be nice to skip the covariance check here.
-    for (E element in objects) add(element);
+    for (E element in objects) {
+      add(element);
+    }
   }
 
   bool remove(Object? key) {

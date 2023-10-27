@@ -2,7 +2,6 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'dart:_internal' show patch;
 import 'dart:async';
 import 'dart:convert';
 import 'dart:isolate' show SendPort;
@@ -411,7 +410,7 @@ class InternetAddress {
   @patch
   factory InternetAddress.fromRawAddress(Uint8List rawAddress,
       {InternetAddressType? type}) {
-    throw new UnsupportedError("InternetAddress.fromRawAddress");
+    throw UnsupportedError("InternetAddress.fromRawAddress");
   }
 
   @patch
@@ -460,8 +459,7 @@ class RawServerSocket {
 @patch
 class ServerSocket {
   @patch
-  static Future<ServerSocket> _bind(address, int port,
-      {int backlog = 0, bool v6Only = false, bool shared = false}) {
+  static Future<ServerSocket> _bind(address, int port) {
     throw UnsupportedError("ServerSocket.bind");
   }
 }
@@ -484,14 +482,12 @@ class RawSocket {
 @patch
 class Socket {
   @patch
-  static Future<Socket> _connect(dynamic host, int port,
-      {dynamic sourceAddress, int sourcePort = 0, Duration? timeout}) {
+  static Future<Socket> _connect(dynamic host, int port) {
     throw UnsupportedError("Socket constructor");
   }
 
   @patch
-  static Future<ConnectionTask<Socket>> _startConnect(dynamic host, int port,
-      {dynamic sourceAddress, int sourcePort = 0}) {
+  static Future<ConnectionTask<Socket>> _startConnect(dynamic host, int port) {
     throw UnsupportedError("Socket constructor");
   }
 }
@@ -688,7 +684,7 @@ class Stdin {
   }
 
   @patch
-  void set echoMode(bool enabled) {
+  set echoMode(bool enabled) {
     throw UnsupportedError("Stdin.echoMode");
   }
 
@@ -698,7 +694,7 @@ class Stdin {
   }
 
   @patch
-  void set echoNewlineMode(bool enabled) {
+  set echoNewlineMode(bool enabled) {
     throw UnsupportedError("Stdin.echoNewlineMode");
   }
 
@@ -708,7 +704,7 @@ class Stdin {
   }
 
   @patch
-  void set lineMode(bool enabled) {
+  set lineMode(bool enabled) {
     throw UnsupportedError("Stdin.lineMode");
   }
 

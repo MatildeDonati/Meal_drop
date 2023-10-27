@@ -8,12 +8,19 @@ part of dart._runtime;
 
 // TODO(jmesserly): remove this in favor of _Invocation.
 class InvocationImpl extends Invocation {
+  @override
   final Symbol memberName;
+  @override
   final List positionalArguments;
+  @override
   final Map<Symbol, dynamic> namedArguments;
+  @override
   final List<Type> typeArguments;
+  @override
   final bool isMethod;
+  @override
   final bool isGetter;
+  @override
   final bool isSetter;
   final String failureMessage;
 
@@ -49,8 +56,8 @@ class InvocationImpl extends Invocation {
 /// from the superclass, not from the `obj` directly.
 // TODO(leafp): Consider caching the tearoff on the object?
 bind(obj, name, method) {
-  if (obj == null) obj = jsNull;
-  if (method == null) method = JS('', '#[#]', obj, name);
+  obj ??= jsNull;
+  method ??= JS('', '#[#]', obj, name);
   var f = JS('', '#.bind(#)', method, obj);
   // TODO(jmesserly): canonicalize tearoffs.
   JS('', '#._boundObject = #', f, obj);
@@ -461,25 +468,21 @@ _checkAndCall(f, ftype, obj, typeArgs, args, named, displayName) {
   // If f is a function, but not a method (no method type)
   // then it should have been a function valued field, so
   // get the type from the function.
-  if (ftype == null) {
-    ftype = JS_GET_FLAG('NEW_RUNTIME_TYPES')
+  ftype ??= JS_GET_FLAG('NEW_RUNTIME_TYPES')
         ? JS<rti.Rti?>('', '#[#]', f, JS_GET_NAME(JsGetName.SIGNATURE_NAME))
         : JS('', '#[#]', f, _runtimeType);
-  }
 
   if (ftype == null) {
     // TODO(leafp): Allow JS objects to go through?
     if (typeArgs != null) {
       // TODO(jmesserly): is there a sensible way to handle these?
-      throwTypeError('call to JS object `' +
+      throwTypeError('${'${'call to JS object `' +
           // Not a String but historically relying on the default JavaScript
           // behavior.
-          JS<String>('!', '#', obj) +
-          '` with type arguments <' +
+          JS<String>('!', '#', obj)}` with type arguments <' +
           // Not a String but historically relying on the default JavaScript
           // behavior.
-          JS<String>('!', '#', typeArgs) +
-          '> is not supported.');
+          JS<String>('!', '#', typeArgs)}> is not supported.');
     }
 
     if (named != null) JS('', '#.push(#)', args, named);
@@ -491,19 +494,7 @@ _checkAndCall(f, ftype, obj, typeArgs, args, named, displayName) {
     if (rti.isGenericFunctionType(ftype)) {
       var typeParameterBounds = rti.getGenericFunctionBounds(ftype);
       var typeParameterCount = JS<int>('!', '#.length', typeParameterBounds);
-      if (typeArgs == null) {
-        // No type arguments were provided so they will take on their default
-        // values that are attached to generic function tearoffs for this
-        // purpose.
-        //
-        // Note the default value is not always equivalent to the bound for a
-        // given type parameter. The bound can reference other type parameters
-        // and contain infinite cycles where the default value is determined
-        // with an algorithm that will terminate. This means that the default
-        // values will need to be checked against the instantiated bounds just
-        // like any other type arguments.
-        typeArgs = JS('!', '#._defaultTypeArgs', f);
-      }
+      typeArgs ??= JS('!', '#._defaultTypeArgs', f);
       var typeArgCount = JS<int>('!', '#.length', typeArgs);
       if (typeArgCount != typeParameterCount) {
         return callNSM('Dynamic call with incorrect number of type arguments. '
@@ -547,11 +538,10 @@ _checkAndCall(f, ftype, obj, typeArgs, args, named, displayName) {
         typeArgs = JS<List>('!', '#.instantiateDefaultBounds()', ftype);
       } else if (JS<bool>('!', '#.length != #', typeArgs, formalCount)) {
         return callNSM(
-            'Dynamic call with incorrect number of type arguments. Expected: ' +
+            '${'Dynamic call with incorrect number of type arguments. Expected: ' +
                 // Not a String but historically relying on the default
                 // JavaScript behavior.
-                JS<String>('!', '#', formalCount) +
-                ' Actual: ' +
+                JS<String>('!', '#', formalCount)} Actual: ' +
                 // Not a String but historically relying on the default
                 // JavaScript behavior.
                 JS<String>('!', '#.length', typeArgs));
@@ -560,8 +550,7 @@ _checkAndCall(f, ftype, obj, typeArgs, args, named, displayName) {
       }
       ftype = JS('', '#.instantiate(#)', ftype, typeArgs);
     } else if (typeArgs != null) {
-      return callNSM('Dynamic call with unexpected type arguments. ' +
-          'Expected: 0 Actual: ' +
+      return callNSM('Dynamic call with unexpected type arguments. ' 'Expected: 0 Actual: ' +
           // Not a String but historically relying on the default JavaScript
           // behavior.
           JS<String>('!', '#.length', typeArgs));
@@ -787,9 +776,10 @@ bool test(bool? obj) {
 bool dtest(obj) {
   // Only throw an AssertionError in weak mode for compatibility. Strong mode
   // should throw a TypeError.
-  if (obj is! bool)
+  if (obj is! bool) {
     booleanConversionFailed(
         compileTimeFlag('soundNullSafety') ? obj : test(obj));
+  }
   return obj;
 }
 
@@ -878,7 +868,7 @@ Map<K, V> constMap<K, V>(JSArray elements) {
   }
   map = _lookupNonTerminal(map, K);
   Map<K, V>? result = JS('', '#.get(#)', map, V);
-  if (result != null) return result;
+  return result;
   result = ImmutableMap<K, V>.from(elements);
   JS('', '#.set(#, #)', map, V, result);
   return result;
@@ -901,7 +891,7 @@ Set<E> constSet<E>(JSArray<E> elements) {
     map = _lookupNonTerminal(map, JS('', '#[#]', elements, i));
   }
   Set<E>? result = JS('', '#.get(#)', map, E);
-  if (result != null) return result;
+  return result;
   result = _createImmutableSet<E>(elements);
   JS('', '#.set(#, #)', map, E, result);
   return result;

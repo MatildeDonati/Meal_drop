@@ -16,8 +16,8 @@ class String {
   factory String.fromCharCodes(Iterable<int> charCodes,
       [int start = 0, int? end]) {
     // TODO: Remove these null checks once all code is opted into strong nonnullable mode.
-    if (charCodes == null) throw new ArgumentError.notNull("charCodes");
-    if (start == null) throw new ArgumentError.notNull("start");
+    if (charCodes == null) throw ArgumentError.notNull("charCodes");
+    if (start == null) throw ArgumentError.notNull("start");
     return _StringBase.createFromCharCodes(charCodes, start, end, null);
   }
 
@@ -29,21 +29,21 @@ class String {
       }
       if (charCode <= 0xffff) {
         return _StringBase._createFromCodePoints(
-            new _List(1)..[0] = charCode, 0, 1);
+            _List(1)..[0] = charCode, 0, 1);
       }
       if (charCode <= 0x10ffff) {
         var low = 0xDC00 | (charCode & 0x3ff);
         int bits = charCode - 0x10000;
         var high = 0xD800 | (bits >> 10);
         return _StringBase._createFromCodePoints(
-            new _List(2)
+            _List(2)
               ..[0] = high
               ..[1] = low,
             0,
             2);
       }
     }
-    throw new RangeError.range(charCode, 0, 0x10ffff);
+    throw RangeError.range(charCode, 0, 0x10ffff);
   }
 
   @patch
@@ -55,10 +55,8 @@ class String {
   String _substringUnchecked(int startIndex, int endIndex);
 }
 
-/**
- * [_StringBase] contains common methods used by concrete String
- * implementations, e.g., _OneByteString.
- */
+/// [_StringBase] contains common methods used by concrete String
+/// implementations, e.g., _OneByteString.
 abstract final class _StringBase implements String {
   bool _isWhitespace(int codeUnit);
 
@@ -93,9 +91,10 @@ abstract final class _StringBase implements String {
   static const int _maxJoinReplaceOneByteStringLength = 500;
 
   factory _StringBase._uninstantiable() {
-    throw new UnsupportedError("_StringBase can't be instantiated");
+    throw UnsupportedError("_StringBase can't be instantiated");
   }
 
+  @override
   @pragma("vm:recognized", "asm-intrinsic")
   @pragma("vm:exact-result-type", "dart:core#_Smi")
   @pragma("vm:external-name", "String_getHashCode")
@@ -106,6 +105,7 @@ abstract final class _StringBase implements String {
   @pragma("vm:external-name", "String_getHashCode")
   external int get _identityHashCode;
 
+  @override
   bool get _isOneByte {
     // Alternatively return false and override it on one-byte string classes.
     int id = ClassID.getID(this);
@@ -113,16 +113,14 @@ abstract final class _StringBase implements String {
         id == ClassID.cidExternalOneByteString;
   }
 
-  /**
-   * Create the most efficient string representation for specified
-   * [charCodes].
-   *
-   * Only uses the character codes between index [start] and index [end] of
-   * `charCodes`. They must satisfy `0 <= start <= end <= charCodes.length`.
-   *
-   * The [limit] is an upper limit on the character codes in the iterable.
-   * It's `null` if unknown.
-   */
+  /// Create the most efficient string representation for specified
+  /// [charCodes].
+  ///
+  /// Only uses the character codes between index [start] and index [end] of
+  /// `charCodes`. They must satisfy `0 <= start <= end <= charCodes.length`.
+  ///
+  /// The [limit] is an upper limit on the character codes in the iterable.
+  /// It's `null` if unknown.
   static String createFromCharCodes(
       Iterable<int> charCodes, int start, int? end, int? limit) {
     // TODO(srdjan): Also skip copying of wide typed arrays.
@@ -148,7 +146,7 @@ abstract final class _StringBase implements String {
     final int actualLimit =
         limit ?? _scanCodeUnits(typedCharCodes, start, actualEnd);
     if (actualLimit < 0) {
-      throw new ArgumentError(typedCharCodes);
+      throw ArgumentError(typedCharCodes);
     }
     if (actualLimit <= _maxLatin1) {
       return _createOneByteString(typedCharCodes, start, len);
@@ -167,7 +165,7 @@ abstract final class _StringBase implements String {
     int bits = 0;
     for (int i = start; i < end; i++) {
       int code = charCodes[i];
-      if (code is! _Smi) throw new ArgumentError(charCodes);
+      if (code is! _Smi) throw ArgumentError(charCodes);
       bits |= code;
     }
     return bits;
@@ -179,18 +177,18 @@ abstract final class _StringBase implements String {
     if (charCodes is EfficientLengthIterable) {
       int length = charCodes.length;
       final endVal = RangeError.checkValidRange(start, end, length);
-      final charCodeList = new List<int>.from(
+      final charCodeList = List<int>.from(
           charCodes.take(endVal).skip(start),
           growable: false);
       return createFromCharCodes(charCodeList, 0, charCodeList.length, null);
     }
     // Don't know length of iterable, so iterate and see if all the values
     // are there.
-    if (start < 0) throw new RangeError.range(start, 0, charCodes.length);
+    if (start < 0) throw RangeError.range(start, 0, charCodes.length);
     var it = charCodes.iterator;
     for (int i = 0; i < start; i++) {
       if (!it.moveNext()) {
-        throw new RangeError.range(start, 0, i);
+        throw RangeError.range(start, 0, i);
       }
     }
     List<int> charCodeList;
@@ -206,12 +204,12 @@ abstract final class _StringBase implements String {
       charCodeList = makeListFixedLength<int>(list);
     } else {
       if (endVal < start) {
-        throw new RangeError.range(endVal, start, charCodes.length);
+        throw RangeError.range(endVal, start, charCodes.length);
       }
       int len = endVal - start;
-      charCodeList = new List<int>.generate(len, (int i) {
+      charCodeList = List<int>.generate(len, (int i) {
         if (!it.moveNext()) {
-          throw new RangeError.range(endVal, start, start + i);
+          throw RangeError.range(endVal, start, start + i);
         }
         int code = it.current;
         bits |= code;
@@ -220,7 +218,7 @@ abstract final class _StringBase implements String {
     }
     int length = charCodeList.length;
     if (bits < 0) {
-      throw new ArgumentError(charCodes);
+      throw ArgumentError(charCodes);
     }
     bool isOneByteString = (bits <= _maxLatin1);
     if (isOneByteString) {
@@ -268,7 +266,7 @@ abstract final class _StringBase implements String {
   @pragma("vm:recognized", "asm-intrinsic")
   @pragma("vm:exact-result-type", bool)
   bool get isEmpty {
-    return this.length == 0;
+    return length == 0;
   }
 
   bool get isNotEmpty => !isEmpty;
@@ -276,19 +274,21 @@ abstract final class _StringBase implements String {
   @pragma("vm:external-name", "String_concat")
   external String operator +(String other);
 
+  @override
   String toString() {
     return this;
   }
 
+  @override
   @pragma("vm:exact-result-type", bool)
   bool operator ==(Object other) {
     if (identical(this, other)) {
       return true;
     }
-    if (other is String && this.length == other.length) {
-      final len = this.length;
+    if (other is String && length == other.length) {
+      final len = length;
       for (int i = 0; i < len; i++) {
-        if (this.codeUnitAt(i) != other.codeUnitAt(i)) {
+        if (codeUnitAt(i) != other.codeUnitAt(i)) {
           return false;
         }
       }
@@ -298,11 +298,11 @@ abstract final class _StringBase implements String {
   }
 
   int compareTo(String other) {
-    int thisLength = this.length;
+    int thisLength = length;
     int otherLength = other.length;
     int len = (thisLength < otherLength) ? thisLength : otherLength;
     for (int i = 0; i < len; i++) {
-      int thisCodeUnit = this.codeUnitAt(i);
+      int thisCodeUnit = codeUnitAt(i);
       int otherCodeUnit = other.codeUnitAt(i);
       if (thisCodeUnit < otherCodeUnit) {
         return -1;
@@ -321,11 +321,11 @@ abstract final class _StringBase implements String {
   bool _substringMatches(int start, String other) {
     if (other.isEmpty) return true;
     final len = other.length;
-    if ((start < 0) || (start + len > this.length)) {
+    if ((start < 0) || (start + len > length)) {
       return false;
     }
     for (int i = 0; i < len; i++) {
-      if (this.codeUnitAt(i + start) != other.codeUnitAt(i)) {
+      if (codeUnitAt(i + start) != other.codeUnitAt(i)) {
         return false;
       }
     }
@@ -333,12 +333,12 @@ abstract final class _StringBase implements String {
   }
 
   bool endsWith(String other) {
-    return _substringMatches(this.length - other.length, other);
+    return _substringMatches(length - other.length, other);
   }
 
   bool startsWith(Pattern pattern, [int index = 0]) {
-    if ((index < 0) || (index > this.length)) {
-      throw new RangeError.range(index, 0, this.length);
+    if ((index < 0) || (index > length)) {
+      throw RangeError.range(index, 0, length);
     }
     if (pattern is String) {
       return _substringMatches(index, pattern);
@@ -347,12 +347,12 @@ abstract final class _StringBase implements String {
   }
 
   int indexOf(Pattern pattern, [int start = 0]) {
-    if ((start < 0) || (start > this.length)) {
-      throw new RangeError.range(start, 0, this.length, "start");
+    if ((start < 0) || (start > length)) {
+      throw RangeError.range(start, 0, length, "start");
     }
     if (pattern is String) {
       String other = pattern;
-      int maxIndex = this.length - other.length;
+      int maxIndex = length - other.length;
       // TODO: Use an efficient string search (e.g. BMH).
       for (int index = start; index <= maxIndex; index++) {
         if (_substringMatches(index, other)) {
@@ -361,7 +361,7 @@ abstract final class _StringBase implements String {
       }
       return -1;
     }
-    for (int i = start; i <= this.length; i++) {
+    for (int i = start; i <= length; i++) {
       // TODO(11276); This has quadratic behavior because matchAsPrefix tries
       // to find a later match too. Optimize matchAsPrefix to avoid this.
       if (pattern.matchAsPrefix(this, i) != null) return i;
@@ -371,13 +371,13 @@ abstract final class _StringBase implements String {
 
   int lastIndexOf(Pattern pattern, [int? start]) {
     if (start == null) {
-      start = this.length;
-    } else if (start < 0 || start > this.length) {
-      throw new RangeError.range(start, 0, this.length);
+      start = length;
+    } else if (start < 0 || start > length) {
+      throw RangeError.range(start, 0, length);
     }
     if (pattern is String) {
       String other = pattern;
-      int maxIndex = this.length - other.length;
+      int maxIndex = length - other.length;
       if (maxIndex < start) start = maxIndex;
       for (int index = start; index >= 0; index--) {
         if (_substringMatches(index, other)) {
@@ -395,20 +395,20 @@ abstract final class _StringBase implements String {
   }
 
   String substring(int startIndex, [int? endIndex]) {
-    endIndex = RangeError.checkValidRange(startIndex, endIndex, this.length);
+    endIndex = RangeError.checkValidRange(startIndex, endIndex, length);
     return _substringUnchecked(startIndex, endIndex);
   }
 
+  @override
   String _substringUnchecked(int startIndex, int endIndex) {
-    assert(endIndex != null);
-    assert((startIndex >= 0) && (startIndex <= this.length));
-    assert((endIndex >= 0) && (endIndex <= this.length));
+    assert((startIndex >= 0) && (startIndex <= length));
+    assert((endIndex >= 0) && (endIndex <= length));
     assert(startIndex <= endIndex);
 
     if (startIndex == endIndex) {
       return "";
     }
-    if ((startIndex == 0) && (endIndex == this.length)) {
+    if ((startIndex == 0) && (endIndex == length)) {
       return this;
     }
     if ((startIndex + 1) == endIndex) {
@@ -460,10 +460,10 @@ abstract final class _StringBase implements String {
   }
 
   int _firstNonWhitespace() {
-    final len = this.length;
+    final len = length;
     int first = 0;
     for (; first < len; first++) {
-      if (!_isWhitespace(this.codeUnitAt(first))) {
+      if (!_isWhitespace(codeUnitAt(first))) {
         break;
       }
     }
@@ -471,9 +471,9 @@ abstract final class _StringBase implements String {
   }
 
   int _lastNonWhitespace() {
-    int last = this.length - 1;
+    int last = length - 1;
     for (; last >= 0; last--) {
-      if (!_isWhitespace(this.codeUnitAt(last))) {
+      if (!_isWhitespace(codeUnitAt(last))) {
         break;
       }
     }
@@ -481,7 +481,7 @@ abstract final class _StringBase implements String {
   }
 
   String trim() {
-    final len = this.length;
+    final len = length;
     int first = _firstNonWhitespace();
     if (len == first) {
       // String contains only whitespaces.
@@ -497,10 +497,10 @@ abstract final class _StringBase implements String {
   }
 
   String trimLeft() {
-    final len = this.length;
+    final len = length;
     int first = 0;
     for (; first < len; first++) {
-      if (!_isWhitespace(this.codeUnitAt(first))) {
+      if (!_isWhitespace(codeUnitAt(first))) {
         break;
       }
     }
@@ -517,10 +517,10 @@ abstract final class _StringBase implements String {
   }
 
   String trimRight() {
-    final len = this.length;
+    final len = length;
     int last = len - 1;
     for (; last >= 0; last--) {
-      if (!_isWhitespace(this.codeUnitAt(last))) {
+      if (!_isWhitespace(codeUnitAt(last))) {
         break;
       }
     }
@@ -538,7 +538,7 @@ abstract final class _StringBase implements String {
   String operator *(int times) {
     if (times <= 0) return "";
     if (times == 1) return this;
-    StringBuffer buffer = new StringBuffer(this);
+    StringBuffer buffer = StringBuffer(this);
     for (int i = 1; i < times; i++) {
       buffer.write(this);
     }
@@ -546,9 +546,9 @@ abstract final class _StringBase implements String {
   }
 
   String padLeft(int width, [String padding = ' ']) {
-    int delta = width - this.length;
+    int delta = width - length;
     if (delta <= 0) return this;
-    StringBuffer buffer = new StringBuffer();
+    StringBuffer buffer = StringBuffer();
     for (int i = 0; i < delta; i++) {
       buffer.write(padding);
     }
@@ -557,9 +557,9 @@ abstract final class _StringBase implements String {
   }
 
   String padRight(int width, [String padding = ' ']) {
-    int delta = width - this.length;
+    int delta = width - length;
     if (delta <= 0) return this;
-    StringBuffer buffer = new StringBuffer(this);
+    StringBuffer buffer = StringBuffer(this);
     for (int i = 0; i < delta; i++) {
       buffer.write(padding);
     }
@@ -568,27 +568,27 @@ abstract final class _StringBase implements String {
 
   bool contains(Pattern pattern, [int startIndex = 0]) {
     if (pattern is String) {
-      if (startIndex < 0 || startIndex > this.length) {
-        throw new RangeError.range(startIndex, 0, this.length);
+      if (startIndex < 0 || startIndex > length) {
+        throw RangeError.range(startIndex, 0, length);
       }
       return indexOf(pattern, startIndex) >= 0;
     }
-    return pattern.allMatches(this.substring(startIndex)).isNotEmpty;
+    return pattern.allMatches(substring(startIndex)).isNotEmpty;
   }
 
   String replaceFirst(Pattern pattern, String replacement,
       [int startIndex = 0]) {
     // TODO: Remove these null checks once all code is opted into strong nonnullable mode.
     if (pattern == null) {
-      throw new ArgumentError.notNull("pattern");
+      throw ArgumentError.notNull("pattern");
     }
     if (replacement == null) {
-      throw new ArgumentError.notNull("replacement");
+      throw ArgumentError.notNull("replacement");
     }
     if (startIndex == null) {
-      throw new ArgumentError.notNull("startIndex");
+      throw ArgumentError.notNull("startIndex");
     }
-    RangeError.checkValueInInterval(startIndex, 0, this.length, "startIndex");
+    RangeError.checkValueInInterval(startIndex, 0, length, "startIndex");
     Iterator iterator = startIndex == 0
         ? pattern.allMatches(this).iterator
         : pattern.allMatches(this, startIndex).iterator;
@@ -604,7 +604,7 @@ abstract final class _StringBase implements String {
     if (start == 0 && localEnd == length) return replacement;
     int replacementLength = replacement.length;
     int totalLength = start + (length - localEnd) + replacementLength;
-    if (replacementIsOneByte && this._isOneByte) {
+    if (replacementIsOneByte && _isOneByte) {
       var result = _OneByteString._allocate(totalLength);
       int index = 0;
       index = result._setRange(index, this, 0, start);
@@ -634,8 +634,8 @@ abstract final class _StringBase implements String {
   }
 
   String replaceAll(Pattern pattern, String replacement) {
-    if (pattern == null) throw new ArgumentError.notNull("pattern");
-    if (replacement == null) throw new ArgumentError.notNull("replacement");
+    if (pattern == null) throw ArgumentError.notNull("pattern");
+    if (replacement == null) throw ArgumentError.notNull("replacement");
 
     int startIndex = 0;
     // String fragments that replace the prefix [this] up to [startIndex].
@@ -662,17 +662,15 @@ abstract final class _StringBase implements String {
     bool replacementIsOneByte = replacement._isOneByte;
     if (replacementIsOneByte &&
         length < _maxJoinReplaceOneByteStringLength &&
-        this._isOneByte) {
+        _isOneByte) {
       // TODO(lrn): Is there a cut-off point, or is runtime always faster?
       return _joinReplaceAllOneByteResult(this, matches, length);
     }
     return _joinReplaceAllResult(this, matches, length, replacementIsOneByte);
   }
 
-  /**
-   * As [_joinReplaceAllResult], but knowing that the result
-   * is always a [_OneByteString].
-   */
+  /// As [_joinReplaceAllResult], but knowing that the result
+  /// is always a [_OneByteString].
   static String _joinReplaceAllOneByteResult(
       String base, List matches, int length) {
     _OneByteString result = _OneByteString._allocate(length);
@@ -710,24 +708,22 @@ abstract final class _StringBase implements String {
     return result;
   }
 
-  /**
-   * Combine the results of a [replaceAll] match into a new string.
-   *
-   * The [matches] lists contains Smi index pairs representing slices of
-   * [base] and [String]s to be put in between the slices.
-   *
-   * The total [length] of the resulting string is known, as is
-   * whether the replacement strings are one-byte strings.
-   * If they are, then we have to check the base string slices to know
-   * whether the result must be a one-byte string.
-   */
+  /// Combine the results of a [replaceAll] match into a new string.
+  ///
+  /// The [matches] lists contains Smi index pairs representing slices of
+  /// [base] and [String]s to be put in between the slices.
+  ///
+  /// The total [length] of the resulting string is known, as is
+  /// whether the replacement strings are one-byte strings.
+  /// If they are, then we have to check the base string slices to know
+  /// whether the result must be a one-byte string.
   @pragma("vm:external-name", "StringBase_joinReplaceAllResult")
   external static String _joinReplaceAllResult(
       String base, List matches, int length, bool replacementStringsAreOneByte);
 
-  String replaceAllMapped(Pattern pattern, String replace(Match match)) {
-    if (pattern == null) throw new ArgumentError.notNull("pattern");
-    if (replace == null) throw new ArgumentError.notNull("replace");
+  String replaceAllMapped(Pattern pattern, String Function(Match match) replace) {
+    if (pattern == null) throw ArgumentError.notNull("pattern");
+    if (replace == null) throw ArgumentError.notNull("replace");
     List matches = [];
     int length = 0;
     int startIndex = 0;
@@ -745,19 +741,19 @@ abstract final class _StringBase implements String {
     length += _addReplaceSlice(matches, startIndex, this.length);
     if (replacementStringsAreOneByte &&
         length < _maxJoinReplaceOneByteStringLength &&
-        this._isOneByte) {
+        _isOneByte) {
       return _joinReplaceAllOneByteResult(this, matches, length);
     }
     return _joinReplaceAllResult(
         this, matches, length, replacementStringsAreOneByte);
   }
 
-  String replaceFirstMapped(Pattern pattern, String replace(Match match),
+  String replaceFirstMapped(Pattern pattern, String Function(Match match) replace,
       [int startIndex = 0]) {
-    if (pattern == null) throw new ArgumentError.notNull("pattern");
-    if (replace == null) throw new ArgumentError.notNull("replace");
-    if (startIndex == null) throw new ArgumentError.notNull("startIndex");
-    RangeError.checkValueInInterval(startIndex, 0, this.length, "startIndex");
+    if (pattern == null) throw ArgumentError.notNull("pattern");
+    if (replace == null) throw ArgumentError.notNull("replace");
+    if (startIndex == null) throw ArgumentError.notNull("startIndex");
+    RangeError.checkValueInInterval(startIndex, 0, length, "startIndex");
 
     var matches = pattern.allMatches(this, startIndex).iterator;
     if (!matches.moveNext()) return this;
@@ -770,22 +766,22 @@ abstract final class _StringBase implements String {
   static String _stringIdentity(String string) => string;
 
   String _splitMapJoinEmptyString(
-      String onMatch(Match match), String onNonMatch(String nonMatch)) {
+      String Function(Match match) onMatch, String Function(String nonMatch) onNonMatch) {
     // Pattern is the empty string.
-    StringBuffer buffer = new StringBuffer();
+    StringBuffer buffer = StringBuffer();
     int length = this.length;
     int i = 0;
     buffer.write(onNonMatch(""));
     while (i < length) {
-      buffer.write(onMatch(new _StringMatch(i, this, "")));
+      buffer.write(onMatch(_StringMatch(i, this, "")));
       // Special case to avoid splitting a surrogate pair.
-      int code = this.codeUnitAt(i);
+      int code = codeUnitAt(i);
       if ((code & ~0x3FF) == 0xD800 && length > i + 1) {
         // Leading surrogate;
-        code = this.codeUnitAt(i + 1);
+        code = codeUnitAt(i + 1);
         if ((code & ~0x3FF) == 0xDC00) {
           // Matching trailing surrogate.
-          buffer.write(onNonMatch(this.substring(i, i + 2)));
+          buffer.write(onNonMatch(substring(i, i + 2)));
           i += 2;
           continue;
         }
@@ -793,15 +789,15 @@ abstract final class _StringBase implements String {
       buffer.write(onNonMatch(this[i]));
       i++;
     }
-    buffer.write(onMatch(new _StringMatch(i, this, "")));
+    buffer.write(onMatch(_StringMatch(i, this, "")));
     buffer.write(onNonMatch(""));
     return buffer.toString();
   }
 
   String splitMapJoin(Pattern pattern,
-      {String onMatch(Match match)?, String onNonMatch(String nonMatch)?}) {
+      {String Function(Match match)? onMatch, String Function(String nonMatch)? onNonMatch}) {
     if (pattern == null) {
-      throw new ArgumentError.notNull("pattern");
+      throw ArgumentError.notNull("pattern");
     }
     onMatch ??= _matchString;
     onNonMatch ??= _stringIdentity;
@@ -811,14 +807,14 @@ abstract final class _StringBase implements String {
         return _splitMapJoinEmptyString(onMatch, onNonMatch);
       }
     }
-    StringBuffer buffer = new StringBuffer();
+    StringBuffer buffer = StringBuffer();
     int startIndex = 0;
     for (Match match in pattern.allMatches(this)) {
-      buffer.write(onNonMatch(this.substring(startIndex, match.start)));
+      buffer.write(onNonMatch(substring(startIndex, match.start)));
       buffer.write(onMatch(match).toString());
       startIndex = match.end;
     }
-    buffer.write(onNonMatch(this.substring(startIndex)));
+    buffer.write(onNonMatch(substring(startIndex)));
     return buffer.toString();
   }
 
@@ -834,11 +830,9 @@ abstract final class _StringBase implements String {
     return s;
   }
 
-  /**
-   * Convert all objects in [values] to strings and concat them
-   * into a result string.
-   * Modifies the input list if it contains non-`String` values.
-   */
+  /// Convert all objects in [values] to strings and concat them
+  /// into a result string.
+  /// Modifies the input list if it contains non-`String` values.
   @pragma("vm:recognized", "other")
   @pragma("vm:entry-point", "call")
   @pragma("vm:never-inline")
@@ -876,34 +870,34 @@ abstract final class _StringBase implements String {
 
   static ArgumentError _interpolationError(Object? o, Object? result) {
     // Since Dart 2.0, [result] can only be null.
-    return new ArgumentError.value(
+    return ArgumentError.value(
         o, "object", "toString method returned 'null'");
   }
 
   Iterable<Match> allMatches(String string, [int start = 0]) {
     if (start < 0 || start > string.length) {
-      throw new RangeError.range(start, 0, string.length, "start");
+      throw RangeError.range(start, 0, string.length, "start");
     }
-    return new _StringAllMatchesIterable(string, this, start);
+    return _StringAllMatchesIterable(string, this, start);
   }
 
   Match? matchAsPrefix(String string, [int start = 0]) {
     if (start < 0 || start > string.length) {
-      throw new RangeError.range(start, 0, string.length);
+      throw RangeError.range(start, 0, string.length);
     }
-    if (start + this.length > string.length) return null;
-    for (int i = 0; i < this.length; i++) {
-      if (string.codeUnitAt(start + i) != this.codeUnitAt(i)) {
+    if (start + length > string.length) return null;
+    for (int i = 0; i < length; i++) {
+      if (string.codeUnitAt(start + i) != codeUnitAt(i)) {
         return null;
       }
     }
-    return new _StringMatch(start, string, this);
+    return _StringMatch(start, string, this);
   }
 
   List<String> split(Pattern pattern) {
     if ((pattern is String) && pattern.isEmpty) {
       List<String> result =
-          new List<String>.generate(this.length, (int i) => this[i]);
+          List<String>.generate(this.length, (int i) => this[i]);
       return result;
     }
     int length = this.length;
@@ -919,12 +913,12 @@ abstract final class _StringBase implements String {
     // call _substringUnchecked unless it is a trustworthy type (e.g. String).
     while (true) {
       if (startIndex == length || !iterator.moveNext()) {
-        result.add(this.substring(previousIndex, length));
+        result.add(substring(previousIndex, length));
         break;
       }
       Match match = iterator.current;
       if (match.start == length) {
-        result.add(this.substring(previousIndex, length));
+        result.add(substring(previousIndex, length));
         break;
       }
       int endIndex = match.end;
@@ -932,15 +926,15 @@ abstract final class _StringBase implements String {
         ++startIndex; // empty match, advance and restart
         continue;
       }
-      result.add(this.substring(previousIndex, match.start));
+      result.add(substring(previousIndex, match.start));
       startIndex = previousIndex = endIndex;
     }
     return result;
   }
 
-  List<int> get codeUnits => new CodeUnits(this);
+  List<int> get codeUnits => CodeUnits(this);
 
-  Runes get runes => new Runes(this);
+  Runes get runes => Runes(this);
 
   @pragma("vm:external-name", "String_toUpperCase")
   external String toUpperCase();
@@ -965,19 +959,19 @@ abstract final class _StringBase implements String {
 /// Product of two positive integers, clamped to the maximum int value on
 /// overflow or non-positive inputs.
 int _clampedPositiveProduct(int a, int b) {
-  const MAX_INT64 = (-1) >>> 1;
+  const maxInt64 = (-1) >>> 1;
 
   int product = a * b;
 
   // `(a | b)` is negative if either is negative.
   // `product <= 0` if `a` or `b` is zero, and in some cases of overflow.
-  if ((a | b) < 0 || product <= 0) return MAX_INT64;
+  if ((a | b) < 0 || product <= 0) return maxInt64;
 
   // Both values are small enough that the product has no overflow.
   if ((a | b) < (1 << 30)) return product;
 
   // Check the product.
-  if (product ~/ a != b) return MAX_INT64;
+  if (product ~/ a != b) return maxInt64;
 
   return product;
 }
@@ -988,20 +982,24 @@ final class _OneByteString extends _StringBase {
     throw "Unreachable";
   }
 
+  @override
   @pragma("vm:recognized", "asm-intrinsic")
   @pragma("vm:exact-result-type", "dart:core#_Smi")
   @pragma("vm:external-name", "String_getHashCode")
   external int get hashCode;
 
+  @override
   @pragma("vm:recognized", "graph-intrinsic")
   @pragma("vm:exact-result-type", "dart:core#_Smi")
   @pragma("vm:external-name", "String_codeUnitAt")
   external int codeUnitAt(int index);
 
+  @override
   bool _isWhitespace(int codeUnit) {
     return _StringBase._isOneByteWhitespace(codeUnit);
   }
 
+  @override
   @pragma("vm:recognized", "asm-intrinsic")
   @pragma("vm:exact-result-type", bool)
   // Intrinsic is more efficient than an inlined body even for the small
@@ -1011,6 +1009,7 @@ final class _OneByteString extends _StringBase {
     return super == other;
   }
 
+  @override
   @pragma("vm:recognized", "asm-intrinsic")
   @pragma("vm:exact-result-type", _OneByteString)
   @pragma("vm:external-name", "OneByteString_substringUnchecked")
@@ -1020,16 +1019,17 @@ final class _OneByteString extends _StringBase {
     final parts = <String>[];
     int i = 0;
     int start = 0;
-    for (i = 0; i < this.length; ++i) {
-      if (this.codeUnitAt(i) == charCode) {
-        parts.add(this._substringUnchecked(start, i));
+    for (i = 0; i < length; ++i) {
+      if (codeUnitAt(i) == charCode) {
+        parts.add(_substringUnchecked(start, i));
         start = i + 1;
       }
     }
-    parts.add(this._substringUnchecked(start, i));
+    parts.add(_substringUnchecked(start, i));
     return parts;
   }
 
+  @override
   List<String> split(Pattern pattern) {
     // TODO(vegorov) investigate if this can be rewritten as `is _OneByteString`
     // check without performance penalty. Front-end would then promote
@@ -1062,6 +1062,7 @@ final class _OneByteString extends _StringBase {
     return res;
   }
 
+  @override
   int indexOf(Pattern pattern, [int start = 0]) {
     // Specialize for single character pattern.
     final pCid = ClassID.getID(pattern);
@@ -1069,14 +1070,14 @@ final class _OneByteString extends _StringBase {
         (pCid == ClassID.cidTwoByteString) ||
         (pCid == ClassID.cidExternalOneByteString)) {
       final String patternAsString = unsafeCast<String>(pattern);
-      final len = this.length;
+      final len = length;
       if ((patternAsString.length == 1) && (start >= 0) && (start < len)) {
         final patternCu0 = patternAsString.codeUnitAt(0);
         if (patternCu0 > 0xFF) {
           return -1;
         }
         for (int i = start; i < len; i++) {
-          if (this.codeUnitAt(i) == patternCu0) {
+          if (codeUnitAt(i) == patternCu0) {
             return i;
           }
         }
@@ -1086,20 +1087,21 @@ final class _OneByteString extends _StringBase {
     return super.indexOf(pattern, start);
   }
 
+  @override
   bool contains(Pattern pattern, [int start = 0]) {
     final pCid = ClassID.getID(pattern);
     if ((pCid == ClassID.cidOneByteString) ||
         (pCid == ClassID.cidTwoByteString) ||
         (pCid == ClassID.cidExternalOneByteString)) {
       final String patternAsString = unsafeCast<String>(pattern);
-      final len = this.length;
+      final len = length;
       if ((patternAsString.length == 1) && (start >= 0) && (start < len)) {
         final patternCu0 = patternAsString.codeUnitAt(0);
         if (patternCu0 > 0xFF) {
           return false;
         }
         for (int i = start; i < len; i++) {
-          if (this.codeUnitAt(i) == patternCu0) {
+          if (codeUnitAt(i) == patternCu0) {
             return true;
           }
         }
@@ -1109,16 +1111,17 @@ final class _OneByteString extends _StringBase {
     return super.contains(pattern, start);
   }
 
+  @override
   String operator *(int times) {
     if (times <= 0) return "";
     if (times == 1) return this;
-    if (this.isEmpty) return this; // Don't clone empty string.
+    if (isEmpty) return this; // Don't clone empty string.
     int length = this.length;
     int resultLength = _clampedPositiveProduct(length, times);
     _OneByteString result = _OneByteString._allocate(resultLength);
     // Copy `this` into `result`.
     for (int i = 0; i < length; i++) {
-      result._setAt(i, this.codeUnitAt(i));
+      result._setAt(i, codeUnitAt(i));
     }
     // Make more copies by copying within `result`.
     for (int i = length; i < resultLength; i++) {
@@ -1127,6 +1130,7 @@ final class _OneByteString extends _StringBase {
     return result;
   }
 
+  @override
   String padLeft(int width, [String padding = ' ']) {
     int padCid = ClassID.getID(padding);
     if ((padCid != ClassID.cidOneByteString) &&
@@ -1153,11 +1157,12 @@ final class _OneByteString extends _StringBase {
       }
     }
     for (int i = 0; i < length; i++) {
-      result._setAt(index++, this.codeUnitAt(i));
+      result._setAt(index++, codeUnitAt(i));
     }
     return result;
   }
 
+  @override
   String padRight(int width, [String padding = ' ']) {
     int padCid = ClassID.getID(padding);
     if ((padCid != ClassID.cidOneByteString) &&
@@ -1172,7 +1177,7 @@ final class _OneByteString extends _StringBase {
     _OneByteString result = _OneByteString._allocate(resultLength);
     int index = 0;
     for (int i = 0; i < length; i++) {
-      result._setAt(index++, this.codeUnitAt(i));
+      result._setAt(index++, codeUnitAt(i));
     }
     if (padLength == 1) {
       int padChar = padding.codeUnitAt(0);
@@ -1235,33 +1240,35 @@ final class _OneByteString extends _StringBase {
       "\xc0\xc1\xc2\xc3\xc4\xc5\xc6\xc7\xc8\xc9\xca\xcb\xcc\xcd\xce\xcf"
       "\xd0\xd1\xd2\xd3\xd4\xd5\xd6\xf7\xd8\xd9\xda\xdb\xdc\xdd\xde\x00";
 
+  @override
   String toLowerCase() {
-    for (int i = 0; i < this.length; i++) {
-      final c = this.codeUnitAt(i);
+    for (int i = 0; i < length; i++) {
+      final c = codeUnitAt(i);
       if (c == _LC_TABLE.codeUnitAt(c)) continue;
       // Upper-case character found.
-      final result = _allocate(this.length);
+      final result = _allocate(length);
       for (int j = 0; j < i; j++) {
-        result._setAt(j, this.codeUnitAt(j));
+        result._setAt(j, codeUnitAt(j));
       }
-      for (int j = i; j < this.length; j++) {
-        result._setAt(j, _LC_TABLE.codeUnitAt(this.codeUnitAt(j)));
+      for (int j = i; j < length; j++) {
+        result._setAt(j, _LC_TABLE.codeUnitAt(codeUnitAt(j)));
       }
       return result;
     }
     return this;
   }
 
+  @override
   String toUpperCase() {
-    for (int i = 0; i < this.length; i++) {
-      final c = this.codeUnitAt(i);
+    for (int i = 0; i < length; i++) {
+      final c = codeUnitAt(i);
       // Continue loop if character is unchanged by upper-case conversion.
       if (c == _UC_TABLE.codeUnitAt(c)) continue;
 
       // Check rest of string for characters that do not convert to
       // single-characters in the Latin-1 range.
-      for (int j = i; j < this.length; j++) {
-        final c = this.codeUnitAt(j);
+      for (int j = i; j < length; j++) {
+        final c = codeUnitAt(j);
         if ((_UC_TABLE.codeUnitAt(c) == 0x00) && (c != 0x00)) {
           // We use the 0x00 value for characters other than the null character,
           // that don't convert to a single Latin-1 character when upper-cased.
@@ -1271,12 +1278,12 @@ final class _OneByteString extends _StringBase {
       }
       // Some lower-case characters found, but all upper-case to single Latin-1
       // characters.
-      final result = _allocate(this.length);
+      final result = _allocate(length);
       for (int j = 0; j < i; j++) {
-        result._setAt(j, this.codeUnitAt(j));
+        result._setAt(j, codeUnitAt(j));
       }
-      for (int j = i; j < this.length; j++) {
-        result._setAt(j, _UC_TABLE.codeUnitAt(this.codeUnitAt(j)));
+      for (int j = i; j < length; j++) {
+        result._setAt(j, _UC_TABLE.codeUnitAt(codeUnitAt(j)));
       }
       return result;
     }
@@ -1345,15 +1352,18 @@ final class _TwoByteString extends _StringBase {
     writeIntoTwoByteString(this, index, codePoint);
   }
 
+  @override
   bool _isWhitespace(int codeUnit) {
     return _StringBase._isTwoByteWhitespace(codeUnit);
   }
 
+  @override
   @pragma("vm:recognized", "graph-intrinsic")
   @pragma("vm:exact-result-type", "dart:core#_Smi")
   @pragma("vm:external-name", "String_codeUnitAt")
   external int codeUnitAt(int index);
 
+  @override
   @pragma("vm:recognized", "asm-intrinsic")
   @pragma("vm:exact-result-type", bool)
   // Intrinsic is more efficient than an inlined body even for the small
@@ -1363,16 +1373,17 @@ final class _TwoByteString extends _StringBase {
     return super == other;
   }
 
+  @override
   String operator *(int times) {
     if (times <= 0) return "";
     if (times == 1) return this;
-    if (this.isEmpty) return this; // Don't clone empty string.
+    if (isEmpty) return this; // Don't clone empty string.
     int length = this.length;
     int resultLength = _clampedPositiveProduct(length, times);
     _TwoByteString result = _TwoByteString._allocate(resultLength);
     // Copy `this` into `result`.
     for (int i = 0; i < length; i++) {
-      result._setAt(i, this.codeUnitAt(i));
+      result._setAt(i, codeUnitAt(i));
     }
     // Make more copies by copying within `result`.
     for (int i = length; i < resultLength; i++) {
@@ -1388,18 +1399,17 @@ final class _ExternalOneByteString extends _StringBase {
     throw "Unreachable";
   }
 
+  @override
   bool _isWhitespace(int codeUnit) {
     return _StringBase._isOneByteWhitespace(codeUnit);
   }
 
+  @override
   @pragma("vm:recognized", "graph-intrinsic")
   @pragma("vm:exact-result-type", "dart:core#_Smi")
   @pragma("vm:external-name", "String_codeUnitAt")
   external int codeUnitAt(int index);
 
-  bool operator ==(Object other) {
-    return super == other;
-  }
 }
 
 @pragma("vm:entry-point")
@@ -1408,34 +1418,38 @@ final class _ExternalTwoByteString extends _StringBase {
     throw "Unreachable";
   }
 
+  @override
   bool _isWhitespace(int codeUnit) {
     return _StringBase._isTwoByteWhitespace(codeUnit);
   }
 
+  @override
   @pragma("vm:recognized", "graph-intrinsic")
   @pragma("vm:exact-result-type", "dart:core#_Smi")
   @pragma("vm:external-name", "String_codeUnitAt")
   external int codeUnitAt(int index);
 
-  bool operator ==(Object other) {
-    return super == other;
-  }
 }
 
 final class _StringMatch implements Match {
   const _StringMatch(this.start, this.input, this.pattern);
 
+  @override
   int get end => start + pattern.length;
+  @override
   String operator [](int g) => group(g);
+  @override
   int get groupCount => 0;
 
+  @override
   String group(int group) {
     if (group != 0) {
-      throw new RangeError.value(group);
+      throw RangeError.value(group);
     }
     return pattern;
   }
 
+  @override
   List<String> groups(List<int> groups) {
     List<String> result = <String>[];
     for (int g in groups) {
@@ -1444,8 +1458,11 @@ final class _StringMatch implements Match {
     return result;
   }
 
+  @override
   final int start;
+  @override
   final String input;
+  @override
   final String pattern;
 }
 
@@ -1456,13 +1473,15 @@ final class _StringAllMatchesIterable extends Iterable<Match> {
 
   _StringAllMatchesIterable(this._input, this._pattern, this._index);
 
+  @override
   Iterator<Match> get iterator =>
-      new _StringAllMatchesIterator(_input, _pattern, _index);
+      _StringAllMatchesIterator(_input, _pattern, _index);
 
+  @override
   Match get first {
     int index = _input.indexOf(_pattern, _index);
     if (index >= 0) {
-      return new _StringMatch(index, _input, _pattern);
+      return _StringMatch(index, _input, _pattern);
     }
     throw IterableElementError.noElement();
   }
@@ -1476,6 +1495,7 @@ final class _StringAllMatchesIterator implements Iterator<Match> {
 
   _StringAllMatchesIterator(this._input, this._pattern, this._index);
 
+  @override
   bool moveNext() {
     if (_index + _pattern.length > _input.length) {
       _current = null;
@@ -1488,12 +1508,13 @@ final class _StringAllMatchesIterator implements Iterator<Match> {
       return false;
     }
     int end = index + _pattern.length;
-    _current = new _StringMatch(index, _input, _pattern);
+    _current = _StringMatch(index, _input, _pattern);
     // Empty match, don't start at same location again.
     if (end == _index) end++;
     _index = end;
     return true;
   }
 
+  @override
   Match get current => _current as Match;
 }

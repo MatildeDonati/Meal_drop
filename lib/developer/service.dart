@@ -43,6 +43,7 @@ final class ServiceProtocolInfo {
 
   ServiceProtocolInfo(this.serverUri);
 
+  @override
   String toString() {
     if (serverUri != null) {
       return 'Dart VM Service Protocol v$majorVersion.$minorVersion '
@@ -62,8 +63,8 @@ final class Service {
   static Future<ServiceProtocolInfo> getInfo() async {
     // Port to receive response from service isolate.
     final RawReceivePort receivePort =
-        new RawReceivePort(null, 'Service.getInfo');
-    final Completer<String?> completer = new Completer<String?>();
+        RawReceivePort(null, 'Service.getInfo');
+    final Completer<String?> completer = Completer<String?>();
     receivePort.handler = (String? uriString) => completer.complete(uriString);
     // Request the information from the service isolate.
     _getServerInfo(receivePort.sendPort);
@@ -72,7 +73,7 @@ final class Service {
     Uri? uri = uriString == null ? null : Uri.parse(uriString);
     // Close the port.
     receivePort.close();
-    return new ServiceProtocolInfo(uri);
+    return ServiceProtocolInfo(uri);
   }
 
   /// Control the web server that the service protocol is accessed through.
@@ -85,8 +86,8 @@ final class Service {
     ArgumentError.checkNotNull(enable, 'enable');
     // Port to receive response from service isolate.
     final RawReceivePort receivePort =
-        new RawReceivePort(null, 'Service.controlWebServer');
-    final Completer<String?> completer = new Completer<String?>();
+        RawReceivePort(null, 'Service.controlWebServer');
+    final Completer<String?> completer = Completer<String?>();
     receivePort.handler = (String? uriString) => completer.complete(uriString);
     // Request the information from the service isolate.
     _webServerControl(receivePort.sendPort, enable, silenceOutput);
@@ -95,7 +96,7 @@ final class Service {
     Uri? uri = uriString == null ? null : Uri.parse(uriString);
     // Close the port.
     receivePort.close();
-    return new ServiceProtocolInfo(uri);
+    return ServiceProtocolInfo(uri);
   }
 
   /// Returns a [String] token representing the ID of [isolate].

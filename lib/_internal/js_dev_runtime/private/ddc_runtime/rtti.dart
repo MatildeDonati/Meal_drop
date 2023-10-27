@@ -148,7 +148,7 @@ Object getInterceptorForRti(obj) {
         // property and can be accessed from the native value itself.
         classRef = JS('', '#[#]', obj, _extensionType);
         // If there is no extension type then this object must not be from Dart.
-        if (classRef == null) classRef = JS_CLASS_REF(LegacyJavaScriptObject);
+        classRef ??= JS_CLASS_REF(LegacyJavaScriptObject);
     }
   }
   if (classRef == null) throw 'Unknown interceptor for object: ($obj)';
@@ -164,7 +164,7 @@ getReifiedType(obj) {
   if (JS_GET_FLAG('NEW_RUNTIME_TYPES')) {
     switch (JS<String>('!', 'typeof #', obj)) {
       case "object":
-        if (obj == null) return typeRep<Null>();
+        if (obj == null) return typeRep<void>();
         if (_jsInstanceOf(obj, RecordImpl)) return getRtiForRecord(obj);
         if (_jsInstanceOf(obj, Object) ||
             JS<bool>('!', 'Array.isArray(#)', obj)) {
@@ -180,7 +180,7 @@ getReifiedType(obj) {
         if (signature != null) return signature;
         return typeRep<JavaScriptFunction>();
       case "undefined":
-        return typeRep<Null>();
+        return typeRep<void>();
       case "number":
         return JS('', 'Math.floor(#) == # ? # : #', obj, obj, typeRep<int>(),
             typeRep<double>());

@@ -7,16 +7,16 @@ part of "async_patch.dart";
 @patch
 class _AsyncRun {
   @patch
-  static void _scheduleImmediate(void callback()) {
+  static void _scheduleImmediate(void Function() callback) {
     final closure = _ScheduleImmediate._closure;
     if (closure == null) {
-      throw new UnsupportedError("Microtasks are not supported");
+      throw UnsupportedError("Microtasks are not supported");
     }
     closure(callback);
   }
 }
 
-typedef void _ScheduleImmediateClosure(void callback());
+typedef _ScheduleImmediateClosure = void Function(void Function() callback);
 
 class _ScheduleImmediate {
   static _ScheduleImmediateClosure? _closure;

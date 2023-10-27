@@ -80,16 +80,16 @@ class _Cell {
     return _value;
   }
 
-  void set value(Object? v) {
+  set value(Object? v) {
     _value = v;
   }
 
-  void set finalLocalValue(Object? v) {
+  set finalLocalValue(Object? v) {
     if (!identical(_value, this)) throw LateError.localAI(_name);
     _value = v;
   }
 
-  void set finalFieldValue(Object? v) {
+  set finalFieldValue(Object? v) {
     if (!identical(_value, this)) throw LateError.fieldAI(_name);
     _value = v;
   }
@@ -100,7 +100,7 @@ class _Cell {
 class _InitializedCell {
   final String _name;
   Object? _value;
-  Object? Function() _initializer;
+  final Object? Function() _initializer;
 
   @pragma('dart2js:noInline')
   _InitializedCell(this._initializer) : _name = '' {
@@ -136,11 +136,11 @@ class _InitializedCell {
     return _value;
   }
 
-  void set value(Object? v) {
+  set value(Object? v) {
     _value = v;
   }
 
-  void set finalValue(Object? v) {
+  set finalValue(Object? v) {
     if (!identical(_value, this)) throw LateError.localAI(_name);
     _value = v;
   }

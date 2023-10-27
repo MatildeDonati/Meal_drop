@@ -72,6 +72,7 @@ final class Pointer<T extends NativeType> extends NativeType {
   external Pointer<U> cast<U extends NativeType>();
 
   /// Equality for Pointers only depends on their address.
+  @override
   bool operator ==(Object other) {
     if (other is! Pointer) return false;
     Pointer otherPointer = other;
@@ -79,6 +80,7 @@ final class Pointer<T extends NativeType> extends NativeType {
   }
 
   /// The hash code for a Pointer only depends on its address.
+  @override
   int get hashCode {
     return address.hashCode;
   }
@@ -213,7 +215,7 @@ extension Int8Pointer on Pointer<Int8> {
   /// being stored, and the 8-bit value is sign-extended when it is loaded.
   external int get value;
 
-  external void set value(int value);
+  external set value(int value);
 
   /// The 8-bit two's complement integer at `address + index`.
   ///
@@ -258,7 +260,7 @@ extension Int16Pointer on Pointer<Int16> {
   /// The [address] must be 2-byte aligned.
   external int get value;
 
-  external void set value(int value);
+  external set value(int value);
 
   /// The 16-bit two's complement integer at `address + 2 * index`.
   ///
@@ -309,7 +311,7 @@ extension Int32Pointer on Pointer<Int32> {
   /// The [address] must be 4-byte aligned.
   external int get value;
 
-  external void set value(int value);
+  external set value(int value);
 
   /// The 32-bit two's complement integer at `address + 4 * index`.
   ///
@@ -357,7 +359,7 @@ extension Int64Pointer on Pointer<Int64> {
   /// The [address] must be 8-byte aligned.
   external int get value;
 
-  external void set value(int value);
+  external set value(int value);
 
   /// The 64-bit two's complement integer at `address + 8 * index`.
   ///
@@ -400,7 +402,7 @@ extension Uint8Pointer on Pointer<Uint8> {
   /// being stored, and the 8-bit value is zero-extended when it is loaded.
   external int get value;
 
-  external void set value(int value);
+  external set value(int value);
 
   /// The 8-bit unsigned integer at `address + index`.
   ///
@@ -445,7 +447,7 @@ extension Uint16Pointer on Pointer<Uint16> {
   /// The [address] must be 2-byte aligned.
   external int get value;
 
-  external void set value(int value);
+  external set value(int value);
 
   /// The 16-bit unsigned integer at `address + 2 * index`.
   ///
@@ -496,7 +498,7 @@ extension Uint32Pointer on Pointer<Uint32> {
   /// The [address] must be 4-byte aligned.
   external int get value;
 
-  external void set value(int value);
+  external set value(int value);
 
   /// The 32-bit unsigned integer at `address + 4 * index`.
   ///
@@ -544,7 +546,7 @@ extension Uint64Pointer on Pointer<Uint64> {
   /// The [address] must be 8-byte aligned.
   external int get value;
 
-  external void set value(int value);
+  external set value(int value);
 
   /// The 64-bit unsigned integer at `address + 8 * index`.
   ///
@@ -589,7 +591,7 @@ extension FloatPointer on Pointer<Float> {
   /// The [address] must be 4-byte aligned.
   external double get value;
 
-  external void set value(double value);
+  external set value(double value);
 
   /// The float at `address + 4 * index`.
   ///
@@ -637,7 +639,7 @@ extension DoublePointer on Pointer<Double> {
   /// The [address] must be 8-byte aligned.
   external double get value;
 
-  external void set value(double value);
+  external set value(double value);
 
   /// The double at `address + 8 * index`.
   ///
@@ -678,7 +680,7 @@ extension BoolPointer on Pointer<Bool> {
   /// The bool at [address].
   external bool get value;
 
-  external void set value(bool value);
+  external set value(bool value);
 
   /// The bool at `address + index`.
   external bool operator [](int index);
@@ -793,7 +795,7 @@ extension PointerPointer<T extends NativeType> on Pointer<Pointer<T>> {
   /// platforms the [address] must be 8-byte aligned.
   external Pointer<T> get value;
 
-  external void set value(Pointer<T> value);
+  external set value(Pointer<T> value);
 
   /// Load a Dart value from this location offset by [index].
   ///
@@ -903,7 +905,7 @@ extension AbiSpecificIntegerPointer<T extends AbiSpecificInteger>
   /// The integer at [address].
   external int get value;
 
-  external void set value(int value);
+  external set value(int value);
 
   /// The integer at `address + sizeOf<T>() * index`.
   external int operator [](int index);

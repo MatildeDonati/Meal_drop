@@ -40,18 +40,24 @@ class JsLinkedHashMap<K, V> extends MapBase<K, V>
 
   JsLinkedHashMap();
 
+  @override
   int get length => _length;
+  @override
   bool get isEmpty => _length == 0;
+  @override
   bool get isNotEmpty => !isEmpty;
 
+  @override
   Iterable<K> get keys {
-    return new LinkedHashMapKeyIterable<K>(this);
+    return LinkedHashMapKeyIterable<K>(this);
   }
 
+  @override
   Iterable<V> get values {
-    return new MappedIterable<K, V>(keys, (each) => this[each] as V);
+    return MappedIterable<K, V>(keys, (each) => this[each] as V);
   }
 
+  @override
   bool containsKey(Object? key) {
     if (_isStringKey(key)) {
       var strings = _strings;
@@ -73,27 +79,30 @@ class JsLinkedHashMap<K, V> extends MapBase<K, V>
     return internalFindBucketIndex(bucket, key) >= 0;
   }
 
+  @override
   bool containsValue(Object? value) {
     return keys.any((each) => this[each] == value);
   }
 
+  @override
   void addAll(Map<K, V> other) {
     other.forEach((K key, V value) {
       this[key] = value;
     });
   }
 
+  @override
   V? operator [](Object? key) {
     if (_isStringKey(key)) {
       var strings = _strings;
       if (strings == null) return null;
       LinkedHashMapCell? cell = _getTableCell(strings, key);
-      return JS('', '#', cell == null ? null : cell.hashMapCellValue);
+      return JS('', '#', cell?.hashMapCellValue);
     } else if (_isNumericKey(key)) {
       var nums = _nums;
       if (nums == null) return null;
       LinkedHashMapCell? cell = _getTableCell(nums, key);
-      return JS('', '#', cell == null ? null : cell.hashMapCellValue);
+      return JS('', '#', cell?.hashMapCellValue);
     } else {
       return internalGet(key);
     }
@@ -109,6 +118,7 @@ class JsLinkedHashMap<K, V> extends MapBase<K, V>
     return JS('', '#', cell.hashMapCellValue);
   }
 
+  @override
   void operator []=(K key, V value) {
     if (_isStringKey(key)) {
       var strings = _strings;
@@ -143,13 +153,15 @@ class JsLinkedHashMap<K, V> extends MapBase<K, V>
     }
   }
 
-  V putIfAbsent(K key, V ifAbsent()) {
+  @override
+  V putIfAbsent(K key, V Function() ifAbsent) {
     if (containsKey(key)) return this[key] as V;
     V value = ifAbsent();
     this[key] = value;
     return value;
   }
 
+  @override
   V? remove(Object? key) {
     if (_isStringKey(key)) {
       return _removeHashTableEntry(_strings, key);
@@ -178,6 +190,7 @@ class JsLinkedHashMap<K, V> extends MapBase<K, V>
     return JS('', '#', cell.hashMapCellValue);
   }
 
+  @override
   void clear() {
     if (_length > 0) {
       _strings = _nums = _rest = _first = _last = null;
@@ -186,7 +199,8 @@ class JsLinkedHashMap<K, V> extends MapBase<K, V>
     }
   }
 
-  void forEach(void action(K key, V value)) {
+  @override
+  void forEach(void Function(K key, V value) action) {
     LinkedHashMapCell? cell = _first;
     int modifications = _modifications;
     while (cell != null) {
@@ -228,7 +242,7 @@ class JsLinkedHashMap<K, V> extends MapBase<K, V>
 
   // Create a new cell and link it in as the last one in the list.
   LinkedHashMapCell _newLinkedCell(K key, V value) {
-    LinkedHashMapCell cell = new LinkedHashMapCell(key, value);
+    LinkedHashMapCell cell = LinkedHashMapCell(key, value);
     if (_first == null) {
       _first = _last = cell;
     } else {
@@ -291,6 +305,7 @@ class JsLinkedHashMap<K, V> extends MapBase<K, V>
     return -1;
   }
 
+  @override
   String toString() => MapBase.mapToString(this);
 
   LinkedHashMapCell? _getTableCell(var table, var key) {
@@ -343,18 +358,23 @@ class LinkedHashMapKeyIterable<E> extends EfficientLengthIterable<E> {
   final JsLinkedHashMap _map;
   LinkedHashMapKeyIterable(this._map);
 
+  @override
   int get length => _map._length;
+  @override
   bool get isEmpty => _map._length == 0;
 
+  @override
   Iterator<E> get iterator {
-    return new LinkedHashMapKeyIterator<E>(_map, _map._modifications);
+    return LinkedHashMapKeyIterator<E>(_map, _map._modifications);
   }
 
+  @override
   bool contains(Object? element) {
     return _map.containsKey(element);
   }
 
-  void forEach(void f(E element)) {
+  @override
+  void forEach(void Function(E element) f) {
     LinkedHashMapCell? cell = _map._first;
     int modifications = _map._modifications;
     while (cell != null) {
@@ -377,9 +397,11 @@ class LinkedHashMapKeyIterator<E> implements Iterator<E> {
     _cell = _map._first;
   }
 
+  @override
   @pragma('dart2js:as:trust')
   E get current => _current as E;
 
+  @override
   bool moveNext() {
     if (_modifications != _map._modifications) {
       throw ConcurrentModificationError(_map);
@@ -399,10 +421,12 @@ class LinkedHashMapKeyIterator<E> implements Iterator<E> {
 base class JsIdentityLinkedHashMap<K, V> extends JsLinkedHashMap<K, V> {
   JsIdentityLinkedHashMap();
 
+  @override
   int internalComputeHashCode(var key) {
     return JsLinkedHashMap.bucketHashMask & identityHashCode(key);
   }
 
+  @override
   int internalFindBucketIndex(var bucket, var key) {
     if (bucket == null) return -1;
     int length = JS('int', '#.length', bucket);
@@ -420,10 +444,12 @@ base class JsIdentityLinkedHashMap<K, V> extends JsLinkedHashMap<K, V> {
 base class JsConstantLinkedHashMap<K, V> extends JsLinkedHashMap<K, V> {
   JsConstantLinkedHashMap();
 
+  @override
   int internalComputeHashCode(var key) {
     return JsLinkedHashMap.bucketHashMask & constantHashCode(key);
   }
 
+  @override
   int internalFindBucketIndex(var bucket, var key) {
     if (bucket == null) return -1;
     int length = JS('int', '#.length', bucket);

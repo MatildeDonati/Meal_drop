@@ -103,6 +103,7 @@ throwCyclicInitializationError([String? field]) {
 class _CyclicInitializationError extends Error {
   final String? variableName;
   _CyclicInitializationError([this.variableName]);
+  @override
   String toString() {
     var variableName = this.variableName;
     return variableName == null
@@ -117,7 +118,7 @@ throwNullValueError() {
   // actually be queried ... it only affects how the error is printed.
   throw NoSuchMethodError.withInvocation(
     null,
-    Invocation.method(Symbol('<Unexpected Null Value>'), null, null),
+    Invocation.method(const Symbol('<Unexpected Null Value>'), null, null),
   );
 }
 
@@ -212,7 +213,7 @@ StackTrace stackTrace(Object? error) {
 
   // If we've already created the Dart stack trace object, return it.
   StackTrace? trace = JS('', '#[#]', error, _stackTrace);
-  if (trace != null) return trace;
+  return trace;
 
   // Otherwise create the Dart stack trace (by parsing the JS stack), and
   // cache it so we don't repeat the parsing/allocation.
@@ -314,7 +315,7 @@ void throw_(Object? exception) {
 Object? createErrorWithStack(Object exception, StackTrace? trace) {
   if (trace == null) {
     var error = JS('', '#[#]', exception, _jsError);
-    return error != null ? error : JS('', 'new #(#)', DartError, exception);
+    return error ?? JS('', 'new #(#)', DartError, exception);
   }
   if (trace is _StackTrace) {
     /// Optimization: if this stack trace and exception already have a matching
@@ -342,9 +343,10 @@ class _StackTrace implements StackTrace {
   _StackTrace(this._jsError) : _jsObjectMissingTrace = null;
 
   _StackTrace.missing(Object? caughtObj)
-      : _jsObjectMissingTrace = caughtObj != null ? caughtObj : 'null',
+      : _jsObjectMissingTrace = caughtObj ?? 'null',
         _jsError = JS('', 'Error()');
 
+  @override
   String toString() {
     if (_trace != null) return _trace!;
 
@@ -353,7 +355,7 @@ class _StackTrace implements StackTrace {
     if (e != null && JS<bool>('!', 'typeof # === "object"', e)) {
       trace = e is NativeError ? e.dartStack() : JS<String>('', '#.stack', e);
       var mapper = stackTraceMapper;
-      if (trace != null && mapper != null) {
+      if (mapper != null) {
         trace = mapper(trace);
       }
     }

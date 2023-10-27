@@ -4,30 +4,27 @@
 
 part of dart._interceptors;
 
-/**
- * The interceptor class for [List]. The compiler recognizes this
- * class as an interceptor, and changes references to [:this:] to
- * actually use the receiver of the method, which is generated as an extra
- * argument added to each member.
- */
+/// The interceptor class for [List]. The compiler recognizes this
+/// class as an interceptor, and changes references to [:this:] to
+/// actually use the receiver of the method, which is generated as an extra
+/// argument added to each member.
 @JsPeerInterface(name: 'Array')
 class JSArray<E> extends JavaScriptObject
     implements List<E>, JSIndexable<E>, TrustedGetRuntimeType {
   const JSArray();
 
-  /**
-   * Constructor for adding type parameters to an existing JavaScript
-   * Array. Used for creating literal lists.
-   */
+  /// Constructor for adding type parameters to an existing JavaScript
+  /// Array. Used for creating literal lists.
   factory JSArray.of(list) {
     // TODO(sra): Move this to core.List for better readability.
     //
     // TODO(jmesserly): this uses special compiler magic to close over the
     // parameterized ES6 'JSArray' class.
     jsObjectSetPrototypeOf(list, JS('', 'JSArray.prototype'));
-    if (JS_GET_FLAG('NEW_RUNTIME_TYPES'))
+    if (JS_GET_FLAG('NEW_RUNTIME_TYPES')) {
       JS('', '#.# = #', list, JS_EMBEDDED_GLOBAL('', ARRAY_RTI_PROPERTY),
           JSArray<E>);
+    }
     return JS('-dynamic', '#', list);
   }
 
@@ -35,9 +32,10 @@ class JSArray<E> extends JavaScriptObject
   factory JSArray.fixed(list) {
     jsObjectSetPrototypeOf(list, JS('', 'JSArray.prototype'));
     JS('', r'#.fixed$length = Array', list);
-    if (JS_GET_FLAG('NEW_RUNTIME_TYPES'))
+    if (JS_GET_FLAG('NEW_RUNTIME_TYPES')) {
       JS('', '#.# = #', list, JS_EMBEDDED_GLOBAL('', ARRAY_RTI_PROPERTY),
           JSArray<E>);
+    }
     return JS('-dynamic', '#', list);
   }
 
@@ -45,9 +43,10 @@ class JSArray<E> extends JavaScriptObject
     jsObjectSetPrototypeOf(list, JS('', 'JSArray.prototype'));
     JS('', r'#.fixed$length = Array', list);
     JS('', r'#.immutable$list = Array', list);
-    if (JS_GET_FLAG('NEW_RUNTIME_TYPES'))
+    if (JS_GET_FLAG('NEW_RUNTIME_TYPES')) {
       JS('', '#.# = #', list, JS_EMBEDDED_GLOBAL('', ARRAY_RTI_PROPERTY),
           JSArray<E>);
+    }
     return JS('-dynamic', '#', list);
   }
 
@@ -78,12 +77,15 @@ class JSArray<E> extends JavaScriptObject
     }
   }
 
+  @override
   List<R> cast<R>() => List.castFrom<E, R>(this);
+  @override
   void add(E value) {
     checkGrowable('add');
     JS('void', r'#.push(#)', this, value);
   }
 
+  @override
   E removeAt(@nullCheck int index) {
     checkGrowable('removeAt');
     if (index < 0 || index >= length) {
@@ -92,6 +94,7 @@ class JSArray<E> extends JavaScriptObject
     return JS('-dynamic', r'#.splice(#, 1)[0]', this, index);
   }
 
+  @override
   void insert(@nullCheck int index, E value) {
     checkGrowable('insert');
     if (index < 0 || index > length) {
@@ -100,6 +103,7 @@ class JSArray<E> extends JavaScriptObject
     JS('void', r'#.splice(#, 0, #)', this, index, value);
   }
 
+  @override
   void insertAll(@nullCheck int index, Iterable<E> iterable) {
     checkGrowable('insertAll');
     RangeError.checkValueInInterval(index, 0, this.length, "index");
@@ -114,6 +118,7 @@ class JSArray<E> extends JavaScriptObject
     this.setRange(index, end, iterable);
   }
 
+  @override
   void setAll(@nullCheck int index, Iterable<E> iterable) {
     checkMutable('setAll');
     RangeError.checkValueInInterval(index, 0, this.length, "index");
@@ -122,12 +127,14 @@ class JSArray<E> extends JavaScriptObject
     }
   }
 
+  @override
   E removeLast() {
     checkGrowable('removeLast');
     if (length == 0) throw diagnoseIndexError(this, -1);
     return JS('var', r'#.pop()', this);
   }
 
+  @override
   bool remove(Object? element) {
     checkGrowable('remove');
     var length = this.length;
@@ -140,14 +147,14 @@ class JSArray<E> extends JavaScriptObject
     return false;
   }
 
-  /**
-   * Removes elements matching [test] from [this] List.
-   */
+  /// Removes elements matching [test] from [this] List.
+  @override
   void removeWhere(bool Function(E) test) {
     checkGrowable('removeWhere');
     _removeWhere(test, true);
   }
 
+  @override
   void retainWhere(bool Function(E) test) {
     checkGrowable('retainWhere');
     _removeWhere(test, false);
@@ -182,14 +189,17 @@ class JSArray<E> extends JavaScriptObject
     }
   }
 
+  @override
   Iterable<E> where(bool Function(E) f) {
     return WhereIterable<E>(this, f);
   }
 
+  @override
   Iterable<T> expand<T>(Iterable<T> Function(E) f) {
     return ExpandIterable<E, T>(this, f);
   }
 
+  @override
   void addAll(Iterable<E> collection) {
     int i = this.length;
     checkGrowable('addAll');
@@ -200,10 +210,12 @@ class JSArray<E> extends JavaScriptObject
     }
   }
 
+  @override
   void clear() {
     length = 0;
   }
 
+  @override
   void forEach(void Function(E) f) {
     int end = this.length;
     for (int i = 0; i < end; i++) {
@@ -213,10 +225,12 @@ class JSArray<E> extends JavaScriptObject
     }
   }
 
+  @override
   Iterable<T> map<T>(T Function(E) f) {
     return MappedListIterable<E, T>(this, f);
   }
 
+  @override
   String join([String separator = ""]) {
     var length = this.length;
     var list = List<String>.filled(length, "");
@@ -226,23 +240,28 @@ class JSArray<E> extends JavaScriptObject
     return JS<String>('!', "#.join(#)", list, separator);
   }
 
+  @override
   Iterable<E> take(int n) {
-    return new SubListIterable<E>(this, 0, checkNotNullable(n, "count"));
+    return SubListIterable<E>(this, 0, checkNotNullable(n, "count"));
   }
 
-  Iterable<E> takeWhile(bool test(E value)) {
+  @override
+  Iterable<E> takeWhile(bool Function(E value) test) {
     return TakeWhileIterable<E>(this, test);
   }
 
+  @override
   Iterable<E> skip(int n) {
     return SubListIterable<E>(this, n, null);
   }
 
+  @override
   Iterable<E> skipWhile(bool Function(E) test) {
     return SkipWhileIterable<E>(this, test);
   }
 
-  E reduce(E combine(E previousValue, E element)) {
+  @override
+  E reduce(E Function(E previousValue, E element) combine) {
     int length = this.length;
     if (length == 0) throw IterableElementError.noElement();
     E value = this[0];
@@ -254,6 +273,7 @@ class JSArray<E> extends JavaScriptObject
     return value;
   }
 
+  @override
   T fold<T>(T initialValue, T Function(T previousValue, E element) combine) {
     var value = initialValue;
     int length = this.length;
@@ -265,6 +285,7 @@ class JSArray<E> extends JavaScriptObject
     return value;
   }
 
+  @override
   E firstWhere(bool Function(E) test, {E Function()? orElse}) {
     int end = this.length;
     for (int i = 0; i < end; ++i) {
@@ -276,6 +297,7 @@ class JSArray<E> extends JavaScriptObject
     throw IterableElementError.noElement();
   }
 
+  @override
   E lastWhere(bool Function(E) test, {E Function()? orElse}) {
     int length = this.length;
     for (int i = length - 1; i >= 0; i--) {
@@ -289,9 +311,10 @@ class JSArray<E> extends JavaScriptObject
     throw IterableElementError.noElement();
   }
 
+  @override
   E singleWhere(bool Function(E) test, {E Function()? orElse}) {
     int length = this.length;
-    E? match = null;
+    E? match;
     bool matchFound = false;
     for (int i = 0; i < length; i++) {
       var element = JS<E>('', '#[#]', this, i);
@@ -311,10 +334,12 @@ class JSArray<E> extends JavaScriptObject
     throw IterableElementError.noElement();
   }
 
+  @override
   E elementAt(int index) {
     return this[index];
   }
 
+  @override
   List<E> sublist(@nullCheck int start, [int? end]) {
     if (start < 0 || start > length) {
       throw RangeError.range(start, 0, length, "start");
@@ -323,8 +348,8 @@ class JSArray<E> extends JavaScriptObject
       end = length;
     } else {
       @notNull
-      var _end = end;
-      if (_end < start || _end > length) {
+      var end0 = end;
+      if (end0 < start || end0 > length) {
         throw RangeError.range(end, start, length, "end");
       }
     }
@@ -332,27 +357,32 @@ class JSArray<E> extends JavaScriptObject
     return JSArray<E>.of(JS('', r'#.slice(#, #)', this, start, end));
   }
 
+  @override
   Iterable<E> getRange(int start, int end) {
     RangeError.checkValidRange(start, end, this.length);
     return SubListIterable<E>(this, start, end);
   }
 
+  @override
   E get first {
     if (length > 0) return this[0];
     throw IterableElementError.noElement();
   }
 
+  @override
   E get last {
     if (length > 0) return this[length - 1];
     throw IterableElementError.noElement();
   }
 
+  @override
   E get single {
     if (length == 1) return this[0];
     if (length == 0) throw IterableElementError.noElement();
     throw IterableElementError.tooMany();
   }
 
+  @override
   void removeRange(@nullCheck int start, @nullCheck int end) {
     checkGrowable('removeRange');
     RangeError.checkValidRange(start, end, this.length);
@@ -360,6 +390,7 @@ class JSArray<E> extends JavaScriptObject
     JS('', '#.splice(#, #)', this, start, deleteCount);
   }
 
+  @override
   void setRange(@nullCheck int start, @nullCheck int end, Iterable<E> iterable,
       [@nullCheck int skipCount = 0]) {
     checkMutable('set range');
@@ -401,6 +432,7 @@ class JSArray<E> extends JavaScriptObject
     }
   }
 
+  @override
   void fillRange(@nullCheck int start, @nullCheck int end, [E? fillValue]) {
     checkMutable('fill range');
     RangeError.checkValidRange(start, end, this.length);
@@ -410,6 +442,7 @@ class JSArray<E> extends JavaScriptObject
     }
   }
 
+  @override
   void replaceRange(
       @nullCheck int start, @nullCheck int end, Iterable<E> replacement) {
     checkGrowable('replace range');
@@ -439,6 +472,7 @@ class JSArray<E> extends JavaScriptObject
     }
   }
 
+  @override
   bool any(bool Function(E) test) {
     int end = this.length;
     for (int i = 0; i < end; i++) {
@@ -449,6 +483,7 @@ class JSArray<E> extends JavaScriptObject
     return false;
   }
 
+  @override
   bool every(bool Function(E) test) {
     int end = this.length;
     for (int i = 0; i < end; i++) {
@@ -459,8 +494,10 @@ class JSArray<E> extends JavaScriptObject
     return true;
   }
 
+  @override
   Iterable<E> get reversed => ReversedListIterable<E>(this);
 
+  @override
   void sort([int Function(E, E)? compare]) {
     checkMutable('sort');
     if (compare == null) {
@@ -471,9 +508,10 @@ class JSArray<E> extends JavaScriptObject
     }
   }
 
+  @override
   void shuffle([Random? random]) {
     checkMutable('shuffle');
-    if (random == null) random = Random();
+    random ??= Random();
     int length = this.length;
     while (length > 1) {
       int pos = random.nextInt(length);
@@ -484,6 +522,7 @@ class JSArray<E> extends JavaScriptObject
     }
   }
 
+  @override
   int indexOf(Object? element, [@nullCheck int start = 0]) {
     int length = this.length;
     if (start >= length) {
@@ -500,6 +539,7 @@ class JSArray<E> extends JavaScriptObject
     return -1;
   }
 
+  @override
   int lastIndexOf(Object? element, [int? startIndex]) {
     @notNull
     int start = startIndex ?? this.length - 1;
@@ -516,6 +556,7 @@ class JSArray<E> extends JavaScriptObject
     return -1;
   }
 
+  @override
   bool contains(Object? other) {
     var length = this.length;
     for (int i = 0; i < length; i++) {
@@ -525,33 +566,43 @@ class JSArray<E> extends JavaScriptObject
     return false;
   }
 
+  @override
   @notNull
   bool get isEmpty => length == 0;
 
+  @override
   @notNull
   bool get isNotEmpty => !isEmpty;
 
+  @override
   String toString() => ListBase.listToString(this);
 
+  @override
   List<E> toList({@nullCheck bool growable = true}) {
     var list = JS('', '#.slice()', this);
     if (!growable) markFixedList(list);
     return JSArray<E>.of(list);
   }
 
+  @override
   Set<E> toSet() => Set<E>.from(this);
 
+  @override
   Iterator<E> get iterator => ArrayIterator<E>(this);
 
+  @override
   int get hashCode => identityHashCode(this);
 
+  @override
   @notNull
   bool operator ==(other) => identical(this, other);
 
+  @override
   @notNull
   int get length => JS<int>('!', r'#.length', this);
 
-  void set length(@nullCheck int newLength) {
+  @override
+  set length(@nullCheck int newLength) {
     checkGrowable('set length');
     // TODO(sra): Remove this test and let JavaScript throw an error.
     if (newLength < 0) {
@@ -583,39 +634,43 @@ class JSArray<E> extends JavaScriptObject
     JS('void', r'#.length = #', this, newLength);
   }
 
+  @override
   E operator [](int index) {
     // Suppress redundant null checks via JS.
-    if (index == null ||
-        // This form of the range check correctly rejects NaN.
-        JS<bool>('!', '!(# >= 0 && # < #.length)', index, index, this)) {
+    if (JS<bool>('!', '!(# >= 0 && # < #.length)', index, index, this)) {
       throw diagnoseIndexError(this, index);
     }
     return JS<E>('', '#[#]', this, index);
   }
 
+  @override
   void operator []=(int index, E value) {
     checkMutable('indexed set');
-    if (index == null ||
-        // This form of the range check correctly rejects NaN.
-        JS<bool>('!', '!(# >= 0 && # < #.length)', index, index, this)) {
+    if (JS<bool>('!', '!(# >= 0 && # < #.length)', index, index, this)) {
       throw diagnoseIndexError(this, index);
     }
     JS('void', r'#[#] = #', this, index, value);
   }
 
+  @override
   Map<int, E> asMap() {
     return ListMapView<E>(this);
   }
 
+  @override
   Type get runtimeType => List<E>;
 
+  @override
   Iterable<E> followedBy(Iterable<E> other) =>
       FollowedByIterable<E>.firstEfficient(this, other);
 
-  Iterable<T> whereType<T>() => new WhereTypeIterable<T>(this);
+  @override
+  Iterable<T> whereType<T>() => WhereTypeIterable<T>(this);
 
+  @override
   List<E> operator +(List<E> other) => [...this, ...other];
 
+  @override
   int indexWhere(bool Function(E) test, [int start = 0]) {
     if (start >= this.length) return -1;
     if (start < 0) start = 0;
@@ -625,8 +680,9 @@ class JSArray<E> extends JavaScriptObject
     return -1;
   }
 
+  @override
   int lastIndexWhere(bool Function(E) test, [int? start]) {
-    if (start == null) start = this.length - 1;
+    start ??= this.length - 1;
     if (start < 0) return -1;
     for (int i = start; i >= 0; i--) {
       if (test(this[i])) return i;
@@ -634,28 +690,28 @@ class JSArray<E> extends JavaScriptObject
     return -1;
   }
 
-  void set first(E element) {
+  @override
+  set first(E element) {
     if (this.isEmpty) throw IndexError.withLength(0, length, indexable: this);
     this[0] = element;
   }
 
-  void set last(E element) {
+  @override
+  set last(E element) {
     if (this.isEmpty) throw IndexError.withLength(0, length, indexable: this);
     this[this.length - 1] = element;
   }
 }
 
-/**
- * Dummy subclasses that allow the backend to track more precise
- * information about arrays through their type. The CPA type inference
- * relies on the fact that these classes do not override [] nor []=.
- *
- * These classes are really a fiction, and can have no methods, since
- * getInterceptor always returns JSArray.  We should consider pushing the
- * 'isGrowable' and 'isMutable' checks into the getInterceptor implementation so
- * these classes can have specialized implementations. Doing so will challenge
- * many assumptions in the JS backend.
- */
+/// Dummy subclasses that allow the backend to track more precise
+/// information about arrays through their type. The CPA type inference
+/// relies on the fact that these classes do not override [] nor []=.
+///
+/// These classes are really a fiction, and can have no methods, since
+/// getInterceptor always returns JSArray.  We should consider pushing the
+/// 'isGrowable' and 'isMutable' checks into the getInterceptor implementation so
+/// these classes can have specialized implementations. Doing so will challenge
+/// many assumptions in the JS backend.
 class JSMutableArray<E> extends JSArray<E> implements JSMutableIndexable<E> {}
 
 class JSFixedArray<E> extends JSMutableArray<E> {}
@@ -679,8 +735,10 @@ class ArrayIterator<E> implements Iterator<E> {
         _length = iterable.length,
         _index = 0;
 
+  @override
   E get current => _current as E;
 
+  @override
   bool moveNext() {
     @notNull
     int length = _iterable.length;

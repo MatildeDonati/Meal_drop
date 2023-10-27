@@ -2,11 +2,9 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import "dart:_internal" show patch, has63BitSmis;
 import 'dart:async';
 import 'dart:typed_data';
 import 'dart:isolate';
-import 'dart:typed_data';
 
 const Map<Type, int> _knownSizes = {
   Int8: 1,
@@ -1059,7 +1057,7 @@ extension AbiSpecificIntegerPointer<T extends AbiSpecificInteger>
       throw "UNREACHABLE: This case should have been rewritten in the CFE.";
 
   @patch
-  void set value(int value) =>
+  set value(int value) =>
       throw "UNREACHABLE: This case should have been rewritten in the CFE.";
 
   @patch
@@ -1184,43 +1182,56 @@ abstract final class NativeApi {
 
 @patch
 final class _ArraySize<T extends NativeType> implements Array<T> {
+  @override
   _checkIndex(int index) => throw UnsupportedError('_ArraySize._checkIndex');
 
+  @override
   List<int> get _nestedDimensions =>
       throw UnsupportedError('_ArraySize._nestedDimensions');
 
+  @override
   int get _nestedDimensionsFirst =>
       throw UnsupportedError('_ArraySize._nestedDimensionsFirst');
 
+  @override
   int? get _nestedDimensionsFirstCache =>
       throw UnsupportedError('_ArraySize._nestedDimensionsFirstCache');
 
-  void set _nestedDimensionsFirstCache(int? _) {
+  @override
+  set _nestedDimensionsFirstCache(int? _) {
     throw UnsupportedError('_ArraySize._nestedDimensionsFirstCache');
   }
 
+  @override
   int get _nestedDimensionsFlattened =>
       throw UnsupportedError('_ArraySize._nestedDimensionsFlattened');
 
+  @override
   int? get _nestedDimensionsFlattenedCache =>
       throw UnsupportedError('_ArraySize._nestedDimensionsFlattenedCache');
 
-  void set _nestedDimensionsFlattenedCache(int? _) {
+  @override
+  set _nestedDimensionsFlattenedCache(int? _) {
     throw UnsupportedError('_ArraySize._nestedDimensionsFlattenedCache');
   }
 
+  @override
   List<int> get _nestedDimensionsRest =>
       throw UnsupportedError('_ArraySize._nestedDimensionsRest');
 
+  @override
   List<int>? get _nestedDimensionsRestCache =>
       throw UnsupportedError('_ArraySize._nestedDimensionsRestCache');
 
-  void set _nestedDimensionsRestCache(List<int>? _) {
+  @override
+  set _nestedDimensionsRestCache(List<int>? _) {
     throw UnsupportedError('_ArraySize._nestedDimensionsRestCache');
   }
 
+  @override
   int get _size => throw UnsupportedError('_ArraySize._size');
 
+  @override
   Object get _typedDataBase =>
       throw UnsupportedError('_ArraySize._typedDataBase');
 }

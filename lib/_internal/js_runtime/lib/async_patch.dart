@@ -4,7 +4,6 @@
 
 // Patch file for the dart:async library.
 
-import 'dart:_internal' show patch;
 import 'dart:_js_helper'
     show
         ExceptionAndStackTrace,
@@ -22,7 +21,7 @@ import 'dart:_async_status_codes' as async_status_codes;
 @patch
 class _AsyncRun {
   @patch
-  static void _scheduleImmediate(void callback()) {
+  static void _scheduleImmediate(void Function() callback) {
     _scheduleImmediateClosure(callback);
   }
 
@@ -52,7 +51,7 @@ class _AsyncRun {
           convertDartClosureToJS(internalCallback, 1));
       JS('', '#.observe(#, { childList: true })', observer, div);
 
-      return (void callback()) {
+      return (void Function() callback) {
         assert(storedCallback == null);
         storedCallback = callback;
         // Because of a broken shadow-dom polyfill we have to change the
@@ -67,7 +66,7 @@ class _AsyncRun {
     return _scheduleImmediateWithTimer;
   }
 
-  static void _scheduleImmediateJsOverride(void callback()) {
+  static void _scheduleImmediateJsOverride(void Function() callback) {
     internalCallback() {
       callback();
     }
@@ -76,7 +75,7 @@ class _AsyncRun {
         convertDartClosureToJS(internalCallback, 0));
   }
 
-  static void _scheduleImmediateWithSetImmediate(void callback()) {
+  static void _scheduleImmediateWithSetImmediate(void Function() callback) {
     internalCallback() {
       callback();
     }
@@ -85,7 +84,7 @@ class _AsyncRun {
         convertDartClosureToJS(internalCallback, 0));
   }
 
-  static void _scheduleImmediateWithTimer(void callback()) {
+  static void _scheduleImmediateWithTimer(void Function() callback) {
     Timer._createTimer(Duration.zero, callback);
   }
 }
@@ -93,18 +92,18 @@ class _AsyncRun {
 @patch
 class Timer {
   @patch
-  static Timer _createTimer(Duration duration, void callback()) {
+  static Timer _createTimer(Duration duration, void Function() callback) {
     int milliseconds = duration.inMilliseconds;
     if (milliseconds < 0) milliseconds = 0;
-    return new _TimerImpl(milliseconds, callback);
+    return _TimerImpl(milliseconds, callback);
   }
 
   @patch
   static Timer _createPeriodicTimer(
-      Duration duration, void callback(Timer timer)) {
+      Duration duration, void Function(Timer timer) callback) {
     int milliseconds = duration.inMilliseconds;
     if (milliseconds < 0) milliseconds = 0;
-    return new _TimerImpl.periodic(milliseconds, callback);
+    return _TimerImpl.periodic(milliseconds, callback);
   }
 }
 
@@ -113,22 +112,22 @@ class _TimerImpl implements Timer {
   int? _handle;
   int _tick = 0;
 
-  _TimerImpl(int milliseconds, void callback()) : _once = true {
+  _TimerImpl(int milliseconds, void Function() callback) : _once = true {
     if (_hasTimer()) {
       void internalCallback() {
         _handle = null;
-        this._tick = 1;
+        _tick = 1;
         callback();
       }
 
       _handle = JS('int', 'self.setTimeout(#, #)',
           convertDartClosureToJS(internalCallback, 0), milliseconds);
     } else {
-      throw new UnsupportedError('`setTimeout()` not found.');
+      throw UnsupportedError('`setTimeout()` not found.');
     }
   }
 
-  _TimerImpl.periodic(int milliseconds, void callback(Timer timer))
+  _TimerImpl.periodic(int milliseconds, void Function(Timer timer) callback)
       : _once = false {
     if (_hasTimer()) {
       int start = JS('int', 'Date.now()');
@@ -136,7 +135,7 @@ class _TimerImpl implements Timer {
           'int',
           'self.setInterval(#, #)',
           convertDartClosureToJS(() {
-            int tick = this._tick + 1;
+            int tick = _tick + 1;
             if (milliseconds > 0) {
               int end = JS('int', 'Date.now()');
               int duration = end - start;
@@ -144,12 +143,12 @@ class _TimerImpl implements Timer {
                 tick = duration ~/ milliseconds;
               }
             }
-            this._tick = tick;
+            _tick = tick;
             callback(this);
           }, 0),
           milliseconds);
     } else {
-      throw new UnsupportedError('Periodic timer.');
+      throw UnsupportedError('Periodic timer.');
     }
   }
 
@@ -170,7 +169,7 @@ class _TimerImpl implements Timer {
       }
       _handle = null;
     } else {
-      throw new UnsupportedError('Canceling a timer.');
+      throw UnsupportedError('Canceling a timer.');
     }
   }
 }
@@ -181,7 +180,7 @@ bool _hasTimer() {
 }
 
 class _AsyncAwaitCompleter<T> implements Completer<T> {
-  final _future = new _Future<T>();
+  final _future = _Future<T>();
   bool isSync;
 
   _AsyncAwaitCompleter() : isSync = false;
@@ -221,7 +220,7 @@ class _AsyncAwaitCompleter<T> implements Completer<T> {
 /// Used as part of the runtime support for the async/await transformation.
 @pragma('dart2js:assumeDynamic') // Global type inference can't see call site.
 Completer<T> _makeAsyncAwaitCompleter<T>() {
-  return new _AsyncAwaitCompleter<T>();
+  return _AsyncAwaitCompleter<T>();
 }
 
 /// Initiates the computation of an `async` function and starts the body
@@ -279,14 +278,13 @@ dynamic _asyncRethrow(dynamic object, Completer completer) {
 /// The [bodyFunction] argument is the continuation that should be invoked
 /// when the future completes.
 void _awaitOnObject(object, _WrappedAsyncBody bodyFunction) {
-  FutureOr<dynamic> Function(dynamic) thenCallback =
-      (result) => bodyFunction(async_status_codes.SUCCESS, result);
+  thenCallback(result) => bodyFunction(async_status_codes.SUCCESS, result);
 
-  Function errorCallback = (dynamic error, StackTrace stackTrace) {
+  errorCallback(dynamic error, StackTrace stackTrace) {
     ExceptionAndStackTrace wrappedException =
-        new ExceptionAndStackTrace(error, stackTrace);
+        ExceptionAndStackTrace(error, stackTrace);
     bodyFunction(async_status_codes.ERROR, wrappedException);
-  };
+  }
 
   if (object is _Future) {
     // We can skip the zone registration, since the bodyFunction is already
@@ -295,14 +293,14 @@ void _awaitOnObject(object, _WrappedAsyncBody bodyFunction) {
   } else if (object is Future) {
     object.then(thenCallback, onError: errorCallback);
   } else {
-    _Future future = new _Future().._setValue(object);
+    _Future future = _Future().._setValue(object);
     // We can skip the zone registration, since the bodyFunction is already
     // registered (see [_wrapJsFunctionForAsync]).
     future._thenAwait(thenCallback, errorCallback);
   }
 }
 
-typedef void _WrappedAsyncBody(int errorCode, dynamic result);
+typedef _WrappedAsyncBody = void Function(int errorCode, dynamic result);
 
 _WrappedAsyncBody _wrapJsFunctionForAsync(dynamic /* js function */ function) {
   var protected = JS(
@@ -461,7 +459,7 @@ class _AsyncStarStreamController<T> {
 
   bool get isPaused => controller.isPaused;
 
-  _Future? cancelationFuture = null;
+  _Future? cancelationFuture;
 
   /// True after the StreamSubscription has been cancelled.
   /// When this is true, errors thrown from the async* body should go to the
@@ -486,7 +484,7 @@ class _AsyncStarStreamController<T> {
       });
     }
 
-    controller = new StreamController<T>(onListen: () {
+    controller = StreamController<T>(onListen: () {
       _resumeBody();
     }, onResume: () {
       // Only schedule again if the async* function actually is suspended.
@@ -499,7 +497,7 @@ class _AsyncStarStreamController<T> {
     }, onCancel: () {
       // If the async* is finished we ignore cancel events.
       if (!controller.isClosed) {
-        cancelationFuture = new _Future();
+        cancelationFuture = _Future();
         if (isSuspended) {
           // Resume the suspended async* function to run finalizers.
           isSuspended = false;
@@ -518,7 +516,7 @@ class _AsyncStarStreamController<T> {
 /// Used as part of the runtime support for the async/await transformation.
 @pragma('dart2js:assumeDynamic') // Global type inference can't see call site.
 _makeAsyncStarStreamController<T>(_WrappedAsyncBody body) {
-  return new _AsyncStarStreamController<T>(body);
+  return _AsyncStarStreamController<T>(body);
 }
 
 class _IterationMarker {
@@ -533,7 +531,7 @@ class _IterationMarker {
   const _IterationMarker._(this.state, this.value);
 
   static yieldStar(dynamic /* Iterable or Stream */ values) {
-    return new _IterationMarker._(YIELD_STAR, values);
+    return _IterationMarker._(YIELD_STAR, values);
   }
 
   static endOfIteration() {
@@ -541,13 +539,14 @@ class _IterationMarker {
   }
 
   static yieldSingle(dynamic value) {
-    return new _IterationMarker._(YIELD_SINGLE, value);
+    return _IterationMarker._(YIELD_SINGLE, value);
   }
 
   static uncaughtError(dynamic error) {
-    return new _IterationMarker._(UNCAUGHT_ERROR, error);
+    return _IterationMarker._(UNCAUGHT_ERROR, error);
   }
 
+  @override
   toString() => "IterationMarker($state, $value)";
 }
 
@@ -566,20 +565,21 @@ class _SyncStarIterator<T> implements Iterator<T> {
   Object? _body;
 
   // The current value, unless iterating a non-sync* nested iterator.
-  T? _current = null;
+  T? _current;
 
   // Value passed back from state machine for uncaught exceptions.
   Object? _datum;
 
   // This is the nested iterator when iterating a yield* of a non-sync iterator.
-  Iterator<T>? _nestedIterator = null;
+  Iterator<T>? _nestedIterator;
 
   // Stack of suspended state machines when iterating a yield* of a sync*
   // iterator.
-  List? _suspendedBodies = null;
+  List? _suspendedBodies;
 
   _SyncStarIterator(this._body);
 
+  @override
   T get current {
     return _current as dynamic; // implicit: as T;
   }
@@ -596,6 +596,7 @@ class _SyncStarIterator<T> implements Iterator<T> {
     }
   }
 
+  @override
   bool moveNext() {
     if (JS_GET_FLAG('FALSE')) _modelGeneratedCode();
     Object? errorValue;
@@ -673,7 +674,7 @@ class _SyncStarIterator<T> implements Iterator<T> {
     return false;
   }
 
-  static _terminatedBody(_1, _2, _3) => async_status_codes.SYNC_STAR_DONE;
+  static _terminatedBody(1, 2, 3) => async_status_codes.SYNC_STAR_DONE;
 
   // Called from generated code.
   @pragma('dart2js:parameter:trust')
@@ -715,7 +716,7 @@ class _SyncStarIterator<T> implements Iterator<T> {
 /// Used as part of the runtime support for the async/await transformation.
 @pragma('dart2js:assumeDynamic') // Global type inference can't see call site.
 _SyncStarIterable<T> _makeSyncStarIterable<T>(body) {
-  return new _SyncStarIterable<T>(body);
+  return _SyncStarIterable<T>(body);
 }
 
 /// An Iterable corresponding to a sync* method.
@@ -730,7 +731,8 @@ class _SyncStarIterable<T> extends Iterable<T> {
 
   _SyncStarIterable(this._outerHelper);
 
+  @override
   @pragma('dart2js:prefer-inline')
   _SyncStarIterator<T> get iterator =>
-      new _SyncStarIterator<T>(JS('', '#()', _outerHelper));
+      _SyncStarIterator<T>(JS('', '#()', _outerHelper));
 }

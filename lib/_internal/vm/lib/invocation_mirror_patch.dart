@@ -67,18 +67,19 @@ class _InvocationMirror implements Invocation {
     }
     if (funcName.startsWith("get:")) {
       _type |= _GETTER;
-      _memberName = new internal.Symbol.unvalidated(funcName.substring(4));
+      _memberName = internal.Symbol.unvalidated(funcName.substring(4));
     } else if (funcName.startsWith("set:")) {
       _type |= _SETTER;
       _memberName =
-          new internal.Symbol.unvalidated(funcName.substring(4) + "=");
+          internal.Symbol.unvalidated(funcName.substring(4) + "=");
     } else {
       _type |=
           _isSuperInvocation ? (_SUPER << _LEVEL_SHIFT) | _METHOD : _METHOD;
-      _memberName = new internal.Symbol.unvalidated(funcName);
+      _memberName = internal.Symbol.unvalidated(funcName);
     }
   }
 
+  @override
   Symbol get memberName {
     if (_memberName == null) {
       _setMemberNameAndType();
@@ -91,6 +92,7 @@ class _InvocationMirror implements Invocation {
     return typeArgsLen == 0 ? _delayedTypeArgumentsLen : typeArgsLen;
   }
 
+  @override
   List<Type> get typeArguments {
     if (_typeArguments == null) {
       if (_typeArgsLen == 0) {
@@ -109,6 +111,7 @@ class _InvocationMirror implements Invocation {
   external static List<Type> _unpackTypeArguments(
       typeArguments, int numTypeArguments);
 
+  @override
   List get positionalArguments {
     if (_positionalArguments == null) {
       // The argument descriptor counts the receiver, but not the type arguments
@@ -121,12 +124,13 @@ class _InvocationMirror implements Invocation {
       // Exclude receiver and type args in the returned list.
       var receiverIndex = _typeArgsLen > 0 ? 1 : 0;
       var args = _arguments!;
-      _positionalArguments = new _ImmutableList._from(
+      _positionalArguments = _ImmutableList._from(
           args, receiverIndex + 1, numPositionalArguments);
     }
     return _positionalArguments!;
   }
 
+  @override
   Map<Symbol, dynamic> get namedArguments {
     if (_namedArguments == null) {
       final argsDescriptor = _argumentsDescriptor!;
@@ -139,19 +143,20 @@ class _InvocationMirror implements Invocation {
         return _namedArguments = const {};
       }
       var receiverIndex = _typeArgsLen > 0 ? 1 : 0;
-      final namedArguments = new Map<Symbol, Object?>();
+      final namedArguments = <Symbol, Object?>{};
       for (var i = 0; i < numNamedArguments; i++) {
         var namedEntryIndex = _FIRST_NAMED_ENTRY + 2 * i;
         var pos = argsDescriptor[namedEntryIndex + 1] as int;
-        var arg_name = argsDescriptor[namedEntryIndex] as String;
-        var arg_value = _arguments![receiverIndex + pos];
-        namedArguments[new internal.Symbol.unvalidated(arg_name)] = arg_value;
+        var argName = argsDescriptor[namedEntryIndex] as String;
+        var argValue = _arguments![receiverIndex + pos];
+        namedArguments[internal.Symbol.unvalidated(argName)] = argValue;
       }
-      _namedArguments = new Map.unmodifiable(namedArguments);
+      _namedArguments = Map.unmodifiable(namedArguments);
     }
     return _namedArguments!;
   }
 
+  @override
   bool get isMethod {
     if (_type == _UNINITIALIZED) {
       _setMemberNameAndType();
@@ -159,6 +164,7 @@ class _InvocationMirror implements Invocation {
     return (_type & _KIND_MASK) == _METHOD;
   }
 
+  @override
   bool get isAccessor {
     if (_type == _UNINITIALIZED) {
       _setMemberNameAndType();
@@ -166,6 +172,7 @@ class _InvocationMirror implements Invocation {
     return (_type & _KIND_MASK) != _METHOD;
   }
 
+  @override
   bool get isGetter {
     if (_type == _UNINITIALIZED) {
       _setMemberNameAndType();
@@ -173,6 +180,7 @@ class _InvocationMirror implements Invocation {
     return (_type & _KIND_MASK) == _GETTER;
   }
 
+  @override
   bool get isSetter {
     if (_type == _UNINITIALIZED) {
       _setMemberNameAndType();
@@ -185,14 +193,13 @@ class _InvocationMirror implements Invocation {
       [this._delayedTypeArgumentsLen = 0]);
 
   _InvocationMirror._withoutType(this._functionName, this._typeArguments,
-      this._positionalArguments, this._namedArguments, this._isSuperInvocation,
-      [this._delayedTypeArgumentsLen = 0]);
+      this._positionalArguments, this._namedArguments, this._isSuperInvocation);
 
   @pragma("vm:entry-point", "call")
   static _allocateInvocationMirror(String functionName,
       List argumentsDescriptor, List arguments, bool isSuperInvocation,
       [int type = _UNINITIALIZED]) {
-    return new _InvocationMirror(
+    return _InvocationMirror(
         functionName, argumentsDescriptor, arguments, isSuperInvocation, type);
   }
 
@@ -208,7 +215,7 @@ class _InvocationMirror implements Invocation {
       List arguments,
       int? type,
       int delayedTypeArgumentsLen) {
-    return new _InvocationMirror(functionName, argumentsDescriptor, arguments,
+    return _InvocationMirror(functionName, argumentsDescriptor, arguments,
         false, type ?? _UNINITIALIZED, delayedTypeArgumentsLen);
   }
 }

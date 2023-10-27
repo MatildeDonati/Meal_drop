@@ -8,7 +8,7 @@ part of "core_patch.dart";
 class double {
   @patch
   static double parse(String source,
-      [@deprecated double onError(String source)?]) {
+      [double Function(String source)? onError]) {
     double? result = tryParse(source);
     if (result == null) {
       if (onError == null) {
@@ -67,6 +67,7 @@ final class _BoxedDouble extends double {
   static const int _exponentMask = 0x7FF0000000000000;
   static const int _mantissaMask = 0x000FFFFFFFFFFFFF;
 
+  @override
   int get hashCode => _doubleHashCode(this);
 
   static int _doubleHashCode(double value) {
@@ -126,6 +127,7 @@ final class _BoxedDouble extends double {
 
   external double operator -();
 
+  @override
   @pragma("wasm:prefer-inline")
   bool operator ==(Object other) {
     return other is double
@@ -228,11 +230,11 @@ final class _BoxedDouble extends double {
 
   num clamp(num lowerLimit, num upperLimit) {
     if (lowerLimit.compareTo(upperLimit) > 0) {
-      throw new ArgumentError(lowerLimit);
+      throw ArgumentError(lowerLimit);
     }
     if (lowerLimit.isNaN) return lowerLimit;
-    if (this.compareTo(lowerLimit) < 0) return lowerLimit;
-    if (this.compareTo(upperLimit) > 0) return upperLimit;
+    if (compareTo(lowerLimit) < 0) return lowerLimit;
+    if (compareTo(upperLimit) > 0) return upperLimit;
     return this;
   }
 
@@ -253,9 +255,10 @@ final class _BoxedDouble extends double {
   static const int CACHE_LENGTH = 1 << (CACHE_SIZE_LOG2 + 1);
   static const int CACHE_MASK = CACHE_LENGTH - 1;
   // Each key (double) followed by its toString result.
-  static final List _cache = new List.filled(CACHE_LENGTH, null);
+  static final List _cache = List.filled(CACHE_LENGTH, null);
   static int _cacheEvictIndex = 0;
 
+  @override
   String toString() {
     // TODO(koda): Consider starting at most recently inserted.
     for (int i = 0; i < CACHE_LENGTH; i += 2) {
@@ -276,7 +279,7 @@ final class _BoxedDouble extends double {
       }
     }
     String result = JS<String>("v => stringToDartString(v.toString())", value);
-    if (this % 1.0 == 0.0 && result.indexOf('e') == -1) {
+    if (this % 1.0 == 0.0 && !result.contains('e')) {
       result = '$result.0';
     }
     // Replace the least recently inserted entry.
@@ -291,7 +294,7 @@ final class _BoxedDouble extends double {
 
     // Step 2.
     if (fractionDigits < 0 || fractionDigits > 20) {
-      throw new RangeError.range(fractionDigits, 0, 20, "fractionDigits");
+      throw RangeError.range(fractionDigits, 0, 20, "fractionDigits");
     }
 
     // Step 3.
@@ -329,7 +332,7 @@ final class _BoxedDouble extends double {
     // Step 7.
     if (fractionDigits != null) {
       if (fractionDigits < 0 || fractionDigits > 20) {
-        throw new RangeError.range(fractionDigits, 0, 20, "fractionDigits");
+        throw RangeError.range(fractionDigits, 0, 20, "fractionDigits");
       }
     }
 
@@ -360,7 +363,7 @@ final class _BoxedDouble extends double {
 
     // Step 8.
     if (precision < 1 || precision > 21) {
-      throw new RangeError.range(precision, 1, 21, "precision");
+      throw RangeError.range(precision, 1, 21, "precision");
     }
 
     if (isNaN) return "NaN";
@@ -395,10 +398,10 @@ final class _BoxedDouble extends double {
       } else if (other is int) {
         // Compare as integers as it is more precise if the integer value is
         // outside of MIN_EXACT_INT_TO_DOUBLE..MAX_EXACT_INT_TO_DOUBLE range.
-        const int MAX_EXACT_INT_TO_DOUBLE = 9007199254740992; // 2^53.
-        const int MIN_EXACT_INT_TO_DOUBLE = -MAX_EXACT_INT_TO_DOUBLE;
-        if ((MIN_EXACT_INT_TO_DOUBLE <= other) &&
-            (other <= MAX_EXACT_INT_TO_DOUBLE)) {
+        const int maxExactIntToDouble = 9007199254740992; // 2^53.
+        const int minExactIntToDouble = -maxExactIntToDouble;
+        if ((minExactIntToDouble <= other) &&
+            (other <= maxExactIntToDouble)) {
           return EQUAL;
         }
         const bool limitIntsTo64Bits = ((1 << 64) == 0);

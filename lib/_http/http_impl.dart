@@ -322,6 +322,7 @@ class _CopyingBytesBuilder implements BytesBuilder {
             ? _emptyList
             : Uint8List(_pow2roundup(initialCapacity));
 
+  @override
   void add(List<int> bytes) {
     int bytesLength = bytes.length;
     if (bytesLength == 0) return;
@@ -340,6 +341,7 @@ class _CopyingBytesBuilder implements BytesBuilder {
     _length = required;
   }
 
+  @override
   void addByte(int byte) {
     if (_buffer.length == _length) {
       // The grow algorithm always at least doubles.
@@ -365,6 +367,7 @@ class _CopyingBytesBuilder implements BytesBuilder {
     _buffer = newBuffer;
   }
 
+  @override
   Uint8List takeBytes() {
     if (_length == 0) return _emptyList;
     var buffer = Uint8List.view(_buffer.buffer, _buffer.offsetInBytes, _length);
@@ -372,18 +375,23 @@ class _CopyingBytesBuilder implements BytesBuilder {
     return buffer;
   }
 
+  @override
   Uint8List toBytes() {
     if (_length == 0) return _emptyList;
     return Uint8List.fromList(
         Uint8List.view(_buffer.buffer, _buffer.offsetInBytes, _length));
   }
 
+  @override
   int get length => _length;
 
+  @override
   bool get isEmpty => _length == 0;
 
+  @override
   bool get isNotEmpty => _length != 0;
 
+  @override
   void clear() {
     _length = 0;
     _buffer = _emptyList;
@@ -434,6 +442,7 @@ class _HttpIncoming extends Stream<Uint8List> {
 
   _HttpIncoming(this.headers, this._transferLength, this._stream);
 
+  @override
   StreamSubscription<Uint8List> listen(void Function(Uint8List event)? onData,
       {Function? onError, void Function()? onDone, bool? cancelOnError}) {
     hasSubscriber = true;
@@ -482,6 +491,7 @@ abstract class _HttpInboundMessage extends Stream<Uint8List> {
 }
 
 class _HttpRequest extends _HttpInboundMessage implements HttpRequest {
+  @override
   final HttpResponse response;
 
   final _HttpServer _httpServer;
@@ -517,14 +527,17 @@ class _HttpRequest extends _HttpInboundMessage implements HttpRequest {
     }
   }
 
+  @override
   StreamSubscription<Uint8List> listen(void Function(Uint8List event)? onData,
       {Function? onError, void Function()? onDone, bool? cancelOnError}) {
     return _incoming.listen(onData,
         onError: onError, onDone: onDone, cancelOnError: cancelOnError);
   }
 
+  @override
   Uri get uri => _incoming.uri!;
 
+  @override
   Uri get requestedUri {
     var requestedUri = _requestedUri;
     if (requestedUri != null) return requestedUri;
@@ -561,8 +574,10 @@ class _HttpRequest extends _HttpInboundMessage implements HttpRequest {
     return _requestedUri = Uri.parse("$scheme://$host$uri");
   }
 
+  @override
   String get method => _incoming.method!;
 
+  @override
   HttpSession get session {
     var session = _session;
     if (session != null && !session._destroyed) {
@@ -572,8 +587,10 @@ class _HttpRequest extends _HttpInboundMessage implements HttpRequest {
     return _session = _httpServer._sessionManager.createSession();
   }
 
+  @override
   HttpConnectionInfo? get connectionInfo => _httpConnection.connectionInfo;
 
+  @override
   X509Certificate? get certificate {
     var socket = _httpConnection._socket;
     if (socket is SecureSocket) return socket.peerCertificate;
@@ -583,6 +600,7 @@ class _HttpRequest extends _HttpInboundMessage implements HttpRequest {
 
 class _HttpClientResponse extends _HttpInboundMessageListInt
     implements HttpClientResponse {
+  @override
   List<RedirectInfo> get redirects => _httpRequest._responseRedirects;
 
   // The HttpClient this response belongs to.
@@ -592,6 +610,7 @@ class _HttpClientResponse extends _HttpInboundMessageListInt
   final _HttpClientRequest _httpRequest;
 
   // The compression state of this response.
+  @override
   final HttpClientResponseCompressionState compressionState;
 
   final _HttpProfileData? _profileData;
@@ -615,15 +634,19 @@ class _HttpClientResponse extends _HttpInboundMessageListInt
     }
   }
 
+  @override
   int get statusCode => _incoming.statusCode!;
+  @override
   String get reasonPhrase => _incoming.reasonPhrase!;
 
+  @override
   X509Certificate? get certificate {
     var socket = _httpRequest._httpClientConnection._socket;
     if (socket is SecureSocket) return socket.peerCertificate;
     return null;
   }
 
+  @override
   List<Cookie> get cookies {
     var cookies = _cookies;
     if (cookies != null) return cookies;
@@ -638,6 +661,7 @@ class _HttpClientResponse extends _HttpInboundMessageListInt
     return cookies;
   }
 
+  @override
   bool get isRedirect {
     if (_httpRequest.method == "GET" || _httpRequest.method == "HEAD") {
       return statusCode == HttpStatus.movedPermanently ||
@@ -651,6 +675,7 @@ class _HttpClientResponse extends _HttpInboundMessageListInt
     return false;
   }
 
+  @override
   Future<HttpClientResponse> redirect(
       [String? method, Uri? url, bool? followLoops]) {
     if (method == null) {
@@ -686,6 +711,7 @@ class _HttpClientResponse extends _HttpInboundMessageListInt
     });
   }
 
+  @override
   StreamSubscription<Uint8List> listen(void Function(Uint8List event)? onData,
       {Function? onError, void Function()? onDone, bool? cancelOnError}) {
     if (_incoming.upgraded) {
@@ -694,7 +720,7 @@ class _HttpClientResponse extends _HttpInboundMessageListInt
       // Since listening to upgraded data is 'bogus', simply close and
       // return empty stream subscription.
       _httpRequest._httpClientConnection.destroy();
-      return Stream<Uint8List>.empty().listen(null, onDone: onDone);
+      return const Stream<Uint8List>.empty().listen(null, onDone: onDone);
     }
     Stream<Uint8List> stream = _incoming;
     if (compressionState == HttpClientResponseCompressionState.decompressed) {
@@ -728,12 +754,14 @@ class _HttpClientResponse extends _HttpInboundMessageListInt
     }, cancelOnError: cancelOnError);
   }
 
+  @override
   Future<Socket> detachSocket() {
     _profileData?.finishResponseWithError('Socket has been detached');
     _httpClient._connectionClosed(_httpRequest._httpClientConnection);
     return _httpRequest._httpClientConnection.detachSocket();
   }
 
+  @override
   HttpConnectionInfo? get connectionInfo => _httpRequest.connectionInfo;
 
   bool get _shouldAuthenticateProxy {
@@ -877,8 +905,10 @@ class _HttpClientResponse extends _HttpInboundMessageListInt
 class _ToUint8List extends Converter<List<int>, Uint8List> {
   const _ToUint8List();
 
+  @override
   Uint8List convert(List<int> input) => Uint8List.fromList(input);
 
+  @override
   Sink<List<int>> startChunkedConversion(Sink<Uint8List> sink) {
     return _Uint8ListConversionSink(sink);
   }
@@ -889,10 +919,12 @@ class _Uint8ListConversionSink implements Sink<List<int>> {
 
   final Sink<Uint8List> _target;
 
+  @override
   void add(List<int> data) {
     _target.add(Uint8List.fromList(data));
   }
 
+  @override
   void close() {
     _target.close();
   }
@@ -909,6 +941,7 @@ class _StreamSinkImpl<T> implements StreamSink<T> {
 
   _StreamSinkImpl(this._target);
 
+  @override
   void add(T data) {
     if (_isClosed) {
       throw StateError("StreamSink is closed");
@@ -916,6 +949,7 @@ class _StreamSinkImpl<T> implements StreamSink<T> {
     _controller.add(data);
   }
 
+  @override
   void addError(Object error, [StackTrace? stackTrace]) {
     if (_isClosed) {
       throw StateError("StreamSink is closed");
@@ -923,6 +957,7 @@ class _StreamSinkImpl<T> implements StreamSink<T> {
     _controller.addError(error, stackTrace);
   }
 
+  @override
   Future addStream(Stream<T> stream) {
     if (_isBound) {
       throw StateError("StreamSink is already bound to a stream");
@@ -959,6 +994,7 @@ class _StreamSinkImpl<T> implements StreamSink<T> {
     });
   }
 
+  @override
   Future close() {
     if (_isBound) {
       throw StateError("StreamSink is bound to a stream");
@@ -979,6 +1015,7 @@ class _StreamSinkImpl<T> implements StreamSink<T> {
     _target.close().then(_completeDoneValue, onError: _completeDoneError);
   }
 
+  @override
   Future get done => _doneCompleter.future;
 
   void _completeDoneValue(value) {
@@ -1040,15 +1077,18 @@ class _IOSinkImpl extends _StreamSinkImpl<List<int>> implements IOSink {
       StreamConsumer<List<int>> target, this._encoding, this._profileData)
       : super(target);
 
+  @override
   Encoding get encoding => _encoding;
 
-  void set encoding(Encoding value) {
+  @override
+  set encoding(Encoding value) {
     if (!_encodingMutable) {
       throw StateError("IOSink encoding is not mutable");
     }
     _encoding = value;
   }
 
+  @override
   void write(Object? obj) {
     String string = '$obj';
     if (string.isEmpty) return;
@@ -1060,6 +1100,7 @@ class _IOSinkImpl extends _StreamSinkImpl<List<int>> implements IOSink {
     super.add(_encoding.encode(string));
   }
 
+  @override
   void writeAll(Iterable objects, [String separator = ""]) {
     Iterator iterator = objects.iterator;
     if (!iterator.moveNext()) return;
@@ -1076,11 +1117,13 @@ class _IOSinkImpl extends _StreamSinkImpl<List<int>> implements IOSink {
     }
   }
 
+  @override
   void writeln([Object? object = ""]) {
     write(object);
     write("\n");
   }
 
+  @override
   void writeCharCode(int charCode) {
     write(String.fromCharCode(charCode));
   }
@@ -1114,21 +1157,22 @@ abstract class _HttpOutboundMessage<T> extends _IOSinkImpl {
   }
 
   int get contentLength => headers.contentLength;
-  void set contentLength(int contentLength) {
+  set contentLength(int contentLength) {
     headers.contentLength = contentLength;
   }
 
   bool get persistentConnection => headers.persistentConnection;
-  void set persistentConnection(bool p) {
+  set persistentConnection(bool p) {
     headers.persistentConnection = p;
   }
 
   bool get bufferOutput => _bufferOutput;
-  void set bufferOutput(bool bufferOutput) {
+  set bufferOutput(bool bufferOutput) {
     if (_outgoing.headersWritten) throw StateError("Header already sent");
     _bufferOutput = bufferOutput;
   }
 
+  @override
   Encoding get encoding {
     if (_encodingSet && _outgoing.headersWritten) {
       return _encoding;
@@ -1143,12 +1187,14 @@ abstract class _HttpOutboundMessage<T> extends _IOSinkImpl {
     return Encoding.getByName(charset) ?? latin1;
   }
 
+  @override
   void add(List<int> data) {
     if (data.isEmpty) return;
     _profileData?.appendRequestData(Uint8List.fromList(data));
     super.add(data);
   }
 
+  @override
   Future addStream(Stream<List<int>> s) {
     if (_profileData == null) {
       return super.addStream(s);
@@ -1159,6 +1205,7 @@ abstract class _HttpOutboundMessage<T> extends _IOSinkImpl {
     }));
   }
 
+  @override
   void write(Object? obj) {
     if (!_encodingSet) {
       _encoding = encoding;
@@ -1190,22 +1237,29 @@ class _HttpResponse extends _HttpOutboundMessage<HttpResponse>
     }
   }
 
+  @override
   bool get _isConnectionClosed => _httpRequest!._httpConnection._isClosing;
 
+  @override
   List<Cookie> get cookies => _cookies ??= <Cookie>[];
 
+  @override
   int get statusCode => _statusCode;
-  void set statusCode(int statusCode) {
+  @override
+  set statusCode(int statusCode) {
     if (_outgoing.headersWritten) throw StateError("Header already sent");
     _statusCode = statusCode;
   }
 
+  @override
   String get reasonPhrase => _findReasonPhrase(statusCode);
-  void set reasonPhrase(String reasonPhrase) {
+  @override
+  set reasonPhrase(String reasonPhrase) {
     if (_outgoing.headersWritten) throw StateError("Header already sent");
     _reasonPhrase = reasonPhrase;
   }
 
+  @override
   Future redirect(Uri location, {int status = HttpStatus.movedTemporarily}) {
     if (_outgoing.headersWritten) throw StateError("Header already sent");
     statusCode = status;
@@ -1213,6 +1267,7 @@ class _HttpResponse extends _HttpOutboundMessage<HttpResponse>
     return close();
   }
 
+  @override
   Future<Socket> detachSocket({bool writeHeaders = true}) {
     if (_outgoing.headersWritten) throw StateError("Headers already sent");
     deadline = null; // Be sure to stop any deadline.
@@ -1234,11 +1289,14 @@ class _HttpResponse extends _HttpOutboundMessage<HttpResponse>
     return future;
   }
 
+  @override
   HttpConnectionInfo? get connectionInfo => _httpRequest!.connectionInfo;
 
+  @override
   Duration? get deadline => _deadline;
 
-  void set deadline(Duration? d) {
+  @override
+  set deadline(Duration? d) {
     _deadlineTimer?.cancel();
     _deadline = d;
 
@@ -1248,6 +1306,7 @@ class _HttpResponse extends _HttpOutboundMessage<HttpResponse>
     });
   }
 
+  @override
   void _writeHeader() {
     BytesBuilder buffer = _CopyingBytesBuilder(_OUTGOING_BUFFER_SIZE);
 
@@ -1396,8 +1455,11 @@ class _HttpResponse extends _HttpOutboundMessage<HttpResponse>
 
 class _HttpClientRequest extends _HttpOutboundMessage<HttpClientResponse>
     implements HttpClientRequest {
+  @override
   final String method;
+  @override
   final Uri uri;
+  @override
   final List<Cookie> cookies = [];
 
   // The HttpClient this request belongs to.
@@ -1447,10 +1509,12 @@ class _HttpClientRequest extends _HttpOutboundMessage<HttpClientResponse>
     }, onError: (e) {});
   }
 
+  @override
   Future<HttpClientResponse> get done => _response ??=
       Future.wait([_responseCompleter.future, super.done], eagerError: true)
           .then((list) => list[0]);
 
+  @override
   Future<HttpClientResponse> close() {
     if (!_aborted) {
       // It will send out the request.
@@ -1459,18 +1523,23 @@ class _HttpClientRequest extends _HttpOutboundMessage<HttpClientResponse>
     return done;
   }
 
+  @override
   int get maxRedirects => _maxRedirects;
-  void set maxRedirects(int maxRedirects) {
+  @override
+  set maxRedirects(int maxRedirects) {
     if (_outgoing.headersWritten) throw StateError("Request already sent");
     _maxRedirects = maxRedirects;
   }
 
+  @override
   bool get followRedirects => _followRedirects;
-  void set followRedirects(bool followRedirects) {
+  @override
+  set followRedirects(bool followRedirects) {
     if (_outgoing.headersWritten) throw StateError("Request already sent");
     _followRedirects = followRedirects;
   }
 
+  @override
   HttpConnectionInfo? get connectionInfo =>
       _httpClientConnection.connectionInfo;
 
@@ -1548,16 +1617,19 @@ class _HttpClientRequest extends _HttpOutboundMessage<HttpClientResponse>
     }
   }
 
+  @override
   void add(List<int> data) {
     if (data.isEmpty || _aborted) return;
     super.add(data);
   }
 
+  @override
   void write(Object? obj) {
     if (_aborted) return;
     super.write(obj);
   }
 
+  @override
   void _writeHeader() {
     if (_aborted) {
       _outgoing.setHeader(Uint8List(0), 0);
@@ -1603,10 +1675,11 @@ class _HttpClientRequest extends _HttpOutboundMessage<HttpClientResponse>
     _outgoing.setHeader(headerBytes, headerBytes.length);
   }
 
+  @override
   void abort([Object? exception, StackTrace? stackTrace]) {
     _aborted = true;
     if (!_responseCompleter.isCompleted) {
-      exception ??= HttpException("Request has been aborted");
+      exception ??= const HttpException("Request has been aborted");
       _responseCompleter.completeError(exception, stackTrace);
       _httpClientConnection.destroy();
     }
@@ -1619,10 +1692,12 @@ class _HttpGZipSink extends ByteConversionSink {
   final _BytesConsumer _consume;
   _HttpGZipSink(this._consume);
 
+  @override
   void add(List<int> chunk) {
     _consume(chunk);
   }
 
+  @override
   void addSlice(List<int> chunk, int start, int end, bool isLast) {
     if (chunk is Uint8List) {
       _consume(Uint8List.view(
@@ -1632,6 +1707,7 @@ class _HttpGZipSink extends ByteConversionSink {
     }
   }
 
+  @override
   void close() {}
 }
 
@@ -1744,6 +1820,7 @@ class _HttpOutgoing implements StreamConsumer<List<int>> {
     return null;
   }
 
+  @override
   Future addStream(Stream<List<int>> stream) {
     if (_socketError) {
       stream.listen(null).cancel();
@@ -1821,6 +1898,7 @@ class _HttpOutgoing implements StreamConsumer<List<int>> {
     });
   }
 
+  @override
   Future close() {
     // If we are already closed, return that future.
     var closeFuture = _closeFuture;
@@ -1915,7 +1993,7 @@ class _HttpOutgoing implements StreamConsumer<List<int>> {
     _length = length;
   }
 
-  void set gzip(bool value) {
+  set gzip(bool value) {
     _gzip = value;
     if (value) {
       _gzipBuffer = Uint8List(_OUTGOING_BUFFER_SIZE);
@@ -2158,7 +2236,7 @@ class _HttpClientConnection {
         proxyCreds.authorize(request);
       }
     }
-    if (uri.userInfo != null && uri.userInfo.isNotEmpty) {
+    if (uri.userInfo.isNotEmpty) {
       // If the URL contains user information use that for basic
       // authorization.
       String auth = base64Encode(utf8.encode(uri.userInfo));
@@ -2293,7 +2371,7 @@ class _HttpClientConnection {
       _Proxy proxy,
       bool Function(X509Certificate certificate) callback,
       _HttpProfileData? profileData) {
-    final method = "CONNECT";
+    const method = "CONNECT";
     final uri = Uri(host: host, port: port);
 
     profileData?.proxyEvent(proxy);
@@ -2561,19 +2639,25 @@ class _HttpClient implements HttpClient {
   BadCertificateCallback? _badCertificateCallback;
   Function(String line)? _keyLog;
 
+  @override
   Duration get idleTimeout => _idleTimeout;
 
+  @override
   Duration? connectionTimeout;
 
+  @override
   int? maxConnectionsPerHost;
 
+  @override
   bool autoUncompress = true;
 
+  @override
   String? userAgent = _getHttpVersion();
 
   _HttpClient(this._context);
 
-  void set idleTimeout(Duration timeout) {
+  @override
+  set idleTimeout(Duration timeout) {
     _idleTimeout = timeout;
     for (var c in _connectionTargets.values) {
       for (var idle in c._idle) {
@@ -2584,15 +2668,18 @@ class _HttpClient implements HttpClient {
     }
   }
 
+  @override
   set badCertificateCallback(
       bool Function(X509Certificate cert, String host, int port)? callback) {
     _badCertificateCallback = callback;
   }
 
-  void set keyLog(Function(String line)? callback) {
+  @override
+  set keyLog(Function(String line)? callback) {
     _keyLog = callback;
   }
 
+  @override
   Future<HttpClientRequest> open(
       String method, String host, int port, String path) {
     const int hashMark = 0x23;
@@ -2618,39 +2705,53 @@ class _HttpClient implements HttpClient {
     return _openUrl(method, uri);
   }
 
+  @override
   Future<HttpClientRequest> openUrl(String method, Uri url) =>
       _openUrl(method, url);
 
+  @override
   Future<HttpClientRequest> get(String host, int port, String path) =>
       open("get", host, port, path);
 
+  @override
   Future<HttpClientRequest> getUrl(Uri url) => _openUrl("get", url);
 
+  @override
   Future<HttpClientRequest> post(String host, int port, String path) =>
       open("post", host, port, path);
 
+  @override
   Future<HttpClientRequest> postUrl(Uri url) => _openUrl("post", url);
 
+  @override
   Future<HttpClientRequest> put(String host, int port, String path) =>
       open("put", host, port, path);
 
+  @override
   Future<HttpClientRequest> putUrl(Uri url) => _openUrl("put", url);
 
+  @override
   Future<HttpClientRequest> delete(String host, int port, String path) =>
       open("delete", host, port, path);
 
+  @override
   Future<HttpClientRequest> deleteUrl(Uri url) => _openUrl("delete", url);
 
+  @override
   Future<HttpClientRequest> head(String host, int port, String path) =>
       open("head", host, port, path);
 
+  @override
   Future<HttpClientRequest> headUrl(Uri url) => _openUrl("head", url);
 
+  @override
   Future<HttpClientRequest> patch(String host, int port, String path) =>
       open("patch", host, port, path);
 
+  @override
   Future<HttpClientRequest> patchUrl(Uri url) => _openUrl("patch", url);
 
+  @override
   void close({bool force = false}) {
     _closing = true;
     _closingForcefully = force;
@@ -2660,16 +2761,19 @@ class _HttpClient implements HttpClient {
         !force || !_connectionTargets.values.any((s) => s._active.isNotEmpty));
   }
 
+  @override
   set authenticate(
       Future<bool> Function(Uri url, String scheme, String? realm)? f) {
     _authenticate = f;
   }
 
+  @override
   void addCredentials(Uri url, String realm, HttpClientCredentials cr) {
     _credentials
         .add(_SiteCredentials(url, realm, cr as _HttpClientCredentials));
   }
 
+  @override
   set authenticateProxy(
       Future<bool> Function(
               String host, int port, String scheme, String? realm)?
@@ -2677,18 +2781,21 @@ class _HttpClient implements HttpClient {
     _authenticateProxy = f;
   }
 
+  @override
   void addProxyCredentials(
       String host, int port, String realm, HttpClientCredentials cr) {
     _proxyCredentials.add(
         _ProxyCredentials(host, port, realm, cr as _HttpClientCredentials));
   }
 
-  void set connectionFactory(
+  @override
+  set connectionFactory(
           Future<ConnectionTask<Socket>> Function(
                   Uri url, String? proxyHost, int? proxyPort)?
               f) =>
       _connectionFactory = f;
 
+  @override
   set findProxy(String Function(Uri uri)? f) => _findProxy = f;
 
   static void _startRequestTimelineEvent(
@@ -2720,13 +2827,13 @@ class _HttpClient implements HttpClient {
     //                | "/" | "[" | "]" | "?" | "="
     //                | "{" | "}" | SP | HT
     // token          = 1*<any CHAR except CTLs or separators>
-    const _validChars = r"                                "
+    const validChars = r"                                "
         r" ! #$%&'  *+ -. 0123456789      "
         r" ABCDEFGHIJKLMNOPQRSTUVWXYZ   ^_"
         r"`abcdefghijklmnopqrstuvwxyz | ~ ";
     for (int codeUnit in token.codeUnits) {
-      if (codeUnit >= _validChars.length ||
-          _validChars.codeUnitAt(codeUnit) == 0x20) {
+      if (codeUnit >= validChars.length ||
+          validChars.codeUnitAt(codeUnit) == 0x20) {
         return false;
       }
     }
@@ -2749,7 +2856,7 @@ class _HttpClient implements HttpClient {
     if (method != "CONNECT") {
       if (uri.host.isEmpty) {
         throw ArgumentError("No host specified in URI $uri");
-      } else if (this._connectionFactory == null &&
+      } else if (_connectionFactory == null &&
           !uri.isScheme("http") &&
           !uri.isScheme("https")) {
         throw ArgumentError("Unsupported scheme '${uri.scheme}' in URI $uri");
@@ -2807,7 +2914,7 @@ class _HttpClient implements HttpClient {
     return (subdomain.isScheme(domain.scheme) &&
         subdomain.port == domain.port &&
         (subdomain.host == domain.host ||
-            subdomain.host.endsWith("." + domain.host)));
+            subdomain.host.endsWith(".${domain.host}")));
   }
 
   // Only visible for testing.
@@ -2926,7 +3033,7 @@ class _HttpClient implements HttpClient {
           .catchError(connect);
     }
 
-    return connect(HttpException("No proxies given"), StackTrace.current);
+    return connect(const HttpException("No proxies given"), StackTrace.current);
   }
 
   _SiteCredentials? _findCredentials(Uri url, [_AuthenticationScheme? scheme]) {
@@ -3150,7 +3257,9 @@ final class _HttpConnection extends LinkedListEntry<_HttpConnection>
   bool get _isClosing => _state == _CLOSING;
   bool get _isDetached => _state == _DETACHED;
 
+  @override
   String get _serviceTypePath => 'io/http/serverconnections';
+  @override
   String get _serviceTypeName => 'HttpServerConnection';
 }
 
@@ -3170,8 +3279,11 @@ class _HttpServer extends Stream<HttpRequest>
   // Use default Map so we keep order.
   static final Map<int, _HttpServer> _servers = <int, _HttpServer>{};
 
+  @override
   String? serverHeader;
+  @override
   final HttpHeaders defaultResponseHeaders = _initDefaultResponseHeaders();
+  @override
   bool autoCompress = false;
 
   Duration? _idleTimeout;
@@ -3228,9 +3340,11 @@ class _HttpServer extends Stream<HttpRequest>
     return defaultResponseHeaders;
   }
 
+  @override
   Duration? get idleTimeout => _idleTimeout;
 
-  void set idleTimeout(Duration? duration) {
+  @override
+  set idleTimeout(Duration? duration) {
     var idleTimer = _idleTimer;
     if (idleTimer != null) {
       idleTimer.cancel();
@@ -3250,6 +3364,7 @@ class _HttpServer extends Stream<HttpRequest>
     }
   }
 
+  @override
   StreamSubscription<HttpRequest> listen(
       void Function(HttpRequest event)? onData,
       {Function? onError,
@@ -3273,6 +3388,7 @@ class _HttpServer extends Stream<HttpRequest>
         onError: onError, onDone: onDone, cancelOnError: cancelOnError);
   }
 
+  @override
   Future close({bool force = false}) {
     closed = true;
     Future result;
@@ -3307,16 +3423,19 @@ class _HttpServer extends Stream<HttpRequest>
     }
   }
 
+  @override
   int get port {
-    if (closed) throw HttpException("HttpServer is not bound to a socket");
+    if (closed) throw const HttpException("HttpServer is not bound to a socket");
     return _serverSocket.port;
   }
 
+  @override
   InternetAddress get address {
-    if (closed) throw HttpException("HttpServer is not bound to a socket");
+    if (closed) throw const HttpException("HttpServer is not bound to a socket");
     return _serverSocket.address;
   }
 
+  @override
   set sessionTimeout(int timeout) {
     _sessionManager.sessionTimeout = timeout;
   }
@@ -3349,6 +3468,7 @@ class _HttpServer extends Stream<HttpRequest>
   _HttpSessionManager get _sessionManager =>
       _sessionManagerInstance ??= _HttpSessionManager();
 
+  @override
   HttpConnectionsInfo connectionsInfo() {
     HttpConnectionsInfo result = HttpConnectionsInfo();
     result.total = _activeConnections.length + _idleConnections.length;
@@ -3367,7 +3487,9 @@ class _HttpServer extends Stream<HttpRequest>
     return result;
   }
 
+  @override
   String get _serviceTypePath => 'io/http/servers';
+  @override
   String get _serviceTypeName => 'HttpServer';
 
   _HttpSessionManager? _sessionManagerInstance;
@@ -3434,7 +3556,7 @@ class _ProxyConfiguration {
           }
           proxies.add(_Proxy(host, port, username, password));
         } else if (proxy.trim() == DIRECT_PREFIX) {
-          proxies.add(_Proxy.direct());
+          proxies.add(const _Proxy.direct());
         } else {
           throw HttpException("Invalid proxy configuration $configuration");
         }
@@ -3467,8 +3589,11 @@ class _Proxy {
 }
 
 class _HttpConnectionInfo implements HttpConnectionInfo {
+  @override
   InternetAddress remoteAddress;
+  @override
   int remotePort;
+  @override
   int localPort;
 
   _HttpConnectionInfo(this.remoteAddress, this.remotePort, this.localPort);
@@ -3489,71 +3614,92 @@ class _DetachedSocket extends Stream<Uint8List> implements Socket {
 
   _DetachedSocket(this._socket, this._incoming);
 
+  @override
   StreamSubscription<Uint8List> listen(void Function(Uint8List event)? onData,
       {Function? onError, void Function()? onDone, bool? cancelOnError}) {
     return _incoming.listen(onData,
         onError: onError, onDone: onDone, cancelOnError: cancelOnError);
   }
 
+  @override
   Encoding get encoding => _socket.encoding;
 
-  void set encoding(Encoding value) {
+  @override
+  set encoding(Encoding value) {
     _socket.encoding = value;
   }
 
+  @override
   void write(Object? obj) {
     _socket.write(obj);
   }
 
+  @override
   void writeln([Object? obj = ""]) {
     _socket.writeln(obj);
   }
 
+  @override
   void writeCharCode(int charCode) {
     _socket.writeCharCode(charCode);
   }
 
+  @override
   void writeAll(Iterable objects, [String separator = ""]) {
     _socket.writeAll(objects, separator);
   }
 
+  @override
   void add(List<int> bytes) {
     _socket.add(bytes);
   }
 
+  @override
   void addError(Object error, [StackTrace? stackTrace]) =>
       _socket.addError(error, stackTrace);
 
+  @override
   Future addStream(Stream<List<int>> stream) {
     return _socket.addStream(stream);
   }
 
+  @override
   void destroy() {
     _socket.destroy();
   }
 
+  @override
   Future flush() => _socket.flush();
 
+  @override
   Future close() => _socket.close();
 
+  @override
   Future get done => _socket.done;
 
+  @override
   int get port => _socket.port;
 
+  @override
   InternetAddress get address => _socket.address;
 
+  @override
   InternetAddress get remoteAddress => _socket.remoteAddress;
 
+  @override
   int get remotePort => _socket.remotePort;
 
+  @override
   bool setOption(SocketOption option, bool enabled) {
     return _socket.setOption(option, enabled);
   }
 
+  @override
   Uint8List getRawOption(RawSocketOption option) {
     return _socket.getRawOption(option);
   }
 
+  @override
   void setRawOption(RawSocketOption option) {
     _socket.setRawOption(option);
   }
@@ -3574,6 +3720,7 @@ class _AuthenticationScheme {
     return UNKNOWN;
   }
 
+  @override
   String toString() {
     if (this == BASIC) return "Basic";
     if (this == DIGEST) return "Digest";
@@ -3633,6 +3780,7 @@ class _SiteCredentials extends _Credentials {
     return uri.path.startsWith(this.uri.path);
   }
 
+  @override
   void authorize(HttpClientRequest request) {
     // Digest credentials cannot be used without a nonce from the
     // server.
@@ -3656,6 +3804,7 @@ class _ProxyCredentials extends _Credentials {
     return proxy.host == host && proxy.port == port;
   }
 
+  @override
   void authorize(HttpClientRequest request) {
     // Digest credentials cannot be used without a nonce from the
     // server.
@@ -3679,6 +3828,7 @@ final class _HttpClientBasicCredentials extends _HttpClientCredentials
 
   _HttpClientBasicCredentials(this.username, this.password);
 
+  @override
   _AuthenticationScheme get scheme => _AuthenticationScheme.BASIC;
 
   String authorization() {
@@ -3692,10 +3842,12 @@ final class _HttpClientBasicCredentials extends _HttpClientCredentials
     return "Basic $auth";
   }
 
+  @override
   void authorize(_Credentials _, HttpClientRequest request) {
     request.headers.set(HttpHeaders.authorizationHeader, authorization());
   }
 
+  @override
   void authorizeProxy(_ProxyCredentials _, HttpClientRequest request) {
     request.headers.set(HttpHeaders.proxyAuthorizationHeader, authorization());
   }
@@ -3708,6 +3860,7 @@ final class _HttpClientDigestCredentials extends _HttpClientCredentials
 
   _HttpClientDigestCredentials(this.username, this.password);
 
+  @override
   _AuthenticationScheme get scheme => _AuthenticationScheme.DIGEST;
 
   String authorization(_Credentials credentials, _HttpClientRequest request) {
@@ -3765,11 +3918,13 @@ final class _HttpClientDigestCredentials extends _HttpClientCredentials
     return buffer.toString();
   }
 
+  @override
   void authorize(_Credentials credentials, HttpClientRequest request) {
     request.headers.set(HttpHeaders.authorizationHeader,
         authorization(credentials, request as _HttpClientRequest));
   }
 
+  @override
   void authorizeProxy(
       _ProxyCredentials credentials, HttpClientRequest request) {
     request.headers.set(HttpHeaders.proxyAuthorizationHeader,
@@ -3778,8 +3933,11 @@ final class _HttpClientDigestCredentials extends _HttpClientCredentials
 }
 
 class _RedirectInfo implements RedirectInfo {
+  @override
   final int statusCode;
+  @override
   final String method;
+  @override
   final Uri location;
   const _RedirectInfo(this.statusCode, this.method, this.location);
 }

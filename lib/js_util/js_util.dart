@@ -136,7 +136,7 @@ class NullRejectionException implements Exception {
 
   @override
   String toString() {
-    var value = this.isUndefined ? 'undefined' : 'null';
+    var value = isUndefined ? 'undefined' : 'null';
     return 'Promise was rejected with a value of `$value`.';
   }
 }
@@ -221,7 +221,7 @@ external Object? dartify(Object? o);
 /// ```
 external T createStaticInteropMock<T extends Object, U extends Object>(
     U dartMock,
-    [Object? proto = null]);
+    [Object? proto]);
 
 /// Given a Dart object that is marked exportable, creates a JS object literal
 /// that forwards to that Dart class. Look at the `@JSExport` annotation to

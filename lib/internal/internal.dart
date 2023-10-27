@@ -57,7 +57,7 @@ external T unsafeCast<T>(dynamic value);
 // Powers of 10 up to 10^22 are representable as doubles.
 // Powers of 10 above that are only approximate due to lack of precision.
 // Used by double-parsing.
-const POWERS_OF_TEN = const [
+const POWERS_OF_TEN = [
   1.0, // 0
   10.0,
   100.0,
@@ -83,16 +83,16 @@ const POWERS_OF_TEN = const [
   10000000000000000000000.0,
 ];
 
-/**
- * An [Iterable] of the UTF-16 code units of a [String] in index order.
- */
+/// An [Iterable] of the UTF-16 code units of a [String] in index order.
 final class CodeUnits extends UnmodifiableListBase<int> {
-  /** The string that this is the code units of. */
+  /// The string that this is the code units of.
   final String _string;
 
   CodeUnits(this._string);
 
+  @override
   int get length => _string.length;
+  @override
   int operator [](int i) => _string.codeUnitAt(i);
 
   static String stringOf(CodeUnits u) => u._string;
@@ -157,7 +157,7 @@ int parseHexByte(String source, int index) {
 /// This future will be removed again if we can ever do so.
 /// Do not use it for anything other than preserving timing
 /// during the null safety migration.
-final Future<Null> nullFuture = Zone.root.run(() => Future<Null>.value(null));
+final Future<void> nullFuture = Zone.root.run(() => Future<void>.value(null));
 
 /// A default hash function used by the platform in various places.
 ///
@@ -644,7 +644,7 @@ class SentinelValue {
 }
 
 /// A default value to use when only one sentinel is needed.
-const Object sentinelValue = const SentinelValue(0);
+const Object sentinelValue = SentinelValue(0);
 
 /// Given an [instance] of some generic type [T], and [extract], a first-class
 /// generic function that takes the same number of type parameters as [T],
@@ -758,6 +758,7 @@ T checkNotNullable<T extends Object>(T value, String name) {
 class NotNullableError<T> extends Error implements TypeError {
   final String _name;
   NotNullableError(this._name);
+  @override
   String toString() => "Null is not a valid value for '$_name' of type '$T'";
 }
 
@@ -779,9 +780,7 @@ T valueOfNonNullableParamWithDefault<T extends Object>(T value, T defaultVal) {
   }
 }
 
-/**
- * HTTP status codes.  Exported in dart:io and dart:html.
- */
+/// HTTP status codes.  Exported in dart:io and dart:html.
 abstract class HttpStatus {
   static const int continue_ = 100;
   static const int switchingProtocols = 101;

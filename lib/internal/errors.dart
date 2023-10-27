@@ -23,17 +23,18 @@ class LateError extends Error {
 
   @pragma("vm:entry-point")
   LateError.fieldNI(String fieldName)
-      : _message = "Field '${fieldName}' has not been initialized.";
+      : _message = "Field '$fieldName' has not been initialized.";
 
   LateError.localNI(String localName)
-      : _message = "Local '${localName}' has not been initialized.";
+      : _message = "Local '$localName' has not been initialized.";
 
   LateError.fieldAI(String fieldName)
-      : _message = "Field '${fieldName}' has already been initialized.";
+      : _message = "Field '$fieldName' has already been initialized.";
 
   LateError.localAI(String localName)
-      : _message = "Local '${localName}' has already been initialized.";
+      : _message = "Local '$localName' has already been initialized.";
 
+  @override
   String toString() {
     var message = _message;
     return (message != null)
@@ -47,6 +48,7 @@ class ReachabilityError extends Error {
 
   ReachabilityError([this._message]);
 
+  @override
   String toString() {
     var message = _message;
     return (message != null)

@@ -4,14 +4,12 @@
 
 part of dart._internal;
 
-/**
- * Implementation of [core.Symbol].  This class uses the same name as
- * a core class so a user can't tell the difference.
- *
- * The purpose of this class is to hide [_name] from user code, but
- * make it accessible to Dart platform code via the static method
- * [getName].
- */
+/// Implementation of [core.Symbol].  This class uses the same name as
+/// a core class so a user can't tell the difference.
+///
+/// The purpose of this class is to hide [_name] from user code, but
+/// make it accessible to Dart platform code via the static method
+/// [getName].
 @pragma('vm:entry-point')
 class Symbol implements core.Symbol {
   @pragma('vm:entry-point')
@@ -19,16 +17,17 @@ class Symbol implements core.Symbol {
 
   external const Symbol(String name);
 
-  /**
-   * Platform-private method used by the mirror system to create
-   * otherwise invalid names.
-   */
+  /// Platform-private method used by the mirror system to create
+  /// otherwise invalid names.
   const Symbol.unvalidated(this._name);
 
+  @override
   bool operator ==(Object other) => other is Symbol && _name == other._name;
 
+  @override
   external int get hashCode;
 
+  @override
   external toString();
 
   /// Platform-private accessor which cannot be called from user libraries.

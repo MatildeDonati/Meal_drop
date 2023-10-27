@@ -5,8 +5,6 @@
 import 'dart:core' hide Symbol;
 import 'dart:core' as core show Symbol;
 import 'dart:_js_primitives' show printString;
-import 'dart:_internal' show patch;
-import 'dart:_interceptors' show JSArray;
 import 'dart:_foreign_helper'
     show JS, JS_GET_FLAG, createJsSentinel, isJsSentinel;
 
@@ -20,18 +18,20 @@ bool typeAcceptsNull<T>() {
 @patch
 class Symbol implements core.Symbol {
   @patch
-  const Symbol(String name) : this._name = name;
+  const Symbol(String name) : _name = name;
 
+  @override
   @patch
   int get hashCode {
     int? hash = JS('int|Null', '#._hashCode', this);
-    if (hash != null) return hash;
+    return hash;
     const arbitraryPrime = 664597;
     hash = 0x1fffffff & (arbitraryPrime * _name.hashCode);
     JS('', '#._hashCode = #', this, hash);
     return hash;
   }
 
+  @override
   @patch
   toString() => 'Symbol("$_name")';
 
@@ -43,7 +43,7 @@ class Symbol implements core.Symbol {
 
 @patch
 void printToConsole(String line) {
-  printString('$line');
+  printString(line);
 }
 
 @patch

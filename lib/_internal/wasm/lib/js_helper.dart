@@ -478,7 +478,7 @@ ByteData toDartByteData(WasmExternRef? ref) {
 }
 
 List<double> jsFloatTypedArrayToDartFloatTypedData(
-    WasmExternRef? ref, List<double> makeTypedData(int size)) {
+    WasmExternRef? ref, List<double> Function(int size) makeTypedData) {
   int length = objectLength(ref).toInt();
   List<double> list = makeTypedData(length);
   for (int i = 0; i < length; i++) {
@@ -488,7 +488,7 @@ List<double> jsFloatTypedArrayToDartFloatTypedData(
 }
 
 List<int> jsIntTypedArrayToDartIntTypedData(
-    WasmExternRef? ref, List<int> makeTypedData(int size)) {
+    WasmExternRef? ref, List<int> Function(int size) makeTypedData) {
   int length = objectLength(ref).toInt();
   List<int> list = makeTypedData(length);
   for (int i = 0; i < length; i++) {

@@ -6,7 +6,6 @@
 
 import 'dart:_js_helper' show ForceInline, ReifyFunctionTypes;
 import 'dart:_foreign_helper' show JS, JSExportName;
-import 'dart:_internal' show patch;
 import 'dart:_runtime' as dart;
 import 'dart:async';
 import 'dart:convert' show json;
@@ -14,7 +13,7 @@ import 'dart:isolate';
 
 var _issuedRegisterExtensionWarning = false;
 var _issuedPostEventWarning = false;
-final _developerSupportWarning = 'from dart:developer is only supported in '
+const _developerSupportWarning = 'from dart:developer is only supported in '
     'build/run/test environments where the developer event method hooks have '
     'been set by package:dwds v11.1.0 or higher.';
 

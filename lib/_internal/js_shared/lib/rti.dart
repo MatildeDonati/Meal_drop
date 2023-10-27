@@ -561,7 +561,9 @@ Rti bindingRtiFromList(JSArray rtis) {
       '${Recipe.startTypeArgumentsString}'
       '0'
       '${Recipe.endTypeArgumentsString}');
-  for (int i = 1; i < rtis.length; i++) binding = _rtiBind(binding, rtis[i]);
+  for (int i = 1; i < rtis.length; i++) {
+    binding = _rtiBind(binding, rtis[i]);
+  }
   return binding;
 }
 
@@ -609,8 +611,9 @@ Rti _substitute(Object? universe, Rti rti, Object? typeArguments, int depth) {
       var substitutedInterfaceTypeArguments = _substituteArray(
           universe, interfaceTypeArguments, typeArguments, depth);
       if (_Utils.isIdentical(
-          substitutedInterfaceTypeArguments, interfaceTypeArguments))
+          substitutedInterfaceTypeArguments, interfaceTypeArguments)) {
         return rti;
+      }
       return _Universe._lookupInterfaceRti(universe, Rti._getInterfaceName(rti),
           substitutedInterfaceTypeArguments);
     case Rti.kindBinding:
@@ -632,8 +635,9 @@ Rti _substitute(Object? universe, Rti rti, Object? typeArguments, int depth) {
           _substituteFunctionParameters(
               universe, functionParameters, typeArguments, depth);
       if (_Utils.isIdentical(substitutedReturnType, returnType) &&
-          _Utils.isIdentical(substitutedFunctionParameters, functionParameters))
+          _Utils.isIdentical(substitutedFunctionParameters, functionParameters)) {
         return rti;
+      }
       return _Universe._lookupFunctionRti(
           universe, substitutedReturnType, substitutedFunctionParameters);
     case Rti.kindGenericFunction:
@@ -1112,7 +1116,7 @@ bool _installSpecializedIsTest(Object? object) {
           // DDC uses a JavaScript symbol when tagging the type to hide them
           // on native types.
           ? getSpecializedTestTag(name)
-          : '${JS_GET_NAME(JsGetName.OPERATOR_IS_PREFIX)}${name}';
+          : '${JS_GET_NAME(JsGetName.OPERATOR_IS_PREFIX)}$name';
       Rti._setSpecializedTestResource(testRti, propertyName);
       if (name == JS_GET_NAME(JsGetName.LIST_CLASS_TYPE_NAME)) {
         return _finishIsFn(
@@ -1138,7 +1142,7 @@ bool _finishIsFn(Rti testRti, Object? object, Object? isFn) {
 
 Object? _simpleSpecializedIsTest(Rti testRti) {
   // Note: We must not match `Never` below.
-  var isFn = null;
+  var isFn;
   if (_Utils.isIdentical(testRti, TYPE_REF<int>())) {
     isFn = RAW_DART_FUNCTION_REF(_isInt);
   } else if (_Utils.isIdentical(testRti, TYPE_REF<double>()) ||
@@ -1277,6 +1281,7 @@ Object? _generalAsCheckImplementation(Object? object) {
     if (JS_GET_FLAG('LEGACY') || isNullable(testRti)) return object;
   } else if (Rti._isCheck(testRti, object)) return object;
   _failedAsCheck(object, testRti);
+  return null;
 }
 
 /// General 'as' check for types that accept `null`.
@@ -1289,6 +1294,7 @@ Object? _generalNullableAsCheckImplementation(Object? object) {
     return object;
   } else if (Rti._isCheck(testRti, object)) return object;
   _failedAsCheck(object, testRti);
+  return null;
 }
 
 void _failedAsCheck(Object? object, Rti testRti) {
@@ -1319,9 +1325,9 @@ class _Error extends Error {
     String objectDescription = Error.safeToString(object);
     Rti objectRti = _structuralTypeOf(object);
     String objectTypeDescription = _rtiToString(objectRti, null);
-    return "${objectDescription}:"
-        " type '${objectTypeDescription}'"
-        " is not a subtype of type '${checkedTypeDescription}'";
+    return "$objectDescription:"
+        " type '$objectTypeDescription'"
+        " is not a subtype of type '$checkedTypeDescription'";
   }
 
   @override
@@ -1550,7 +1556,7 @@ String _recordRtiToString(Rti recordType, List<String>? genericContext) {
   Object? fields = Rti._getRecordFields(recordType);
   if ('' == partialShape) {
     // No named fields.
-    return '(' + _rtiArrayToString(fields, genericContext) + ')';
+    return '(${_rtiArrayToString(fields, genericContext)})';
   }
 
   int fieldCount = _Utils.arrayLength(fields);
@@ -1564,15 +1570,15 @@ String _recordRtiToString(Rti recordType, List<String>? genericContext) {
     if (namesIndex == 0) s += '{';
     s += _rtiToString(_Utils.asRti(_Utils.arrayAt(fields, i)), genericContext);
     if (namesIndex >= 0) {
-      s += ' ' + _Utils.asString(_Utils.arrayAt(names, namesIndex));
+      s += ' ${_Utils.asString(_Utils.arrayAt(names, namesIndex))}';
     }
     namesIndex++;
   }
-  return s + '})';
+  return '$s})';
 }
 
 String _functionRtiToString(Rti functionType, List<String>? genericContext,
-    {Object? bounds = null}) {
+    {Object? bounds}) {
   String typeParametersText = '';
   int? outerContextLength;
 
@@ -1596,7 +1602,7 @@ String _functionRtiToString(Rti functionType, List<String>? genericContext,
       Rti boundRti = _Utils.asRti(_Utils.arrayAt(bounds, i));
       if (!isTopType(boundRti)) {
         typeParametersText +=
-            ' extends ' + _rtiToString(boundRti, genericContext);
+            ' extends ${_rtiToString(boundRti, genericContext)}';
       }
       typeSep = ', ';
     }
@@ -1627,7 +1633,7 @@ String _functionRtiToString(Rti functionType, List<String>? genericContext,
   }
 
   if (optionalPositionalLength > 0) {
-    argumentsText += sep + '[';
+    argumentsText += '$sep[';
     sep = '';
     for (int i = 0; i < optionalPositionalLength; i++) {
       argumentsText += sep +
@@ -1639,17 +1645,15 @@ String _functionRtiToString(Rti functionType, List<String>? genericContext,
   }
 
   if (namedLength > 0) {
-    argumentsText += sep + '{';
+    argumentsText += '$sep{';
     sep = '';
     for (int i = 0; i < namedLength; i += 3) {
       argumentsText += sep;
       if (_Utils.asBool(_Utils.arrayAt(named, i + 1))) {
         argumentsText += 'required ';
       }
-      argumentsText += _rtiToString(
-              _Utils.asRti(_Utils.arrayAt(named, i + 2)), genericContext) +
-          ' ' +
-          _Utils.asString(_Utils.arrayAt(named, i));
+      argumentsText += '${_rtiToString(
+              _Utils.asRti(_Utils.arrayAt(named, i + 2)), genericContext)} ${_Utils.asString(_Utils.arrayAt(named, i))}';
       sep = ', ';
     }
     argumentsText += '}';
@@ -1664,7 +1668,7 @@ String _functionRtiToString(Rti functionType, List<String>? genericContext,
   //
   //     return '${returnTypeText} Function${typeParametersText}(${argumentsText})';
   //
-  return '${typeParametersText}(${argumentsText}) => ${returnTypeText}';
+  return '$typeParametersText($argumentsText) => $returnTypeText';
 }
 
 /// Returns a human readable version of [rti].
@@ -1693,9 +1697,9 @@ String _rtiToString(Rti rti, List<String>? genericContext) {
       int argumentKind = Rti._getKind(starArgument);
       if (argumentKind == Rti.kindFunction ||
           argumentKind == Rti.kindGenericFunction) {
-        s = '(' + s + ')';
+        s = '($s)';
       }
-      return s + '*';
+      return '$s*';
     } else {
       return s;
     }
@@ -1707,9 +1711,9 @@ String _rtiToString(Rti rti, List<String>? genericContext) {
     int argumentKind = Rti._getKind(questionArgument);
     if (argumentKind == Rti.kindFunction ||
         argumentKind == Rti.kindGenericFunction) {
-      s = '(' + s + ')';
+      s = '($s)';
     }
-    return s + '?';
+    return '$s?';
   }
 
   if (kind == Rti.kindFutureOr) {
@@ -1729,7 +1733,7 @@ String _rtiToString(Rti rti, List<String>? genericContext) {
     }
     var arguments = Rti._getInterfaceTypeArguments(rti);
     if (arguments.length > 0) {
-      name += '<' + _rtiArrayToString(arguments, genericContext) + '>';
+      name += '<${_rtiArrayToString(arguments, genericContext)}>';
     }
     return name;
   }
@@ -1760,7 +1764,7 @@ String _rtiToString(Rti rti, List<String>? genericContext) {
 
 String _unminifyOrTag(String rawClassName) {
   String? preserved = unmangleGlobalNameIfPreservedAnyways(rawClassName);
-  if (preserved != null) return preserved;
+  return preserved;
   return JS_GET_FLAG('MINIFIED') ? 'minified:$rawClassName' : rawClassName;
 }
 
@@ -1770,7 +1774,7 @@ String _rtiArrayToDebugString(Object? array) {
     s += sep + _rtiToDebugString(_Utils.asRti(_Utils.arrayAt(array, i)));
     sep = ', ';
   }
-  return s + ']';
+  return '$s]';
 }
 
 String functionParametersToString(_FunctionParameters parameters) {
@@ -1792,7 +1796,7 @@ String functionParametersToString(_FunctionParameters parameters) {
   }
 
   if (optionalPositionalLength > 0) {
-    s += sep + '[';
+    s += '$sep[';
     sep = '';
     for (int i = 0; i < optionalPositionalLength; i++) {
       s += sep +
@@ -1804,22 +1808,20 @@ String functionParametersToString(_FunctionParameters parameters) {
   }
 
   if (namedLength > 0) {
-    s += sep + '{';
+    s += '$sep{';
     sep = '';
     for (int i = 0; i < namedLength; i += 3) {
       s += sep;
       if (_Utils.asBool(_Utils.arrayAt(named, i + 1))) {
         s += 'required ';
       }
-      s += _rtiToDebugString(_Utils.asRti(_Utils.arrayAt(named, i + 2))) +
-          ' ' +
-          _Utils.asString(_Utils.arrayAt(named, i));
+      s += '${_rtiToDebugString(_Utils.asRti(_Utils.arrayAt(named, i + 2)))} ${_Utils.asString(_Utils.arrayAt(named, i))}';
       sep = ', ';
     }
     s += '}';
   }
 
-  return s + ')';
+  return '$s)';
 }
 
 String _rtiToDebugString(Rti rti) {
@@ -2224,7 +2226,7 @@ class _Universe {
         return baseType;
       } else if (baseKind == Rti.kindNever ||
           _Utils.isIdentical(baseType, LEGACY_TYPE_REF<Never>())) {
-        return TYPE_REF<Null>();
+        return TYPE_REF<void>();
       } else if (baseKind == Rti.kindStar) {
         Rti starArgument = Rti._getStarArgument(baseType);
         int starArgumentKind = Rti._getKind(starArgument);
@@ -2262,7 +2264,7 @@ class _Universe {
       } else if (baseKind == Rti.kindNever) {
         return _lookupFutureRti(universe, baseType);
       } else if (isNullType(baseType)) {
-        return TYPE_REF<Future<Null>?>();
+        return TYPE_REF<Future<void>?>();
       }
     }
     Rti rti = Rti.allocate();
@@ -3221,7 +3223,7 @@ bool _isSubtype(Object? universe, Rti s, Object? sEnv, Rti t, Object? tEnv) {
   // Left Nullable:
   if (sKind == Rti.kindQuestion) {
     return (isLegacy ||
-            _isSubtype(universe, TYPE_REF<Null>(), sEnv, t, tEnv)) &&
+            _isSubtype(universe, TYPE_REF<void>(), sEnv, t, tEnv)) &&
         _isSubtype(universe, Rti._getQuestionArgument(s), sEnv, t, tEnv);
   }
 
@@ -3242,7 +3244,7 @@ bool _isSubtype(Object? universe, Rti s, Object? sEnv, Rti t, Object? tEnv) {
   // Right Nullable:
   if (tKind == Rti.kindQuestion) {
     return (!isLegacy &&
-            _isSubtype(universe, s, sEnv, TYPE_REF<Null>(), tEnv)) ||
+            _isSubtype(universe, s, sEnv, TYPE_REF<void>(), tEnv)) ||
         _isSubtype(universe, s, sEnv, Rti._getQuestionArgument(t), tEnv);
   }
 
@@ -3446,7 +3448,7 @@ bool _isInterfaceSubtype(
   assert(sName == tName);
   var sArgs = Rti._getInterfaceTypeArguments(s);
   var tArgs = Rti._getInterfaceTypeArguments(t);
-  var sVariances;
+  Object? sVariances;
   if (JS_GET_FLAG("VARIANCE")) {
     sVariances = _Universe.findTypeParameterVariances(universe, sName);
   }
@@ -3557,7 +3559,7 @@ bool isLegacyObjectType(Rti t) =>
     _Utils.isIdentical(t, LEGACY_TYPE_REF<Object>());
 bool isNullableObjectType(Rti t) => _Utils.isIdentical(t, TYPE_REF<Object?>());
 bool isNullType(Rti t) =>
-    _Utils.isIdentical(t, TYPE_REF<Null>()) ||
+    _Utils.isIdentical(t, TYPE_REF<void>()) ||
     _Utils.isIdentical(t, TYPE_REF<JSNull>());
 bool isFunctionType(Rti t) => _Utils.isIdentical(t, TYPE_REF<Function>());
 bool isJsFunctionType(Rti t) =>
@@ -3565,7 +3567,7 @@ bool isJsFunctionType(Rti t) =>
 bool isRecordInterfaceType(Rti t) => _Utils.isIdentical(t, TYPE_REF<Record>());
 
 class _Utils {
-  static Null asNull(Object? o) => JS('Null', '#', o);
+  static void asNull(Object? o) => JS('Null', '#', o);
   static bool asBool(Object? o) => JS('bool', '#', o);
   static double asDouble(Object? o) => JS('double', '#', o);
   static int asInt(Object? o) => JS('int', '#', o);

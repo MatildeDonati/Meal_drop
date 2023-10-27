@@ -10,6 +10,7 @@ class _MirrorReference {
     throw "Unreachable";
   }
 
+  @override
   @pragma("vm:external-name", "MirrorReference_equals")
   external bool operator ==(Object other);
 }

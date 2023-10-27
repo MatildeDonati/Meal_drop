@@ -6,27 +6,24 @@
 
 import 'dart:_js_helper' show argumentErrorValue;
 import 'dart:_foreign_helper' show JS;
-import 'dart:_interceptors' show JSExtendableArray;
 import 'dart:_internal' show MappedIterable, ListIterable, patch;
 import 'dart:collection' show LinkedHashMap, MapBase;
 import 'dart:_native_typed_data' show NativeUint8List;
 
-/**
- * Parses [json] and builds the corresponding parsed JSON value.
- *
- * Parsed JSON values Nare of the types [num], [String], [bool], [Null],
- * [List]s of parsed JSON values or [Map]s from [String] to parsed
- * JSON values.
- *
- * The optional [reviver] function, if provided, is called once for each object
- * or list property parsed. The arguments are the property name ([String]) or
- * list index ([int]), and the value is the parsed value.  The return value of
- * the reviver will be used as the value of that property instead of the parsed
- * value.  The top level value is passed to the reviver with the empty string as
- * a key.
- *
- * Throws [FormatException] if the input is not valid JSON text.
- */
+/// Parses [json] and builds the corresponding parsed JSON value.
+///
+/// Parsed JSON values Nare of the types [num], [String], [bool], [Null],
+/// [List]s of parsed JSON values or [Map]s from [String] to parsed
+/// JSON values.
+///
+/// The optional [reviver] function, if provided, is called once for each object
+/// or list property parsed. The arguments are the property name ([String]) or
+/// list index ([int]), and the value is the parsed value.  The return value of
+/// the reviver will be used as the value of that property instead of the parsed
+/// value.  The top level value is passed to the reviver with the empty string as
+/// a key.
+///
+/// Throws [FormatException] if the input is not valid JSON text.
 @patch
 _parseJson(String source, reviver(key, value)?) {
   if (source is! String) throw argumentErrorValue(source);
@@ -46,12 +43,10 @@ _parseJson(String source, reviver(key, value)?) {
   }
 }
 
-/**
- * Walks the raw JavaScript value [json], replacing JavaScript Objects with
- * Maps. [json] is expected to be freshly allocated so elements can be replaced
- * in-place.
- */
-_convertJsonToDart(json, reviver(Object? key, Object? value)) {
+/// Walks the raw JavaScript value [json], replacing JavaScript Objects with
+/// Maps. [json] is expected to be freshly allocated so elements can be replaced
+/// in-place.
+_convertJsonToDart(json, Function(Object? key, Object? value) reviver) {
   walk(e) {
     // JavaScript null, string, number, bool are in the correct representation.
     if (JS<bool>('!', '# == null', e) ||
@@ -136,10 +131,11 @@ class _JsonMap extends MapBase<String, dynamic> {
 
   // If the data slot isn't null, it represents either the list
   // of keys (for non-upgraded JSON maps) or the upgraded map.
-  var _data = null;
+  var _data;
 
   _JsonMap(this._original);
 
+  @override
   operator [](key) {
     if (_isUpgraded) {
       return _upgradedMap[key];
@@ -152,21 +148,27 @@ class _JsonMap extends MapBase<String, dynamic> {
     }
   }
 
+  @override
   int get length => _isUpgraded ? _upgradedMap.length : _computeKeys().length;
 
+  @override
   bool get isEmpty => length == 0;
+  @override
   bool get isNotEmpty => length > 0;
 
+  @override
   Iterable<String> get keys {
     if (_isUpgraded) return _upgradedMap.keys;
     return _JsonMapKeyIterable(this);
   }
 
+  @override
   Iterable get values {
     if (_isUpgraded) return _upgradedMap.values;
     return MappedIterable(_computeKeys(), (each) => this[each]);
   }
 
+  @override
   operator []=(key, value) {
     if (_isUpgraded) {
       _upgradedMap[key] = value;
@@ -182,12 +184,14 @@ class _JsonMap extends MapBase<String, dynamic> {
     }
   }
 
+  @override
   void addAll(Map<String, dynamic> other) {
     other.forEach((key, value) {
       this[key] = value;
     });
   }
 
+  @override
   bool containsValue(value) {
     if (_isUpgraded) return _upgradedMap.containsValue(value);
     List<String> keys = _computeKeys();
@@ -198,24 +202,28 @@ class _JsonMap extends MapBase<String, dynamic> {
     return false;
   }
 
+  @override
   bool containsKey(key) {
     if (_isUpgraded) return _upgradedMap.containsKey(key);
     if (key is! String) return false;
     return _hasProperty(_original, key);
   }
 
-  putIfAbsent(key, ifAbsent()) {
+  @override
+  putIfAbsent(key, Function() ifAbsent) {
     if (containsKey(key)) return this[key];
     var value = ifAbsent();
     this[key] = value;
     return value;
   }
 
+  @override
   remove(Object? key) {
     if (!_isUpgraded && !containsKey(key)) return null;
     return _upgrade().remove(key);
   }
 
+  @override
   void clear() {
     if (_isUpgraded) {
       _upgradedMap.clear();
@@ -231,6 +239,7 @@ class _JsonMap extends MapBase<String, dynamic> {
     }
   }
 
+  @override
   void forEach(void f(String key, value)) {
     if (_isUpgraded) return _upgradedMap.forEach(f);
     List<String> keys = _computeKeys();
@@ -273,9 +282,7 @@ class _JsonMap extends MapBase<String, dynamic> {
   List<String> _computeKeys() {
     assert(!_isUpgraded);
     List? keys = _data;
-    if (keys == null) {
-      keys = _data = _getPropertyNames(_original);
-    }
+    keys ??= _data = _getPropertyNames(_original);
     return JS('JSExtendableArray', '#', keys);
   }
 
@@ -335,8 +342,10 @@ class _JsonMapKeyIterable extends ListIterable<String> {
 
   _JsonMapKeyIterable(this._parent);
 
+  @override
   int get length => _parent.length;
 
+  @override
   String elementAt(int index) {
     return _parent._isUpgraded
         ? _parent.keys.elementAt(index)
@@ -346,6 +355,7 @@ class _JsonMapKeyIterable extends ListIterable<String> {
   /// Although [ListIterable] defines its own iterator, we return the iterator
   /// of the underlying list [_keys] in order to propagate
   /// [ConcurrentModificationError]s.
+  @override
   Iterator<String> get iterator {
     return _parent._isUpgraded
         ? _parent.keys.iterator
@@ -354,6 +364,7 @@ class _JsonMapKeyIterable extends ListIterable<String> {
 
   /// Delegate to [parent.containsKey] to ensure the performance expected
   /// from [Map.keys.containsKey].
+  @override
   bool contains(Object? key) => _parent.containsKey(key);
 }
 
@@ -365,12 +376,10 @@ class JsonDecoder {
   }
 }
 
-/**
- * Implements the chunked conversion from a JSON string to its corresponding
- * object.
- *
- * The sink only creates one object, but its input can be chunked.
- */
+/// Implements the chunked conversion from a JSON string to its corresponding
+/// object.
+///
+/// The sink only creates one object, but its input can be chunked.
 // TODO(floitsch): don't accumulate everything before starting to decode.
 class _JsonDecoderSink extends _StringSinkConversionSink<StringBuffer> {
   final Object? Function(Object? key, Object? value)? _reviver;

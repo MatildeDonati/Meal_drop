@@ -4,7 +4,6 @@
 
 library dart.js_interop_unsafe;
 
-import 'dart:_internal' show patch;
 import "dart:_js_helper";
 import 'dart:_wasm';
 import 'dart:js_interop' hide JS;

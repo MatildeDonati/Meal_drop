@@ -57,8 +57,9 @@ Iterable getOwnNamesAndSymbols(obj) {
 /// We use this instead of obj[name] since obj[name] checks the entire
 /// prototype chain instead of just `obj`.
 safeGetOwnProperty(obj, name) {
-  if (JS<bool>('!', '#.hasOwnProperty(#)', obj, name))
+  if (JS<bool>('!', '#.hasOwnProperty(#)', obj, name)) {
     return JS<Object>('', '#[#]', obj, name);
+  }
 }
 
 copyTheseProperties(to, from, names) {

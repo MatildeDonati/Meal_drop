@@ -20,7 +20,10 @@ final class _BoxedBool extends bool {
         : false;
   }
 
+  @override
   bool operator &(bool other) => this & other; // Intrinsic &
+  @override
   bool operator ^(bool other) => this ^ other; // Intrinsic ^
+  @override
   bool operator |(bool other) => this | other; // Intrinsic |
 }

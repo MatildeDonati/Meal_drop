@@ -10,7 +10,6 @@ library dart.dom.svg;
 
 import 'dart:async';
 import 'dart:collection' hide LinkedList, LinkedListEntry;
-import 'dart:_internal' show FixedLengthListMixin;
 import 'dart:html';
 import 'dart:html_common';
 import 'dart:_js_helper' show Creates, Returns, JSName, Native;
@@ -40,22 +39,21 @@ class _SvgElementFactoryProvider {
 class AElement extends GraphicsElement implements UriReference {
   // To suppress missing implicit constructor warnings.
   factory AElement._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory AElement() =>
       _SvgElementFactoryProvider.createSvgElement_tag("a") as AElement;
-  /**
-   * Constructor instantiated by the DOM when a custom element has been created.
-   *
-   * This can only be called by subclasses from their created constructor.
-   */
+  /// Constructor instantiated by the DOM when a custom element has been created.
+  ///
+  /// This can only be called by subclasses from their created constructor.
   AElement.created() : super.created();
 
   AnimatedString get target native;
 
   // From SVGURIReference
 
+  @override
   AnimatedString? get href native;
 }
 // Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
@@ -67,7 +65,7 @@ class AElement extends GraphicsElement implements UriReference {
 class Angle extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory Angle._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   static const int SVG_ANGLETYPE_DEG = 2;
@@ -110,23 +108,21 @@ class Angle extends JavaScriptObject {
 class AnimateElement extends AnimationElement {
   // To suppress missing implicit constructor warnings.
   factory AnimateElement._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory AnimateElement() =>
       _SvgElementFactoryProvider.createSvgElement_tag("animate")
           as AnimateElement;
-  /**
-   * Constructor instantiated by the DOM when a custom element has been created.
-   *
-   * This can only be called by subclasses from their created constructor.
-   */
+  /// Constructor instantiated by the DOM when a custom element has been created.
+  ///
+  /// This can only be called by subclasses from their created constructor.
   AnimateElement.created() : super.created();
 
   /// Checks if this type is supported on the current platform.
   static bool get supported =>
       SvgElement.isTagSupported('animate') &&
-      (new SvgElement.tag('animate') is AnimateElement);
+      (SvgElement.tag('animate') is AnimateElement);
 }
 // Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
 // for details. All rights reserved. Use of this source code is governed by a
@@ -140,23 +136,21 @@ class AnimateElement extends AnimationElement {
 class AnimateMotionElement extends AnimationElement {
   // To suppress missing implicit constructor warnings.
   factory AnimateMotionElement._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory AnimateMotionElement() =>
       _SvgElementFactoryProvider.createSvgElement_tag("animateMotion")
           as AnimateMotionElement;
-  /**
-   * Constructor instantiated by the DOM when a custom element has been created.
-   *
-   * This can only be called by subclasses from their created constructor.
-   */
+  /// Constructor instantiated by the DOM when a custom element has been created.
+  ///
+  /// This can only be called by subclasses from their created constructor.
   AnimateMotionElement.created() : super.created();
 
   /// Checks if this type is supported on the current platform.
   static bool get supported =>
       SvgElement.isTagSupported('animateMotion') &&
-      (new SvgElement.tag('animateMotion') is AnimateMotionElement);
+      (SvgElement.tag('animateMotion') is AnimateMotionElement);
 }
 // Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
 // for details. All rights reserved. Use of this source code is governed by a
@@ -170,23 +164,21 @@ class AnimateMotionElement extends AnimationElement {
 class AnimateTransformElement extends AnimationElement {
   // To suppress missing implicit constructor warnings.
   factory AnimateTransformElement._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory AnimateTransformElement() =>
       _SvgElementFactoryProvider.createSvgElement_tag("animateTransform")
           as AnimateTransformElement;
-  /**
-   * Constructor instantiated by the DOM when a custom element has been created.
-   *
-   * This can only be called by subclasses from their created constructor.
-   */
+  /// Constructor instantiated by the DOM when a custom element has been created.
+  ///
+  /// This can only be called by subclasses from their created constructor.
   AnimateTransformElement.created() : super.created();
 
   /// Checks if this type is supported on the current platform.
   static bool get supported =>
       SvgElement.isTagSupported('animateTransform') &&
-      (new SvgElement.tag('animateTransform') is AnimateTransformElement);
+      (SvgElement.tag('animateTransform') is AnimateTransformElement);
 }
 // Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
 // for details. All rights reserved. Use of this source code is governed by a
@@ -197,7 +189,7 @@ class AnimateTransformElement extends AnimationElement {
 class AnimatedAngle extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory AnimatedAngle._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   Angle? get animVal native;
@@ -213,7 +205,7 @@ class AnimatedAngle extends JavaScriptObject {
 class AnimatedBoolean extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory AnimatedBoolean._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   bool? get animVal native;
@@ -231,7 +223,7 @@ class AnimatedBoolean extends JavaScriptObject {
 class AnimatedEnumeration extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory AnimatedEnumeration._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   int? get animVal native;
@@ -249,7 +241,7 @@ class AnimatedEnumeration extends JavaScriptObject {
 class AnimatedInteger extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory AnimatedInteger._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   int? get animVal native;
@@ -267,7 +259,7 @@ class AnimatedInteger extends JavaScriptObject {
 class AnimatedLength extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory AnimatedLength._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   Length? get animVal native;
@@ -283,7 +275,7 @@ class AnimatedLength extends JavaScriptObject {
 class AnimatedLengthList extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory AnimatedLengthList._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   LengthList? get animVal native;
@@ -299,7 +291,7 @@ class AnimatedLengthList extends JavaScriptObject {
 class AnimatedNumber extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory AnimatedNumber._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   num? get animVal native;
@@ -317,7 +309,7 @@ class AnimatedNumber extends JavaScriptObject {
 class AnimatedNumberList extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory AnimatedNumberList._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   NumberList? get animVal native;
@@ -333,7 +325,7 @@ class AnimatedNumberList extends JavaScriptObject {
 class AnimatedPreserveAspectRatio extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory AnimatedPreserveAspectRatio._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   PreserveAspectRatio? get animVal native;
@@ -349,7 +341,7 @@ class AnimatedPreserveAspectRatio extends JavaScriptObject {
 class AnimatedRect extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory AnimatedRect._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   Rect? get animVal native;
@@ -365,7 +357,7 @@ class AnimatedRect extends JavaScriptObject {
 class AnimatedString extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory AnimatedString._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   String? get animVal native;
@@ -383,7 +375,7 @@ class AnimatedString extends JavaScriptObject {
 class AnimatedTransformList extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory AnimatedTransformList._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   TransformList? get animVal native;
@@ -399,17 +391,15 @@ class AnimatedTransformList extends JavaScriptObject {
 class AnimationElement extends SvgElement implements Tests {
   // To suppress missing implicit constructor warnings.
   factory AnimationElement._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory AnimationElement() =>
       _SvgElementFactoryProvider.createSvgElement_tag("animation")
           as AnimationElement;
-  /**
-   * Constructor instantiated by the DOM when a custom element has been created.
-   *
-   * This can only be called by subclasses from their created constructor.
-   */
+  /// Constructor instantiated by the DOM when a custom element has been created.
+  ///
+  /// This can only be called by subclasses from their created constructor.
   AnimationElement.created() : super.created();
 
   SvgElement? get targetElement native;
@@ -430,8 +420,10 @@ class AnimationElement extends SvgElement implements Tests {
 
   // From SVGTests
 
+  @override
   StringList? get requiredExtensions native;
 
+  @override
   StringList? get systemLanguage native;
 }
 // Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
@@ -443,17 +435,15 @@ class AnimationElement extends SvgElement implements Tests {
 class CircleElement extends GeometryElement {
   // To suppress missing implicit constructor warnings.
   factory CircleElement._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory CircleElement() =>
       _SvgElementFactoryProvider.createSvgElement_tag("circle")
           as CircleElement;
-  /**
-   * Constructor instantiated by the DOM when a custom element has been created.
-   *
-   * This can only be called by subclasses from their created constructor.
-   */
+  /// Constructor instantiated by the DOM when a custom element has been created.
+  ///
+  /// This can only be called by subclasses from their created constructor.
   CircleElement.created() : super.created();
 
   AnimatedLength? get cx native;
@@ -471,17 +461,15 @@ class CircleElement extends GeometryElement {
 class ClipPathElement extends GraphicsElement {
   // To suppress missing implicit constructor warnings.
   factory ClipPathElement._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory ClipPathElement() =>
       _SvgElementFactoryProvider.createSvgElement_tag("clipPath")
           as ClipPathElement;
-  /**
-   * Constructor instantiated by the DOM when a custom element has been created.
-   *
-   * This can only be called by subclasses from their created constructor.
-   */
+  /// Constructor instantiated by the DOM when a custom element has been created.
+  ///
+  /// This can only be called by subclasses from their created constructor.
   ClipPathElement.created() : super.created();
 
   AnimatedEnumeration? get clipPathUnits native;
@@ -495,16 +483,14 @@ class ClipPathElement extends GraphicsElement {
 class DefsElement extends GraphicsElement {
   // To suppress missing implicit constructor warnings.
   factory DefsElement._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory DefsElement() =>
       _SvgElementFactoryProvider.createSvgElement_tag("defs") as DefsElement;
-  /**
-   * Constructor instantiated by the DOM when a custom element has been created.
-   *
-   * This can only be called by subclasses from their created constructor.
-   */
+  /// Constructor instantiated by the DOM when a custom element has been created.
+  ///
+  /// This can only be called by subclasses from their created constructor.
   DefsElement.created() : super.created();
 }
 // Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
@@ -516,16 +502,14 @@ class DefsElement extends GraphicsElement {
 class DescElement extends SvgElement {
   // To suppress missing implicit constructor warnings.
   factory DescElement._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory DescElement() =>
       _SvgElementFactoryProvider.createSvgElement_tag("desc") as DescElement;
-  /**
-   * Constructor instantiated by the DOM when a custom element has been created.
-   *
-   * This can only be called by subclasses from their created constructor.
-   */
+  /// Constructor instantiated by the DOM when a custom element has been created.
+  ///
+  /// This can only be called by subclasses from their created constructor.
   DescElement.created() : super.created();
 }
 // Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
@@ -536,13 +520,11 @@ class DescElement extends SvgElement {
 class DiscardElement extends SvgElement {
   // To suppress missing implicit constructor warnings.
   factory DiscardElement._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
-  /**
-   * Constructor instantiated by the DOM when a custom element has been created.
-   *
-   * This can only be called by subclasses from their created constructor.
-   */
+  /// Constructor instantiated by the DOM when a custom element has been created.
+  ///
+  /// This can only be called by subclasses from their created constructor.
   DiscardElement.created() : super.created();
 }
 // Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
@@ -554,17 +536,15 @@ class DiscardElement extends SvgElement {
 class EllipseElement extends GeometryElement {
   // To suppress missing implicit constructor warnings.
   factory EllipseElement._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory EllipseElement() =>
       _SvgElementFactoryProvider.createSvgElement_tag("ellipse")
           as EllipseElement;
-  /**
-   * Constructor instantiated by the DOM when a custom element has been created.
-   *
-   * This can only be called by subclasses from their created constructor.
-   */
+  /// Constructor instantiated by the DOM when a custom element has been created.
+  ///
+  /// This can only be called by subclasses from their created constructor.
   EllipseElement.created() : super.created();
 
   AnimatedLength? get cx native;
@@ -589,23 +569,21 @@ class FEBlendElement extends SvgElement
     implements FilterPrimitiveStandardAttributes {
   // To suppress missing implicit constructor warnings.
   factory FEBlendElement._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory FEBlendElement() =>
       _SvgElementFactoryProvider.createSvgElement_tag("feBlend")
           as FEBlendElement;
-  /**
-   * Constructor instantiated by the DOM when a custom element has been created.
-   *
-   * This can only be called by subclasses from their created constructor.
-   */
+  /// Constructor instantiated by the DOM when a custom element has been created.
+  ///
+  /// This can only be called by subclasses from their created constructor.
   FEBlendElement.created() : super.created();
 
   /// Checks if this type is supported on the current platform.
   static bool get supported =>
       SvgElement.isTagSupported('feBlend') &&
-      (new SvgElement.tag('feBlend') is FEBlendElement);
+      (SvgElement.tag('feBlend') is FEBlendElement);
 
   static const int SVG_FEBLEND_MODE_DARKEN = 4;
 
@@ -627,14 +605,19 @@ class FEBlendElement extends SvgElement
 
   // From SVGFilterPrimitiveStandardAttributes
 
+  @override
   AnimatedLength? get height native;
 
+  @override
   AnimatedString? get result native;
 
+  @override
   AnimatedLength? get width native;
 
+  @override
   AnimatedLength? get x native;
 
+  @override
   AnimatedLength? get y native;
 }
 // Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
@@ -651,23 +634,21 @@ class FEColorMatrixElement extends SvgElement
     implements FilterPrimitiveStandardAttributes {
   // To suppress missing implicit constructor warnings.
   factory FEColorMatrixElement._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory FEColorMatrixElement() =>
       _SvgElementFactoryProvider.createSvgElement_tag("feColorMatrix")
           as FEColorMatrixElement;
-  /**
-   * Constructor instantiated by the DOM when a custom element has been created.
-   *
-   * This can only be called by subclasses from their created constructor.
-   */
+  /// Constructor instantiated by the DOM when a custom element has been created.
+  ///
+  /// This can only be called by subclasses from their created constructor.
   FEColorMatrixElement.created() : super.created();
 
   /// Checks if this type is supported on the current platform.
   static bool get supported =>
       SvgElement.isTagSupported('feColorMatrix') &&
-      (new SvgElement.tag('feColorMatrix') is FEColorMatrixElement);
+      (SvgElement.tag('feColorMatrix') is FEColorMatrixElement);
 
   static const int SVG_FECOLORMATRIX_TYPE_HUEROTATE = 3;
 
@@ -687,14 +668,19 @@ class FEColorMatrixElement extends SvgElement
 
   // From SVGFilterPrimitiveStandardAttributes
 
+  @override
   AnimatedLength? get height native;
 
+  @override
   AnimatedString? get result native;
 
+  @override
   AnimatedLength? get width native;
 
+  @override
   AnimatedLength? get x native;
 
+  @override
   AnimatedLength? get y native;
 }
 // Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
@@ -711,36 +697,39 @@ class FEComponentTransferElement extends SvgElement
     implements FilterPrimitiveStandardAttributes {
   // To suppress missing implicit constructor warnings.
   factory FEComponentTransferElement._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory FEComponentTransferElement() =>
       _SvgElementFactoryProvider.createSvgElement_tag("feComponentTransfer")
           as FEComponentTransferElement;
-  /**
-   * Constructor instantiated by the DOM when a custom element has been created.
-   *
-   * This can only be called by subclasses from their created constructor.
-   */
+  /// Constructor instantiated by the DOM when a custom element has been created.
+  ///
+  /// This can only be called by subclasses from their created constructor.
   FEComponentTransferElement.created() : super.created();
 
   /// Checks if this type is supported on the current platform.
   static bool get supported =>
       SvgElement.isTagSupported('feComponentTransfer') &&
-      (new SvgElement.tag('feComponentTransfer') is FEComponentTransferElement);
+      (SvgElement.tag('feComponentTransfer') is FEComponentTransferElement);
 
   AnimatedString? get in1 native;
 
   // From SVGFilterPrimitiveStandardAttributes
 
+  @override
   AnimatedLength? get height native;
 
+  @override
   AnimatedString? get result native;
 
+  @override
   AnimatedLength? get width native;
 
+  @override
   AnimatedLength? get x native;
 
+  @override
   AnimatedLength? get y native;
 }
 // Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
@@ -753,13 +742,11 @@ class FECompositeElement extends SvgElement
     implements FilterPrimitiveStandardAttributes {
   // To suppress missing implicit constructor warnings.
   factory FECompositeElement._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
-  /**
-   * Constructor instantiated by the DOM when a custom element has been created.
-   *
-   * This can only be called by subclasses from their created constructor.
-   */
+  /// Constructor instantiated by the DOM when a custom element has been created.
+  ///
+  /// This can only be called by subclasses from their created constructor.
   FECompositeElement.created() : super.created();
 
   static const int SVG_FECOMPOSITE_OPERATOR_ARITHMETIC = 6;
@@ -792,14 +779,19 @@ class FECompositeElement extends SvgElement
 
   // From SVGFilterPrimitiveStandardAttributes
 
+  @override
   AnimatedLength? get height native;
 
+  @override
   AnimatedString? get result native;
 
+  @override
   AnimatedLength? get width native;
 
+  @override
   AnimatedLength? get x native;
 
+  @override
   AnimatedLength? get y native;
 }
 // Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
@@ -816,23 +808,21 @@ class FEConvolveMatrixElement extends SvgElement
     implements FilterPrimitiveStandardAttributes {
   // To suppress missing implicit constructor warnings.
   factory FEConvolveMatrixElement._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory FEConvolveMatrixElement() =>
       _SvgElementFactoryProvider.createSvgElement_tag("feConvolveMatrix")
           as FEConvolveMatrixElement;
-  /**
-   * Constructor instantiated by the DOM when a custom element has been created.
-   *
-   * This can only be called by subclasses from their created constructor.
-   */
+  /// Constructor instantiated by the DOM when a custom element has been created.
+  ///
+  /// This can only be called by subclasses from their created constructor.
   FEConvolveMatrixElement.created() : super.created();
 
   /// Checks if this type is supported on the current platform.
   static bool get supported =>
       SvgElement.isTagSupported('feConvolveMatrix') &&
-      (new SvgElement.tag('feConvolveMatrix') is FEConvolveMatrixElement);
+      (SvgElement.tag('feConvolveMatrix') is FEConvolveMatrixElement);
 
   static const int SVG_EDGEMODE_DUPLICATE = 1;
 
@@ -868,14 +858,19 @@ class FEConvolveMatrixElement extends SvgElement
 
   // From SVGFilterPrimitiveStandardAttributes
 
+  @override
   AnimatedLength? get height native;
 
+  @override
   AnimatedString? get result native;
 
+  @override
   AnimatedLength? get width native;
 
+  @override
   AnimatedLength? get x native;
 
+  @override
   AnimatedLength? get y native;
 }
 // Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
@@ -892,23 +887,21 @@ class FEDiffuseLightingElement extends SvgElement
     implements FilterPrimitiveStandardAttributes {
   // To suppress missing implicit constructor warnings.
   factory FEDiffuseLightingElement._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory FEDiffuseLightingElement() =>
       _SvgElementFactoryProvider.createSvgElement_tag("feDiffuseLighting")
           as FEDiffuseLightingElement;
-  /**
-   * Constructor instantiated by the DOM when a custom element has been created.
-   *
-   * This can only be called by subclasses from their created constructor.
-   */
+  /// Constructor instantiated by the DOM when a custom element has been created.
+  ///
+  /// This can only be called by subclasses from their created constructor.
   FEDiffuseLightingElement.created() : super.created();
 
   /// Checks if this type is supported on the current platform.
   static bool get supported =>
       SvgElement.isTagSupported('feDiffuseLighting') &&
-      (new SvgElement.tag('feDiffuseLighting') is FEDiffuseLightingElement);
+      (SvgElement.tag('feDiffuseLighting') is FEDiffuseLightingElement);
 
   AnimatedNumber? get diffuseConstant native;
 
@@ -922,14 +915,19 @@ class FEDiffuseLightingElement extends SvgElement
 
   // From SVGFilterPrimitiveStandardAttributes
 
+  @override
   AnimatedLength? get height native;
 
+  @override
   AnimatedString? get result native;
 
+  @override
   AnimatedLength? get width native;
 
+  @override
   AnimatedLength? get x native;
 
+  @override
   AnimatedLength? get y native;
 }
 // Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
@@ -946,23 +944,21 @@ class FEDisplacementMapElement extends SvgElement
     implements FilterPrimitiveStandardAttributes {
   // To suppress missing implicit constructor warnings.
   factory FEDisplacementMapElement._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory FEDisplacementMapElement() =>
       _SvgElementFactoryProvider.createSvgElement_tag("feDisplacementMap")
           as FEDisplacementMapElement;
-  /**
-   * Constructor instantiated by the DOM when a custom element has been created.
-   *
-   * This can only be called by subclasses from their created constructor.
-   */
+  /// Constructor instantiated by the DOM when a custom element has been created.
+  ///
+  /// This can only be called by subclasses from their created constructor.
   FEDisplacementMapElement.created() : super.created();
 
   /// Checks if this type is supported on the current platform.
   static bool get supported =>
       SvgElement.isTagSupported('feDisplacementMap') &&
-      (new SvgElement.tag('feDisplacementMap') is FEDisplacementMapElement);
+      (SvgElement.tag('feDisplacementMap') is FEDisplacementMapElement);
 
   static const int SVG_CHANNEL_A = 4;
 
@@ -986,14 +982,19 @@ class FEDisplacementMapElement extends SvgElement
 
   // From SVGFilterPrimitiveStandardAttributes
 
+  @override
   AnimatedLength? get height native;
 
+  @override
   AnimatedString? get result native;
 
+  @override
   AnimatedLength? get width native;
 
+  @override
   AnimatedLength? get x native;
 
+  @override
   AnimatedLength? get y native;
 }
 // Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
@@ -1009,23 +1010,21 @@ class FEDisplacementMapElement extends SvgElement
 class FEDistantLightElement extends SvgElement {
   // To suppress missing implicit constructor warnings.
   factory FEDistantLightElement._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory FEDistantLightElement() =>
       _SvgElementFactoryProvider.createSvgElement_tag("feDistantLight")
           as FEDistantLightElement;
-  /**
-   * Constructor instantiated by the DOM when a custom element has been created.
-   *
-   * This can only be called by subclasses from their created constructor.
-   */
+  /// Constructor instantiated by the DOM when a custom element has been created.
+  ///
+  /// This can only be called by subclasses from their created constructor.
   FEDistantLightElement.created() : super.created();
 
   /// Checks if this type is supported on the current platform.
   static bool get supported =>
       SvgElement.isTagSupported('feDistantLight') &&
-      (new SvgElement.tag('feDistantLight') is FEDistantLightElement);
+      (SvgElement.tag('feDistantLight') is FEDistantLightElement);
 
   AnimatedNumber? get azimuth native;
 
@@ -1045,34 +1044,37 @@ class FEFloodElement extends SvgElement
     implements FilterPrimitiveStandardAttributes {
   // To suppress missing implicit constructor warnings.
   factory FEFloodElement._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory FEFloodElement() =>
       _SvgElementFactoryProvider.createSvgElement_tag("feFlood")
           as FEFloodElement;
-  /**
-   * Constructor instantiated by the DOM when a custom element has been created.
-   *
-   * This can only be called by subclasses from their created constructor.
-   */
+  /// Constructor instantiated by the DOM when a custom element has been created.
+  ///
+  /// This can only be called by subclasses from their created constructor.
   FEFloodElement.created() : super.created();
 
   /// Checks if this type is supported on the current platform.
   static bool get supported =>
       SvgElement.isTagSupported('feFlood') &&
-      (new SvgElement.tag('feFlood') is FEFloodElement);
+      (SvgElement.tag('feFlood') is FEFloodElement);
 
   // From SVGFilterPrimitiveStandardAttributes
 
+  @override
   AnimatedLength? get height native;
 
+  @override
   AnimatedString? get result native;
 
+  @override
   AnimatedLength? get width native;
 
+  @override
   AnimatedLength? get x native;
 
+  @override
   AnimatedLength? get y native;
 }
 // Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
@@ -1088,23 +1090,21 @@ class FEFloodElement extends SvgElement
 class FEFuncAElement extends _SVGComponentTransferFunctionElement {
   // To suppress missing implicit constructor warnings.
   factory FEFuncAElement._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory FEFuncAElement() =>
       _SvgElementFactoryProvider.createSvgElement_tag("feFuncA")
           as FEFuncAElement;
-  /**
-   * Constructor instantiated by the DOM when a custom element has been created.
-   *
-   * This can only be called by subclasses from their created constructor.
-   */
+  /// Constructor instantiated by the DOM when a custom element has been created.
+  ///
+  /// This can only be called by subclasses from their created constructor.
   FEFuncAElement.created() : super.created();
 
   /// Checks if this type is supported on the current platform.
   static bool get supported =>
       SvgElement.isTagSupported('feFuncA') &&
-      (new SvgElement.tag('feFuncA') is FEFuncAElement);
+      (SvgElement.tag('feFuncA') is FEFuncAElement);
 }
 // Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
 // for details. All rights reserved. Use of this source code is governed by a
@@ -1119,23 +1119,21 @@ class FEFuncAElement extends _SVGComponentTransferFunctionElement {
 class FEFuncBElement extends _SVGComponentTransferFunctionElement {
   // To suppress missing implicit constructor warnings.
   factory FEFuncBElement._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory FEFuncBElement() =>
       _SvgElementFactoryProvider.createSvgElement_tag("feFuncB")
           as FEFuncBElement;
-  /**
-   * Constructor instantiated by the DOM when a custom element has been created.
-   *
-   * This can only be called by subclasses from their created constructor.
-   */
+  /// Constructor instantiated by the DOM when a custom element has been created.
+  ///
+  /// This can only be called by subclasses from their created constructor.
   FEFuncBElement.created() : super.created();
 
   /// Checks if this type is supported on the current platform.
   static bool get supported =>
       SvgElement.isTagSupported('feFuncB') &&
-      (new SvgElement.tag('feFuncB') is FEFuncBElement);
+      (SvgElement.tag('feFuncB') is FEFuncBElement);
 }
 // Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
 // for details. All rights reserved. Use of this source code is governed by a
@@ -1150,23 +1148,21 @@ class FEFuncBElement extends _SVGComponentTransferFunctionElement {
 class FEFuncGElement extends _SVGComponentTransferFunctionElement {
   // To suppress missing implicit constructor warnings.
   factory FEFuncGElement._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory FEFuncGElement() =>
       _SvgElementFactoryProvider.createSvgElement_tag("feFuncG")
           as FEFuncGElement;
-  /**
-   * Constructor instantiated by the DOM when a custom element has been created.
-   *
-   * This can only be called by subclasses from their created constructor.
-   */
+  /// Constructor instantiated by the DOM when a custom element has been created.
+  ///
+  /// This can only be called by subclasses from their created constructor.
   FEFuncGElement.created() : super.created();
 
   /// Checks if this type is supported on the current platform.
   static bool get supported =>
       SvgElement.isTagSupported('feFuncG') &&
-      (new SvgElement.tag('feFuncG') is FEFuncGElement);
+      (SvgElement.tag('feFuncG') is FEFuncGElement);
 }
 // Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
 // for details. All rights reserved. Use of this source code is governed by a
@@ -1181,23 +1177,21 @@ class FEFuncGElement extends _SVGComponentTransferFunctionElement {
 class FEFuncRElement extends _SVGComponentTransferFunctionElement {
   // To suppress missing implicit constructor warnings.
   factory FEFuncRElement._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory FEFuncRElement() =>
       _SvgElementFactoryProvider.createSvgElement_tag("feFuncR")
           as FEFuncRElement;
-  /**
-   * Constructor instantiated by the DOM when a custom element has been created.
-   *
-   * This can only be called by subclasses from their created constructor.
-   */
+  /// Constructor instantiated by the DOM when a custom element has been created.
+  ///
+  /// This can only be called by subclasses from their created constructor.
   FEFuncRElement.created() : super.created();
 
   /// Checks if this type is supported on the current platform.
   static bool get supported =>
       SvgElement.isTagSupported('feFuncR') &&
-      (new SvgElement.tag('feFuncR') is FEFuncRElement);
+      (SvgElement.tag('feFuncR') is FEFuncRElement);
 }
 // Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
 // for details. All rights reserved. Use of this source code is governed by a
@@ -1213,23 +1207,21 @@ class FEGaussianBlurElement extends SvgElement
     implements FilterPrimitiveStandardAttributes {
   // To suppress missing implicit constructor warnings.
   factory FEGaussianBlurElement._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory FEGaussianBlurElement() =>
       _SvgElementFactoryProvider.createSvgElement_tag("feGaussianBlur")
           as FEGaussianBlurElement;
-  /**
-   * Constructor instantiated by the DOM when a custom element has been created.
-   *
-   * This can only be called by subclasses from their created constructor.
-   */
+  /// Constructor instantiated by the DOM when a custom element has been created.
+  ///
+  /// This can only be called by subclasses from their created constructor.
   FEGaussianBlurElement.created() : super.created();
 
   /// Checks if this type is supported on the current platform.
   static bool get supported =>
       SvgElement.isTagSupported('feGaussianBlur') &&
-      (new SvgElement.tag('feGaussianBlur') is FEGaussianBlurElement);
+      (SvgElement.tag('feGaussianBlur') is FEGaussianBlurElement);
 
   AnimatedString? get in1 native;
 
@@ -1241,14 +1233,19 @@ class FEGaussianBlurElement extends SvgElement
 
   // From SVGFilterPrimitiveStandardAttributes
 
+  @override
   AnimatedLength? get height native;
 
+  @override
   AnimatedString? get result native;
 
+  @override
   AnimatedLength? get width native;
 
+  @override
   AnimatedLength? get x native;
 
+  @override
   AnimatedLength? get y native;
 }
 // Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
@@ -1265,40 +1262,44 @@ class FEImageElement extends SvgElement
     implements FilterPrimitiveStandardAttributes, UriReference {
   // To suppress missing implicit constructor warnings.
   factory FEImageElement._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory FEImageElement() =>
       _SvgElementFactoryProvider.createSvgElement_tag("feImage")
           as FEImageElement;
-  /**
-   * Constructor instantiated by the DOM when a custom element has been created.
-   *
-   * This can only be called by subclasses from their created constructor.
-   */
+  /// Constructor instantiated by the DOM when a custom element has been created.
+  ///
+  /// This can only be called by subclasses from their created constructor.
   FEImageElement.created() : super.created();
 
   /// Checks if this type is supported on the current platform.
   static bool get supported =>
       SvgElement.isTagSupported('feImage') &&
-      (new SvgElement.tag('feImage') is FEImageElement);
+      (SvgElement.tag('feImage') is FEImageElement);
 
   AnimatedPreserveAspectRatio? get preserveAspectRatio native;
 
   // From SVGFilterPrimitiveStandardAttributes
 
+  @override
   AnimatedLength? get height native;
 
+  @override
   AnimatedString? get result native;
 
+  @override
   AnimatedLength? get width native;
 
+  @override
   AnimatedLength? get x native;
 
+  @override
   AnimatedLength? get y native;
 
   // From SVGURIReference
 
+  @override
   AnimatedString? get href native;
 }
 // Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
@@ -1315,34 +1316,37 @@ class FEMergeElement extends SvgElement
     implements FilterPrimitiveStandardAttributes {
   // To suppress missing implicit constructor warnings.
   factory FEMergeElement._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory FEMergeElement() =>
       _SvgElementFactoryProvider.createSvgElement_tag("feMerge")
           as FEMergeElement;
-  /**
-   * Constructor instantiated by the DOM when a custom element has been created.
-   *
-   * This can only be called by subclasses from their created constructor.
-   */
+  /// Constructor instantiated by the DOM when a custom element has been created.
+  ///
+  /// This can only be called by subclasses from their created constructor.
   FEMergeElement.created() : super.created();
 
   /// Checks if this type is supported on the current platform.
   static bool get supported =>
       SvgElement.isTagSupported('feMerge') &&
-      (new SvgElement.tag('feMerge') is FEMergeElement);
+      (SvgElement.tag('feMerge') is FEMergeElement);
 
   // From SVGFilterPrimitiveStandardAttributes
 
+  @override
   AnimatedLength? get height native;
 
+  @override
   AnimatedString? get result native;
 
+  @override
   AnimatedLength? get width native;
 
+  @override
   AnimatedLength? get x native;
 
+  @override
   AnimatedLength? get y native;
 }
 // Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
@@ -1358,23 +1362,21 @@ class FEMergeElement extends SvgElement
 class FEMergeNodeElement extends SvgElement {
   // To suppress missing implicit constructor warnings.
   factory FEMergeNodeElement._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory FEMergeNodeElement() =>
       _SvgElementFactoryProvider.createSvgElement_tag("feMergeNode")
           as FEMergeNodeElement;
-  /**
-   * Constructor instantiated by the DOM when a custom element has been created.
-   *
-   * This can only be called by subclasses from their created constructor.
-   */
+  /// Constructor instantiated by the DOM when a custom element has been created.
+  ///
+  /// This can only be called by subclasses from their created constructor.
   FEMergeNodeElement.created() : super.created();
 
   /// Checks if this type is supported on the current platform.
   static bool get supported =>
       SvgElement.isTagSupported('feMergeNode') &&
-      (new SvgElement.tag('feMergeNode') is FEMergeNodeElement);
+      (SvgElement.tag('feMergeNode') is FEMergeNodeElement);
 
   AnimatedString? get in1 native;
 }
@@ -1392,13 +1394,11 @@ class FEMorphologyElement extends SvgElement
     implements FilterPrimitiveStandardAttributes {
   // To suppress missing implicit constructor warnings.
   factory FEMorphologyElement._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
-  /**
-   * Constructor instantiated by the DOM when a custom element has been created.
-   *
-   * This can only be called by subclasses from their created constructor.
-   */
+  /// Constructor instantiated by the DOM when a custom element has been created.
+  ///
+  /// This can only be called by subclasses from their created constructor.
   FEMorphologyElement.created() : super.created();
 
   static const int SVG_MORPHOLOGY_OPERATOR_DILATE = 2;
@@ -1417,14 +1417,19 @@ class FEMorphologyElement extends SvgElement
 
   // From SVGFilterPrimitiveStandardAttributes
 
+  @override
   AnimatedLength? get height native;
 
+  @override
   AnimatedString? get result native;
 
+  @override
   AnimatedLength? get width native;
 
+  @override
   AnimatedLength? get x native;
 
+  @override
   AnimatedLength? get y native;
 }
 // Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
@@ -1441,23 +1446,21 @@ class FEOffsetElement extends SvgElement
     implements FilterPrimitiveStandardAttributes {
   // To suppress missing implicit constructor warnings.
   factory FEOffsetElement._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory FEOffsetElement() =>
       _SvgElementFactoryProvider.createSvgElement_tag("feOffset")
           as FEOffsetElement;
-  /**
-   * Constructor instantiated by the DOM when a custom element has been created.
-   *
-   * This can only be called by subclasses from their created constructor.
-   */
+  /// Constructor instantiated by the DOM when a custom element has been created.
+  ///
+  /// This can only be called by subclasses from their created constructor.
   FEOffsetElement.created() : super.created();
 
   /// Checks if this type is supported on the current platform.
   static bool get supported =>
       SvgElement.isTagSupported('feOffset') &&
-      (new SvgElement.tag('feOffset') is FEOffsetElement);
+      (SvgElement.tag('feOffset') is FEOffsetElement);
 
   AnimatedNumber? get dx native;
 
@@ -1467,14 +1470,19 @@ class FEOffsetElement extends SvgElement
 
   // From SVGFilterPrimitiveStandardAttributes
 
+  @override
   AnimatedLength? get height native;
 
+  @override
   AnimatedString? get result native;
 
+  @override
   AnimatedLength? get width native;
 
+  @override
   AnimatedLength? get x native;
 
+  @override
   AnimatedLength? get y native;
 }
 // Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
@@ -1490,23 +1498,21 @@ class FEOffsetElement extends SvgElement
 class FEPointLightElement extends SvgElement {
   // To suppress missing implicit constructor warnings.
   factory FEPointLightElement._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory FEPointLightElement() =>
       _SvgElementFactoryProvider.createSvgElement_tag("fePointLight")
           as FEPointLightElement;
-  /**
-   * Constructor instantiated by the DOM when a custom element has been created.
-   *
-   * This can only be called by subclasses from their created constructor.
-   */
+  /// Constructor instantiated by the DOM when a custom element has been created.
+  ///
+  /// This can only be called by subclasses from their created constructor.
   FEPointLightElement.created() : super.created();
 
   /// Checks if this type is supported on the current platform.
   static bool get supported =>
       SvgElement.isTagSupported('fePointLight') &&
-      (new SvgElement.tag('fePointLight') is FEPointLightElement);
+      (SvgElement.tag('fePointLight') is FEPointLightElement);
 
   AnimatedNumber? get x native;
 
@@ -1528,23 +1534,21 @@ class FESpecularLightingElement extends SvgElement
     implements FilterPrimitiveStandardAttributes {
   // To suppress missing implicit constructor warnings.
   factory FESpecularLightingElement._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory FESpecularLightingElement() =>
       _SvgElementFactoryProvider.createSvgElement_tag("feSpecularLighting")
           as FESpecularLightingElement;
-  /**
-   * Constructor instantiated by the DOM when a custom element has been created.
-   *
-   * This can only be called by subclasses from their created constructor.
-   */
+  /// Constructor instantiated by the DOM when a custom element has been created.
+  ///
+  /// This can only be called by subclasses from their created constructor.
   FESpecularLightingElement.created() : super.created();
 
   /// Checks if this type is supported on the current platform.
   static bool get supported =>
       SvgElement.isTagSupported('feSpecularLighting') &&
-      (new SvgElement.tag('feSpecularLighting') is FESpecularLightingElement);
+      (SvgElement.tag('feSpecularLighting') is FESpecularLightingElement);
 
   AnimatedString? get in1 native;
 
@@ -1560,14 +1564,19 @@ class FESpecularLightingElement extends SvgElement
 
   // From SVGFilterPrimitiveStandardAttributes
 
+  @override
   AnimatedLength? get height native;
 
+  @override
   AnimatedString? get result native;
 
+  @override
   AnimatedLength? get width native;
 
+  @override
   AnimatedLength? get x native;
 
+  @override
   AnimatedLength? get y native;
 }
 // Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
@@ -1583,23 +1592,21 @@ class FESpecularLightingElement extends SvgElement
 class FESpotLightElement extends SvgElement {
   // To suppress missing implicit constructor warnings.
   factory FESpotLightElement._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory FESpotLightElement() =>
       _SvgElementFactoryProvider.createSvgElement_tag("feSpotLight")
           as FESpotLightElement;
-  /**
-   * Constructor instantiated by the DOM when a custom element has been created.
-   *
-   * This can only be called by subclasses from their created constructor.
-   */
+  /// Constructor instantiated by the DOM when a custom element has been created.
+  ///
+  /// This can only be called by subclasses from their created constructor.
   FESpotLightElement.created() : super.created();
 
   /// Checks if this type is supported on the current platform.
   static bool get supported =>
       SvgElement.isTagSupported('feSpotLight') &&
-      (new SvgElement.tag('feSpotLight') is FESpotLightElement);
+      (SvgElement.tag('feSpotLight') is FESpotLightElement);
 
   AnimatedNumber? get limitingConeAngle native;
 
@@ -1631,36 +1638,39 @@ class FETileElement extends SvgElement
     implements FilterPrimitiveStandardAttributes {
   // To suppress missing implicit constructor warnings.
   factory FETileElement._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory FETileElement() =>
       _SvgElementFactoryProvider.createSvgElement_tag("feTile")
           as FETileElement;
-  /**
-   * Constructor instantiated by the DOM when a custom element has been created.
-   *
-   * This can only be called by subclasses from their created constructor.
-   */
+  /// Constructor instantiated by the DOM when a custom element has been created.
+  ///
+  /// This can only be called by subclasses from their created constructor.
   FETileElement.created() : super.created();
 
   /// Checks if this type is supported on the current platform.
   static bool get supported =>
       SvgElement.isTagSupported('feTile') &&
-      (new SvgElement.tag('feTile') is FETileElement);
+      (SvgElement.tag('feTile') is FETileElement);
 
   AnimatedString? get in1 native;
 
   // From SVGFilterPrimitiveStandardAttributes
 
+  @override
   AnimatedLength? get height native;
 
+  @override
   AnimatedString? get result native;
 
+  @override
   AnimatedLength? get width native;
 
+  @override
   AnimatedLength? get x native;
 
+  @override
   AnimatedLength? get y native;
 }
 // Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
@@ -1677,23 +1687,21 @@ class FETurbulenceElement extends SvgElement
     implements FilterPrimitiveStandardAttributes {
   // To suppress missing implicit constructor warnings.
   factory FETurbulenceElement._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory FETurbulenceElement() =>
       _SvgElementFactoryProvider.createSvgElement_tag("feTurbulence")
           as FETurbulenceElement;
-  /**
-   * Constructor instantiated by the DOM when a custom element has been created.
-   *
-   * This can only be called by subclasses from their created constructor.
-   */
+  /// Constructor instantiated by the DOM when a custom element has been created.
+  ///
+  /// This can only be called by subclasses from their created constructor.
   FETurbulenceElement.created() : super.created();
 
   /// Checks if this type is supported on the current platform.
   static bool get supported =>
       SvgElement.isTagSupported('feTurbulence') &&
-      (new SvgElement.tag('feTurbulence') is FETurbulenceElement);
+      (SvgElement.tag('feTurbulence') is FETurbulenceElement);
 
   static const int SVG_STITCHTYPE_NOSTITCH = 2;
 
@@ -1721,14 +1729,19 @@ class FETurbulenceElement extends SvgElement
 
   // From SVGFilterPrimitiveStandardAttributes
 
+  @override
   AnimatedLength? get height native;
 
+  @override
   AnimatedString? get result native;
 
+  @override
   AnimatedLength? get width native;
 
+  @override
   AnimatedLength? get x native;
 
+  @override
   AnimatedLength? get y native;
 }
 // Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
@@ -1744,23 +1757,21 @@ class FETurbulenceElement extends SvgElement
 class FilterElement extends SvgElement implements UriReference {
   // To suppress missing implicit constructor warnings.
   factory FilterElement._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory FilterElement() =>
       _SvgElementFactoryProvider.createSvgElement_tag("filter")
           as FilterElement;
-  /**
-   * Constructor instantiated by the DOM when a custom element has been created.
-   *
-   * This can only be called by subclasses from their created constructor.
-   */
+  /// Constructor instantiated by the DOM when a custom element has been created.
+  ///
+  /// This can only be called by subclasses from their created constructor.
   FilterElement.created() : super.created();
 
   /// Checks if this type is supported on the current platform.
   static bool get supported =>
       SvgElement.isTagSupported('filter') &&
-      (new SvgElement.tag('filter') is FilterElement);
+      (SvgElement.tag('filter') is FilterElement);
 
   AnimatedEnumeration? get filterUnits native;
 
@@ -1776,6 +1787,7 @@ class FilterElement extends SvgElement implements UriReference {
 
   // From SVGURIReference
 
+  @override
   AnimatedString? get href native;
 }
 // Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
@@ -1786,7 +1798,7 @@ class FilterElement extends SvgElement implements UriReference {
 abstract class FilterPrimitiveStandardAttributes extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory FilterPrimitiveStandardAttributes._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   AnimatedLength? get height native;
@@ -1807,7 +1819,7 @@ abstract class FilterPrimitiveStandardAttributes extends JavaScriptObject {
 abstract class FitToViewBox extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory FitToViewBox._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   AnimatedPreserveAspectRatio? get preserveAspectRatio native;
@@ -1826,23 +1838,21 @@ abstract class FitToViewBox extends JavaScriptObject {
 class ForeignObjectElement extends GraphicsElement {
   // To suppress missing implicit constructor warnings.
   factory ForeignObjectElement._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory ForeignObjectElement() =>
       _SvgElementFactoryProvider.createSvgElement_tag("foreignObject")
           as ForeignObjectElement;
-  /**
-   * Constructor instantiated by the DOM when a custom element has been created.
-   *
-   * This can only be called by subclasses from their created constructor.
-   */
+  /// Constructor instantiated by the DOM when a custom element has been created.
+  ///
+  /// This can only be called by subclasses from their created constructor.
   ForeignObjectElement.created() : super.created();
 
   /// Checks if this type is supported on the current platform.
   static bool get supported =>
       SvgElement.isTagSupported('foreignObject') &&
-      (new SvgElement.tag('foreignObject') is ForeignObjectElement);
+      (SvgElement.tag('foreignObject') is ForeignObjectElement);
 
   AnimatedLength? get height native;
 
@@ -1861,16 +1871,14 @@ class ForeignObjectElement extends GraphicsElement {
 class GElement extends GraphicsElement {
   // To suppress missing implicit constructor warnings.
   factory GElement._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory GElement() =>
       _SvgElementFactoryProvider.createSvgElement_tag("g") as GElement;
-  /**
-   * Constructor instantiated by the DOM when a custom element has been created.
-   *
-   * This can only be called by subclasses from their created constructor.
-   */
+  /// Constructor instantiated by the DOM when a custom element has been created.
+  ///
+  /// This can only be called by subclasses from their created constructor.
   GElement.created() : super.created();
 }
 // Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
@@ -1881,13 +1889,11 @@ class GElement extends GraphicsElement {
 class GeometryElement extends GraphicsElement {
   // To suppress missing implicit constructor warnings.
   factory GeometryElement._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
-  /**
-   * Constructor instantiated by the DOM when a custom element has been created.
-   *
-   * This can only be called by subclasses from their created constructor.
-   */
+  /// Constructor instantiated by the DOM when a custom element has been created.
+  ///
+  /// This can only be called by subclasses from their created constructor.
   GeometryElement.created() : super.created();
 
   AnimatedNumber? get pathLength native;
@@ -1908,13 +1914,11 @@ class GeometryElement extends GraphicsElement {
 class GraphicsElement extends SvgElement implements Tests {
   // To suppress missing implicit constructor warnings.
   factory GraphicsElement._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
-  /**
-   * Constructor instantiated by the DOM when a custom element has been created.
-   *
-   * This can only be called by subclasses from their created constructor.
-   */
+  /// Constructor instantiated by the DOM when a custom element has been created.
+  ///
+  /// This can only be called by subclasses from their created constructor.
   GraphicsElement.created() : super.created();
 
   SvgElement? get farthestViewportElement native;
@@ -1933,8 +1937,10 @@ class GraphicsElement extends SvgElement implements Tests {
 
   // From SVGTests
 
+  @override
   StringList? get requiredExtensions native;
 
+  @override
   StringList? get systemLanguage native;
 }
 // Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
@@ -1946,16 +1952,14 @@ class GraphicsElement extends SvgElement implements Tests {
 class ImageElement extends GraphicsElement implements UriReference {
   // To suppress missing implicit constructor warnings.
   factory ImageElement._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory ImageElement() =>
       _SvgElementFactoryProvider.createSvgElement_tag("image") as ImageElement;
-  /**
-   * Constructor instantiated by the DOM when a custom element has been created.
-   *
-   * This can only be called by subclasses from their created constructor.
-   */
+  /// Constructor instantiated by the DOM when a custom element has been created.
+  ///
+  /// This can only be called by subclasses from their created constructor.
   ImageElement.created() : super.created();
 
   String? get async native;
@@ -1976,6 +1980,7 @@ class ImageElement extends GraphicsElement implements UriReference {
 
   // From SVGURIReference
 
+  @override
   AnimatedString? get href native;
 }
 // Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
@@ -1987,7 +1992,7 @@ class ImageElement extends GraphicsElement implements UriReference {
 class Length extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory Length._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   static const int SVG_LENGTHTYPE_CM = 6;
@@ -2041,53 +2046,62 @@ class LengthList extends JavaScriptObject
     implements List<Length> {
   // To suppress missing implicit constructor warnings.
   factory LengthList._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
+  @override
   int get length => JS("int", "#.length", this);
 
   int? get numberOfItems native;
 
+  @override
   Length operator [](int index) {
-    if (JS("bool", "# >>> 0 !== # || # >= #", index, index, index, length))
-      throw new IndexError.withLength(index, length, indexable: this);
-    return this.getItem(index);
+    if (JS("bool", "# >>> 0 !== # || # >= #", index, index, index, length)) {
+      throw IndexError.withLength(index, length, indexable: this);
+    }
+    return getItem(index);
   }
 
+  @override
   void operator []=(int index, Length value) {
-    throw new UnsupportedError("Cannot assign element of immutable List.");
+    throw UnsupportedError("Cannot assign element of immutable List.");
   }
   // -- start List<Length> mixins.
   // Length is the element type.
 
+  @override
   set length(int value) {
-    throw new UnsupportedError("Cannot resize immutable List.");
+    throw UnsupportedError("Cannot resize immutable List.");
   }
 
+  @override
   Length get first {
-    if (this.length > 0) {
+    if (isNotEmpty) {
       return JS('Length', '#[0]', this);
     }
-    throw new StateError("No elements");
+    throw StateError("No elements");
   }
 
+  @override
   Length get last {
-    int len = this.length;
+    int len = length;
     if (len > 0) {
       return JS('Length', '#[#]', this, len - 1);
     }
-    throw new StateError("No elements");
+    throw StateError("No elements");
   }
 
+  @override
   Length get single {
-    int len = this.length;
+    int len = length;
     if (len == 1) {
       return JS('Length', '#[0]', this);
     }
-    if (len == 0) throw new StateError("No elements");
-    throw new StateError("More than one element");
+    if (len == 0) throw StateError("No elements");
+    throw StateError("More than one element");
   }
 
+  @override
   Length elementAt(int index) => this[index];
   // -- end List<Length> mixins.
 
@@ -2095,6 +2109,7 @@ class LengthList extends JavaScriptObject
 
   Length appendItem(Length newItem) native;
 
+  @override
   void clear() native;
 
   Length getItem(int index) native;
@@ -2116,16 +2131,14 @@ class LengthList extends JavaScriptObject
 class LineElement extends GeometryElement {
   // To suppress missing implicit constructor warnings.
   factory LineElement._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory LineElement() =>
       _SvgElementFactoryProvider.createSvgElement_tag("line") as LineElement;
-  /**
-   * Constructor instantiated by the DOM when a custom element has been created.
-   *
-   * This can only be called by subclasses from their created constructor.
-   */
+  /// Constructor instantiated by the DOM when a custom element has been created.
+  ///
+  /// This can only be called by subclasses from their created constructor.
   LineElement.created() : super.created();
 
   AnimatedLength? get x1 native;
@@ -2145,17 +2158,15 @@ class LineElement extends GeometryElement {
 class LinearGradientElement extends _GradientElement {
   // To suppress missing implicit constructor warnings.
   factory LinearGradientElement._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory LinearGradientElement() =>
       _SvgElementFactoryProvider.createSvgElement_tag("linearGradient")
           as LinearGradientElement;
-  /**
-   * Constructor instantiated by the DOM when a custom element has been created.
-   *
-   * This can only be called by subclasses from their created constructor.
-   */
+  /// Constructor instantiated by the DOM when a custom element has been created.
+  ///
+  /// This can only be called by subclasses from their created constructor.
   LinearGradientElement.created() : super.created();
 
   AnimatedLength? get x1 native;
@@ -2175,17 +2186,15 @@ class LinearGradientElement extends _GradientElement {
 class MarkerElement extends SvgElement implements FitToViewBox {
   // To suppress missing implicit constructor warnings.
   factory MarkerElement._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory MarkerElement() =>
       _SvgElementFactoryProvider.createSvgElement_tag("marker")
           as MarkerElement;
-  /**
-   * Constructor instantiated by the DOM when a custom element has been created.
-   *
-   * This can only be called by subclasses from their created constructor.
-   */
+  /// Constructor instantiated by the DOM when a custom element has been created.
+  ///
+  /// This can only be called by subclasses from their created constructor.
   MarkerElement.created() : super.created();
 
   static const int SVG_MARKERUNITS_STROKEWIDTH = 2;
@@ -2220,8 +2229,10 @@ class MarkerElement extends SvgElement implements FitToViewBox {
 
   // From SVGFitToViewBox
 
+  @override
   AnimatedPreserveAspectRatio? get preserveAspectRatio native;
 
+  @override
   AnimatedRect? get viewBox native;
 }
 // Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
@@ -2233,16 +2244,14 @@ class MarkerElement extends SvgElement implements FitToViewBox {
 class MaskElement extends SvgElement implements Tests {
   // To suppress missing implicit constructor warnings.
   factory MaskElement._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory MaskElement() =>
       _SvgElementFactoryProvider.createSvgElement_tag("mask") as MaskElement;
-  /**
-   * Constructor instantiated by the DOM when a custom element has been created.
-   *
-   * This can only be called by subclasses from their created constructor.
-   */
+  /// Constructor instantiated by the DOM when a custom element has been created.
+  ///
+  /// This can only be called by subclasses from their created constructor.
   MaskElement.created() : super.created();
 
   AnimatedLength? get height native;
@@ -2259,8 +2268,10 @@ class MaskElement extends SvgElement implements Tests {
 
   // From SVGTests
 
+  @override
   StringList? get requiredExtensions native;
 
+  @override
   StringList? get systemLanguage native;
 }
 // Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
@@ -2272,7 +2283,7 @@ class MaskElement extends SvgElement implements Tests {
 class Matrix extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory Matrix._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   num? get a native;
@@ -2330,13 +2341,11 @@ class Matrix extends JavaScriptObject {
 class MetadataElement extends SvgElement {
   // To suppress missing implicit constructor warnings.
   factory MetadataElement._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
-  /**
-   * Constructor instantiated by the DOM when a custom element has been created.
-   *
-   * This can only be called by subclasses from their created constructor.
-   */
+  /// Constructor instantiated by the DOM when a custom element has been created.
+  ///
+  /// This can only be called by subclasses from their created constructor.
   MetadataElement.created() : super.created();
 }
 // Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
@@ -2348,7 +2357,7 @@ class MetadataElement extends SvgElement {
 class Number extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory Number._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   num? get value native;
@@ -2366,53 +2375,62 @@ class NumberList extends JavaScriptObject
     implements List<Number> {
   // To suppress missing implicit constructor warnings.
   factory NumberList._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
+  @override
   int get length => JS("int", "#.length", this);
 
   int? get numberOfItems native;
 
+  @override
   Number operator [](int index) {
-    if (JS("bool", "# >>> 0 !== # || # >= #", index, index, index, length))
-      throw new IndexError.withLength(index, length, indexable: this);
-    return this.getItem(index);
+    if (JS("bool", "# >>> 0 !== # || # >= #", index, index, index, length)) {
+      throw IndexError.withLength(index, length, indexable: this);
+    }
+    return getItem(index);
   }
 
+  @override
   void operator []=(int index, Number value) {
-    throw new UnsupportedError("Cannot assign element of immutable List.");
+    throw UnsupportedError("Cannot assign element of immutable List.");
   }
   // -- start List<Number> mixins.
   // Number is the element type.
 
+  @override
   set length(int value) {
-    throw new UnsupportedError("Cannot resize immutable List.");
+    throw UnsupportedError("Cannot resize immutable List.");
   }
 
+  @override
   Number get first {
-    if (this.length > 0) {
+    if (isNotEmpty) {
       return JS('Number', '#[0]', this);
     }
-    throw new StateError("No elements");
+    throw StateError("No elements");
   }
 
+  @override
   Number get last {
-    int len = this.length;
+    int len = length;
     if (len > 0) {
       return JS('Number', '#[#]', this, len - 1);
     }
-    throw new StateError("No elements");
+    throw StateError("No elements");
   }
 
+  @override
   Number get single {
-    int len = this.length;
+    int len = length;
     if (len == 1) {
       return JS('Number', '#[0]', this);
     }
-    if (len == 0) throw new StateError("No elements");
-    throw new StateError("More than one element");
+    if (len == 0) throw StateError("No elements");
+    throw StateError("More than one element");
   }
 
+  @override
   Number elementAt(int index) => this[index];
   // -- end List<Number> mixins.
 
@@ -2420,6 +2438,7 @@ class NumberList extends JavaScriptObject
 
   Number appendItem(Number newItem) native;
 
+  @override
   void clear() native;
 
   Number getItem(int index) native;
@@ -2441,16 +2460,14 @@ class NumberList extends JavaScriptObject
 class PathElement extends GeometryElement {
   // To suppress missing implicit constructor warnings.
   factory PathElement._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory PathElement() =>
       _SvgElementFactoryProvider.createSvgElement_tag("path") as PathElement;
-  /**
-   * Constructor instantiated by the DOM when a custom element has been created.
-   *
-   * This can only be called by subclasses from their created constructor.
-   */
+  /// Constructor instantiated by the DOM when a custom element has been created.
+  ///
+  /// This can only be called by subclasses from their created constructor.
   PathElement.created() : super.created();
 }
 // Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
@@ -2463,17 +2480,15 @@ class PatternElement extends SvgElement
     implements FitToViewBox, UriReference, Tests {
   // To suppress missing implicit constructor warnings.
   factory PatternElement._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory PatternElement() =>
       _SvgElementFactoryProvider.createSvgElement_tag("pattern")
           as PatternElement;
-  /**
-   * Constructor instantiated by the DOM when a custom element has been created.
-   *
-   * This can only be called by subclasses from their created constructor.
-   */
+  /// Constructor instantiated by the DOM when a custom element has been created.
+  ///
+  /// This can only be called by subclasses from their created constructor.
   PatternElement.created() : super.created();
 
   AnimatedLength? get height native;
@@ -2492,18 +2507,23 @@ class PatternElement extends SvgElement
 
   // From SVGFitToViewBox
 
+  @override
   AnimatedPreserveAspectRatio? get preserveAspectRatio native;
 
+  @override
   AnimatedRect? get viewBox native;
 
   // From SVGTests
 
+  @override
   StringList? get requiredExtensions native;
 
+  @override
   StringList? get systemLanguage native;
 
   // From SVGURIReference
 
+  @override
   AnimatedString? get href native;
 }
 // Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
@@ -2515,7 +2535,7 @@ class PatternElement extends SvgElement
 class Point extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory Point._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   num? get x native;
@@ -2537,7 +2557,7 @@ class Point extends JavaScriptObject {
 class PointList extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory PointList._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   int? get length native;
@@ -2569,17 +2589,15 @@ class PointList extends JavaScriptObject {
 class PolygonElement extends GeometryElement {
   // To suppress missing implicit constructor warnings.
   factory PolygonElement._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory PolygonElement() =>
       _SvgElementFactoryProvider.createSvgElement_tag("polygon")
           as PolygonElement;
-  /**
-   * Constructor instantiated by the DOM when a custom element has been created.
-   *
-   * This can only be called by subclasses from their created constructor.
-   */
+  /// Constructor instantiated by the DOM when a custom element has been created.
+  ///
+  /// This can only be called by subclasses from their created constructor.
   PolygonElement.created() : super.created();
 
   PointList? get animatedPoints native;
@@ -2595,17 +2613,15 @@ class PolygonElement extends GeometryElement {
 class PolylineElement extends GeometryElement {
   // To suppress missing implicit constructor warnings.
   factory PolylineElement._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory PolylineElement() =>
       _SvgElementFactoryProvider.createSvgElement_tag("polyline")
           as PolylineElement;
-  /**
-   * Constructor instantiated by the DOM when a custom element has been created.
-   *
-   * This can only be called by subclasses from their created constructor.
-   */
+  /// Constructor instantiated by the DOM when a custom element has been created.
+  ///
+  /// This can only be called by subclasses from their created constructor.
   PolylineElement.created() : super.created();
 
   PointList? get animatedPoints native;
@@ -2621,7 +2637,7 @@ class PolylineElement extends GeometryElement {
 class PreserveAspectRatio extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory PreserveAspectRatio._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   static const int SVG_MEETORSLICE_MEET = 1;
@@ -2669,17 +2685,15 @@ class PreserveAspectRatio extends JavaScriptObject {
 class RadialGradientElement extends _GradientElement {
   // To suppress missing implicit constructor warnings.
   factory RadialGradientElement._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory RadialGradientElement() =>
       _SvgElementFactoryProvider.createSvgElement_tag("radialGradient")
           as RadialGradientElement;
-  /**
-   * Constructor instantiated by the DOM when a custom element has been created.
-   *
-   * This can only be called by subclasses from their created constructor.
-   */
+  /// Constructor instantiated by the DOM when a custom element has been created.
+  ///
+  /// This can only be called by subclasses from their created constructor.
   RadialGradientElement.created() : super.created();
 
   AnimatedLength? get cx native;
@@ -2703,7 +2717,7 @@ class RadialGradientElement extends _GradientElement {
 class Rect extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory Rect._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   num? get height native;
@@ -2731,16 +2745,14 @@ class Rect extends JavaScriptObject {
 class RectElement extends GeometryElement {
   // To suppress missing implicit constructor warnings.
   factory RectElement._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory RectElement() =>
       _SvgElementFactoryProvider.createSvgElement_tag("rect") as RectElement;
-  /**
-   * Constructor instantiated by the DOM when a custom element has been created.
-   *
-   * This can only be called by subclasses from their created constructor.
-   */
+  /// Constructor instantiated by the DOM when a custom element has been created.
+  ///
+  /// This can only be called by subclasses from their created constructor.
   RectElement.created() : super.created();
 
   AnimatedLength? get height native;
@@ -2764,17 +2776,15 @@ class RectElement extends GeometryElement {
 class ScriptElement extends SvgElement implements UriReference {
   // To suppress missing implicit constructor warnings.
   factory ScriptElement._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory ScriptElement() =>
       _SvgElementFactoryProvider.createSvgElement_tag("script")
           as ScriptElement;
-  /**
-   * Constructor instantiated by the DOM when a custom element has been created.
-   *
-   * This can only be called by subclasses from their created constructor.
-   */
+  /// Constructor instantiated by the DOM when a custom element has been created.
+  ///
+  /// This can only be called by subclasses from their created constructor.
   ScriptElement.created() : super.created();
 
   String? get type native;
@@ -2783,6 +2793,7 @@ class ScriptElement extends SvgElement implements UriReference {
 
   // From SVGURIReference
 
+  @override
   AnimatedString? get href native;
 }
 // Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
@@ -2797,22 +2808,20 @@ class ScriptElement extends SvgElement implements UriReference {
 class SetElement extends AnimationElement {
   // To suppress missing implicit constructor warnings.
   factory SetElement._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory SetElement() =>
       _SvgElementFactoryProvider.createSvgElement_tag("set") as SetElement;
-  /**
-   * Constructor instantiated by the DOM when a custom element has been created.
-   *
-   * This can only be called by subclasses from their created constructor.
-   */
+  /// Constructor instantiated by the DOM when a custom element has been created.
+  ///
+  /// This can only be called by subclasses from their created constructor.
   SetElement.created() : super.created();
 
   /// Checks if this type is supported on the current platform.
   static bool get supported =>
       SvgElement.isTagSupported('set') &&
-      (new SvgElement.tag('set') is SetElement);
+      (SvgElement.tag('set') is SetElement);
 }
 // Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
 // for details. All rights reserved. Use of this source code is governed by a
@@ -2823,16 +2832,14 @@ class SetElement extends AnimationElement {
 class StopElement extends SvgElement {
   // To suppress missing implicit constructor warnings.
   factory StopElement._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory StopElement() =>
       _SvgElementFactoryProvider.createSvgElement_tag("stop") as StopElement;
-  /**
-   * Constructor instantiated by the DOM when a custom element has been created.
-   *
-   * This can only be called by subclasses from their created constructor.
-   */
+  /// Constructor instantiated by the DOM when a custom element has been created.
+  ///
+  /// This can only be called by subclasses from their created constructor.
   StopElement.created() : super.created();
 
   @JSName('offset')
@@ -2849,53 +2856,62 @@ class StringList extends JavaScriptObject
     implements List<String> {
   // To suppress missing implicit constructor warnings.
   factory StringList._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
+  @override
   int get length => JS("int", "#.length", this);
 
   int? get numberOfItems native;
 
+  @override
   String operator [](int index) {
-    if (JS("bool", "# >>> 0 !== # || # >= #", index, index, index, length))
-      throw new IndexError.withLength(index, length, indexable: this);
-    return this.getItem(index);
+    if (JS("bool", "# >>> 0 !== # || # >= #", index, index, index, length)) {
+      throw IndexError.withLength(index, length, indexable: this);
+    }
+    return getItem(index);
   }
 
+  @override
   void operator []=(int index, String value) {
-    throw new UnsupportedError("Cannot assign element of immutable List.");
+    throw UnsupportedError("Cannot assign element of immutable List.");
   }
   // -- start List<String> mixins.
   // String is the element type.
 
+  @override
   set length(int value) {
-    throw new UnsupportedError("Cannot resize immutable List.");
+    throw UnsupportedError("Cannot resize immutable List.");
   }
 
+  @override
   String get first {
-    if (this.length > 0) {
+    if (length > 0) {
       return JS('String', '#[0]', this);
     }
-    throw new StateError("No elements");
+    throw StateError("No elements");
   }
 
+  @override
   String get last {
-    int len = this.length;
+    int len = length;
     if (len > 0) {
       return JS('String', '#[#]', this, len - 1);
     }
-    throw new StateError("No elements");
+    throw StateError("No elements");
   }
 
+  @override
   String get single {
-    int len = this.length;
+    int len = length;
     if (len == 1) {
       return JS('String', '#[0]', this);
     }
-    if (len == 0) throw new StateError("No elements");
-    throw new StateError("More than one element");
+    if (len == 0) throw StateError("No elements");
+    throw StateError("More than one element");
   }
 
+  @override
   String elementAt(int index) => this[index];
   // -- end List<String> mixins.
 
@@ -2903,6 +2919,7 @@ class StringList extends JavaScriptObject
 
   String appendItem(String newItem) native;
 
+  @override
   void clear() native;
 
   String getItem(int index) native;
@@ -2923,16 +2940,14 @@ class StringList extends JavaScriptObject
 class StyleElement extends SvgElement {
   // To suppress missing implicit constructor warnings.
   factory StyleElement._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory StyleElement() =>
       _SvgElementFactoryProvider.createSvgElement_tag("style") as StyleElement;
-  /**
-   * Constructor instantiated by the DOM when a custom element has been created.
-   *
-   * This can only be called by subclasses from their created constructor.
-   */
+  /// Constructor instantiated by the DOM when a custom element has been created.
+  ///
+  /// This can only be called by subclasses from their created constructor.
   StyleElement.created() : super.created();
 
   bool? get disabled native;
@@ -2968,13 +2983,13 @@ class AttributeClassSet extends CssClassSetImpl {
       classname = (classname as AnimatedString).baseVal;
     }
 
-    Set<String> s = new LinkedHashSet<String>();
+    Set<String> s = LinkedHashSet<String>();
     if (classname == null) {
       return s;
     }
     for (String name in classname.split(' ')) {
       String trimmed = name.trim();
-      if (!trimmed.isEmpty) {
+      if (trimmed.isNotEmpty) {
         s.add(trimmed);
       }
     }
@@ -2989,14 +3004,14 @@ class AttributeClassSet extends CssClassSetImpl {
 @Unstable()
 @Native("SVGElement")
 class SvgElement extends Element implements GlobalEventHandlers, NoncedElement {
-  static final _START_TAG_REGEXP = new RegExp('<(\\w+)');
+  static final _START_TAG_REGEXP = RegExp('<(\\w+)');
 
   factory SvgElement.tag(String tag) =>
       document.createElementNS("http://www.w3.org/2000/svg", tag) as SvgElement;
   factory SvgElement.svg(String svg,
       {NodeValidator? validator, NodeTreeSanitizer? treeSanitizer}) {
     if (validator == null && treeSanitizer == null) {
-      validator = new NodeValidatorBuilder.common()..allowSvg();
+      validator = NodeValidatorBuilder.common()..allowSvg();
     }
 
     final match = _START_TAG_REGEXP.firstMatch(svg);
@@ -3004,48 +3019,53 @@ class SvgElement extends Element implements GlobalEventHandlers, NoncedElement {
     if (match != null && match.group(1)!.toLowerCase() == 'svg') {
       parentElement = document.body!;
     } else {
-      parentElement = new SvgSvgElement();
+      parentElement = SvgSvgElement();
     }
     var fragment = parentElement.createFragment(svg,
         validator: validator, treeSanitizer: treeSanitizer);
-    return fragment.nodes.where((e) => e is SvgElement).single as SvgElement;
+    return fragment.nodes.whereType<SvgElement>().single;
   }
 
-  CssClassSet get classes => new AttributeClassSet(this);
+  @override
+  CssClassSet get classes => AttributeClassSet(this);
 
-  List<Element> get children => new FilteredElementList(this);
+  @override
+  List<Element> get children => FilteredElementList(this);
 
+  @override
   set children(List<Element> value) {
     final children = this.children;
     children.clear();
     children.addAll(value);
   }
 
+  @override
   String? get outerHtml {
-    final container = new DivElement();
-    final SvgElement cloned = this.clone(true) as SvgElement;
+    final container = DivElement();
+    final SvgElement cloned = clone(true) as SvgElement;
     container.children.add(cloned);
     return container.innerHtml;
   }
 
+  @override
   String? get innerHtml {
-    final container = new DivElement();
-    final SvgElement cloned = this.clone(true) as SvgElement;
+    final container = DivElement();
+    final SvgElement cloned = clone(true) as SvgElement;
     container.children.addAll(cloned.children);
     return container.innerHtml;
   }
 
+  @override
   set innerHtml(String? value) {
-    this.setInnerHtml(value);
+    setInnerHtml(value);
   }
 
+  @override
   DocumentFragment createFragment(String? svg,
       {NodeValidator? validator, NodeTreeSanitizer? treeSanitizer}) {
     if (treeSanitizer == null) {
-      if (validator == null) {
-        validator = new NodeValidatorBuilder.common()..allowSvg();
-      }
-      treeSanitizer = new NodeTreeSanitizer(validator);
+      validator ??= NodeValidatorBuilder.common()..allowSvg();
+      treeSanitizer = NodeTreeSanitizer(validator);
     }
 
     // We create a fragment which will parse in the HTML parser
@@ -3053,7 +3073,7 @@ class SvgElement extends Element implements GlobalEventHandlers, NoncedElement {
     var fragment =
         document.body!.createFragment(html, treeSanitizer: treeSanitizer);
 
-    var svgFragment = new DocumentFragment();
+    var svgFragment = DocumentFragment();
     // The root is the <svg/> element, need to pull out the contents.
     var root = fragment.nodes.single;
     while (root.firstChild != null) {
@@ -3064,219 +3084,220 @@ class SvgElement extends Element implements GlobalEventHandlers, NoncedElement {
 
   // Unsupported methods inherited from Element.
 
+  @override
   void insertAdjacentText(String where, String text) {
-    throw new UnsupportedError("Cannot invoke insertAdjacentText on SVG.");
+    throw UnsupportedError("Cannot invoke insertAdjacentText on SVG.");
   }
 
+  @override
   void insertAdjacentHtml(String where, String text,
       {NodeValidator? validator, NodeTreeSanitizer? treeSanitizer}) {
-    throw new UnsupportedError("Cannot invoke insertAdjacentHtml on SVG.");
+    throw UnsupportedError("Cannot invoke insertAdjacentHtml on SVG.");
   }
 
+  @override
   Element insertAdjacentElement(String where, Element element) {
-    throw new UnsupportedError("Cannot invoke insertAdjacentElement on SVG.");
+    throw UnsupportedError("Cannot invoke insertAdjacentElement on SVG.");
   }
 
   HtmlCollection get _children {
-    throw new UnsupportedError("Cannot get _children on SVG.");
+    throw UnsupportedError("Cannot get _children on SVG.");
   }
 
+  @override
   bool get isContentEditable => false;
+  @override
   void click() {
-    throw new UnsupportedError("Cannot invoke click SVG.");
+    throw UnsupportedError("Cannot invoke click SVG.");
   }
 
-  /**
-   * Checks to see if the SVG element type is supported by the current platform.
-   *
-   * The tag should be a valid SVG element tag name.
-   */
+  /// Checks to see if the SVG element type is supported by the current platform.
+  ///
+  /// The tag should be a valid SVG element tag name.
   static bool isTagSupported(String tag) {
-    var e = new SvgElement.tag(tag);
-    return e is SvgElement && !(e is UnknownElement);
+    var e = SvgElement.tag(tag);
+    return e is! UnknownElement;
   }
 
   // To suppress missing implicit constructor warnings.
   factory SvgElement._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   static const EventStreamProvider<Event> abortEvent =
-      const EventStreamProvider<Event>('abort');
+      EventStreamProvider<Event>('abort');
 
   static const EventStreamProvider<Event> blurEvent =
-      const EventStreamProvider<Event>('blur');
+      EventStreamProvider<Event>('blur');
 
   static const EventStreamProvider<Event> canPlayEvent =
-      const EventStreamProvider<Event>('canplay');
+      EventStreamProvider<Event>('canplay');
 
   static const EventStreamProvider<Event> canPlayThroughEvent =
-      const EventStreamProvider<Event>('canplaythrough');
+      EventStreamProvider<Event>('canplaythrough');
 
   static const EventStreamProvider<Event> changeEvent =
-      const EventStreamProvider<Event>('change');
+      EventStreamProvider<Event>('change');
 
   static const EventStreamProvider<MouseEvent> clickEvent =
-      const EventStreamProvider<MouseEvent>('click');
+      EventStreamProvider<MouseEvent>('click');
 
   static const EventStreamProvider<MouseEvent> contextMenuEvent =
-      const EventStreamProvider<MouseEvent>('contextmenu');
+      EventStreamProvider<MouseEvent>('contextmenu');
 
   @DomName('SVGElement.dblclickEvent')
   static const EventStreamProvider<Event> doubleClickEvent =
-      const EventStreamProvider<Event>('dblclick');
+      EventStreamProvider<Event>('dblclick');
 
   static const EventStreamProvider<MouseEvent> dragEvent =
-      const EventStreamProvider<MouseEvent>('drag');
+      EventStreamProvider<MouseEvent>('drag');
 
   static const EventStreamProvider<MouseEvent> dragEndEvent =
-      const EventStreamProvider<MouseEvent>('dragend');
+      EventStreamProvider<MouseEvent>('dragend');
 
   static const EventStreamProvider<MouseEvent> dragEnterEvent =
-      const EventStreamProvider<MouseEvent>('dragenter');
+      EventStreamProvider<MouseEvent>('dragenter');
 
   static const EventStreamProvider<MouseEvent> dragLeaveEvent =
-      const EventStreamProvider<MouseEvent>('dragleave');
+      EventStreamProvider<MouseEvent>('dragleave');
 
   static const EventStreamProvider<MouseEvent> dragOverEvent =
-      const EventStreamProvider<MouseEvent>('dragover');
+      EventStreamProvider<MouseEvent>('dragover');
 
   static const EventStreamProvider<MouseEvent> dragStartEvent =
-      const EventStreamProvider<MouseEvent>('dragstart');
+      EventStreamProvider<MouseEvent>('dragstart');
 
   static const EventStreamProvider<MouseEvent> dropEvent =
-      const EventStreamProvider<MouseEvent>('drop');
+      EventStreamProvider<MouseEvent>('drop');
 
   static const EventStreamProvider<Event> durationChangeEvent =
-      const EventStreamProvider<Event>('durationchange');
+      EventStreamProvider<Event>('durationchange');
 
   static const EventStreamProvider<Event> emptiedEvent =
-      const EventStreamProvider<Event>('emptied');
+      EventStreamProvider<Event>('emptied');
 
   static const EventStreamProvider<Event> endedEvent =
-      const EventStreamProvider<Event>('ended');
+      EventStreamProvider<Event>('ended');
 
   static const EventStreamProvider<Event> errorEvent =
-      const EventStreamProvider<Event>('error');
+      EventStreamProvider<Event>('error');
 
   static const EventStreamProvider<Event> focusEvent =
-      const EventStreamProvider<Event>('focus');
+      EventStreamProvider<Event>('focus');
 
   static const EventStreamProvider<Event> inputEvent =
-      const EventStreamProvider<Event>('input');
+      EventStreamProvider<Event>('input');
 
   static const EventStreamProvider<Event> invalidEvent =
-      const EventStreamProvider<Event>('invalid');
+      EventStreamProvider<Event>('invalid');
 
   static const EventStreamProvider<KeyboardEvent> keyDownEvent =
-      const EventStreamProvider<KeyboardEvent>('keydown');
+      EventStreamProvider<KeyboardEvent>('keydown');
 
   static const EventStreamProvider<KeyboardEvent> keyPressEvent =
-      const EventStreamProvider<KeyboardEvent>('keypress');
+      EventStreamProvider<KeyboardEvent>('keypress');
 
   static const EventStreamProvider<KeyboardEvent> keyUpEvent =
-      const EventStreamProvider<KeyboardEvent>('keyup');
+      EventStreamProvider<KeyboardEvent>('keyup');
 
   static const EventStreamProvider<Event> loadEvent =
-      const EventStreamProvider<Event>('load');
+      EventStreamProvider<Event>('load');
 
   static const EventStreamProvider<Event> loadedDataEvent =
-      const EventStreamProvider<Event>('loadeddata');
+      EventStreamProvider<Event>('loadeddata');
 
   static const EventStreamProvider<Event> loadedMetadataEvent =
-      const EventStreamProvider<Event>('loadedmetadata');
+      EventStreamProvider<Event>('loadedmetadata');
 
   static const EventStreamProvider<MouseEvent> mouseDownEvent =
-      const EventStreamProvider<MouseEvent>('mousedown');
+      EventStreamProvider<MouseEvent>('mousedown');
 
   static const EventStreamProvider<MouseEvent> mouseEnterEvent =
-      const EventStreamProvider<MouseEvent>('mouseenter');
+      EventStreamProvider<MouseEvent>('mouseenter');
 
   static const EventStreamProvider<MouseEvent> mouseLeaveEvent =
-      const EventStreamProvider<MouseEvent>('mouseleave');
+      EventStreamProvider<MouseEvent>('mouseleave');
 
   static const EventStreamProvider<MouseEvent> mouseMoveEvent =
-      const EventStreamProvider<MouseEvent>('mousemove');
+      EventStreamProvider<MouseEvent>('mousemove');
 
   static const EventStreamProvider<MouseEvent> mouseOutEvent =
-      const EventStreamProvider<MouseEvent>('mouseout');
+      EventStreamProvider<MouseEvent>('mouseout');
 
   static const EventStreamProvider<MouseEvent> mouseOverEvent =
-      const EventStreamProvider<MouseEvent>('mouseover');
+      EventStreamProvider<MouseEvent>('mouseover');
 
   static const EventStreamProvider<MouseEvent> mouseUpEvent =
-      const EventStreamProvider<MouseEvent>('mouseup');
+      EventStreamProvider<MouseEvent>('mouseup');
 
   static const EventStreamProvider<WheelEvent> mouseWheelEvent =
-      const EventStreamProvider<WheelEvent>('mousewheel');
+      EventStreamProvider<WheelEvent>('mousewheel');
 
   static const EventStreamProvider<Event> pauseEvent =
-      const EventStreamProvider<Event>('pause');
+      EventStreamProvider<Event>('pause');
 
   static const EventStreamProvider<Event> playEvent =
-      const EventStreamProvider<Event>('play');
+      EventStreamProvider<Event>('play');
 
   static const EventStreamProvider<Event> playingEvent =
-      const EventStreamProvider<Event>('playing');
+      EventStreamProvider<Event>('playing');
 
   static const EventStreamProvider<Event> rateChangeEvent =
-      const EventStreamProvider<Event>('ratechange');
+      EventStreamProvider<Event>('ratechange');
 
   static const EventStreamProvider<Event> resetEvent =
-      const EventStreamProvider<Event>('reset');
+      EventStreamProvider<Event>('reset');
 
   static const EventStreamProvider<Event> resizeEvent =
-      const EventStreamProvider<Event>('resize');
+      EventStreamProvider<Event>('resize');
 
   static const EventStreamProvider<Event> scrollEvent =
-      const EventStreamProvider<Event>('scroll');
+      EventStreamProvider<Event>('scroll');
 
   static const EventStreamProvider<Event> seekedEvent =
-      const EventStreamProvider<Event>('seeked');
+      EventStreamProvider<Event>('seeked');
 
   static const EventStreamProvider<Event> seekingEvent =
-      const EventStreamProvider<Event>('seeking');
+      EventStreamProvider<Event>('seeking');
 
   static const EventStreamProvider<Event> selectEvent =
-      const EventStreamProvider<Event>('select');
+      EventStreamProvider<Event>('select');
 
   static const EventStreamProvider<Event> stalledEvent =
-      const EventStreamProvider<Event>('stalled');
+      EventStreamProvider<Event>('stalled');
 
   static const EventStreamProvider<Event> submitEvent =
-      const EventStreamProvider<Event>('submit');
+      EventStreamProvider<Event>('submit');
 
   static const EventStreamProvider<Event> suspendEvent =
-      const EventStreamProvider<Event>('suspend');
+      EventStreamProvider<Event>('suspend');
 
   static const EventStreamProvider<Event> timeUpdateEvent =
-      const EventStreamProvider<Event>('timeupdate');
+      EventStreamProvider<Event>('timeupdate');
 
   static const EventStreamProvider<TouchEvent> touchCancelEvent =
-      const EventStreamProvider<TouchEvent>('touchcancel');
+      EventStreamProvider<TouchEvent>('touchcancel');
 
   static const EventStreamProvider<TouchEvent> touchEndEvent =
-      const EventStreamProvider<TouchEvent>('touchend');
+      EventStreamProvider<TouchEvent>('touchend');
 
   static const EventStreamProvider<TouchEvent> touchMoveEvent =
-      const EventStreamProvider<TouchEvent>('touchmove');
+      EventStreamProvider<TouchEvent>('touchmove');
 
   static const EventStreamProvider<TouchEvent> touchStartEvent =
-      const EventStreamProvider<TouchEvent>('touchstart');
+      EventStreamProvider<TouchEvent>('touchstart');
 
   static const EventStreamProvider<Event> volumeChangeEvent =
-      const EventStreamProvider<Event>('volumechange');
+      EventStreamProvider<Event>('volumechange');
 
   static const EventStreamProvider<Event> waitingEvent =
-      const EventStreamProvider<Event>('waiting');
+      EventStreamProvider<Event>('waiting');
 
   static const EventStreamProvider<WheelEvent> wheelEvent =
-      const EventStreamProvider<WheelEvent>('wheel');
-  /**
-   * Constructor instantiated by the DOM when a custom element has been created.
-   *
-   * This can only be called by subclasses from their created constructor.
-   */
+      EventStreamProvider<WheelEvent>('wheel');
+  /// Constructor instantiated by the DOM when a custom element has been created.
+  ///
+  /// This can only be called by subclasses from their created constructor.
   SvgElement.created() : super.created();
 
   // Shadowing definition.
@@ -3296,138 +3317,199 @@ class SvgElement extends Element implements GlobalEventHandlers, NoncedElement {
 
   SvgElement? get viewportElement native;
 
+  @override
   void blur() native;
 
+  @override
   void focus() native;
 
   // From NoncedElement
 
+  @override
   String? get nonce native;
 
+  @override
   set nonce(String? value) native;
 
+  @override
   ElementStream<Event> get onAbort => abortEvent.forElement(this);
 
+  @override
   ElementStream<Event> get onBlur => blurEvent.forElement(this);
 
+  @override
   ElementStream<Event> get onCanPlay => canPlayEvent.forElement(this);
 
+  @override
   ElementStream<Event> get onCanPlayThrough =>
       canPlayThroughEvent.forElement(this);
 
+  @override
   ElementStream<Event> get onChange => changeEvent.forElement(this);
 
+  @override
   ElementStream<MouseEvent> get onClick => clickEvent.forElement(this);
 
+  @override
   ElementStream<MouseEvent> get onContextMenu =>
       contextMenuEvent.forElement(this);
 
+  @override
   @DomName('SVGElement.ondblclick')
   ElementStream<Event> get onDoubleClick => doubleClickEvent.forElement(this);
 
+  @override
   ElementStream<MouseEvent> get onDrag => dragEvent.forElement(this);
 
+  @override
   ElementStream<MouseEvent> get onDragEnd => dragEndEvent.forElement(this);
 
+  @override
   ElementStream<MouseEvent> get onDragEnter => dragEnterEvent.forElement(this);
 
+  @override
   ElementStream<MouseEvent> get onDragLeave => dragLeaveEvent.forElement(this);
 
+  @override
   ElementStream<MouseEvent> get onDragOver => dragOverEvent.forElement(this);
 
+  @override
   ElementStream<MouseEvent> get onDragStart => dragStartEvent.forElement(this);
 
+  @override
   ElementStream<MouseEvent> get onDrop => dropEvent.forElement(this);
 
+  @override
   ElementStream<Event> get onDurationChange =>
       durationChangeEvent.forElement(this);
 
+  @override
   ElementStream<Event> get onEmptied => emptiedEvent.forElement(this);
 
+  @override
   ElementStream<Event> get onEnded => endedEvent.forElement(this);
 
+  @override
   ElementStream<Event> get onError => errorEvent.forElement(this);
 
+  @override
   ElementStream<Event> get onFocus => focusEvent.forElement(this);
 
+  @override
   ElementStream<Event> get onInput => inputEvent.forElement(this);
 
+  @override
   ElementStream<Event> get onInvalid => invalidEvent.forElement(this);
 
+  @override
   ElementStream<KeyboardEvent> get onKeyDown => keyDownEvent.forElement(this);
 
+  @override
   ElementStream<KeyboardEvent> get onKeyPress => keyPressEvent.forElement(this);
 
+  @override
   ElementStream<KeyboardEvent> get onKeyUp => keyUpEvent.forElement(this);
 
+  @override
   ElementStream<Event> get onLoad => loadEvent.forElement(this);
 
+  @override
   ElementStream<Event> get onLoadedData => loadedDataEvent.forElement(this);
 
+  @override
   ElementStream<Event> get onLoadedMetadata =>
       loadedMetadataEvent.forElement(this);
 
+  @override
   ElementStream<MouseEvent> get onMouseDown => mouseDownEvent.forElement(this);
 
+  @override
   ElementStream<MouseEvent> get onMouseEnter =>
       mouseEnterEvent.forElement(this);
 
+  @override
   ElementStream<MouseEvent> get onMouseLeave =>
       mouseLeaveEvent.forElement(this);
 
+  @override
   ElementStream<MouseEvent> get onMouseMove => mouseMoveEvent.forElement(this);
 
+  @override
   ElementStream<MouseEvent> get onMouseOut => mouseOutEvent.forElement(this);
 
+  @override
   ElementStream<MouseEvent> get onMouseOver => mouseOverEvent.forElement(this);
 
+  @override
   ElementStream<MouseEvent> get onMouseUp => mouseUpEvent.forElement(this);
 
+  @override
   ElementStream<WheelEvent> get onMouseWheel =>
       mouseWheelEvent.forElement(this);
 
+  @override
   ElementStream<Event> get onPause => pauseEvent.forElement(this);
 
+  @override
   ElementStream<Event> get onPlay => playEvent.forElement(this);
 
+  @override
   ElementStream<Event> get onPlaying => playingEvent.forElement(this);
 
+  @override
   ElementStream<Event> get onRateChange => rateChangeEvent.forElement(this);
 
+  @override
   ElementStream<Event> get onReset => resetEvent.forElement(this);
 
+  @override
   ElementStream<Event> get onResize => resizeEvent.forElement(this);
 
+  @override
   ElementStream<Event> get onScroll => scrollEvent.forElement(this);
 
+  @override
   ElementStream<Event> get onSeeked => seekedEvent.forElement(this);
 
+  @override
   ElementStream<Event> get onSeeking => seekingEvent.forElement(this);
 
+  @override
   ElementStream<Event> get onSelect => selectEvent.forElement(this);
 
+  @override
   ElementStream<Event> get onStalled => stalledEvent.forElement(this);
 
+  @override
   ElementStream<Event> get onSubmit => submitEvent.forElement(this);
 
+  @override
   ElementStream<Event> get onSuspend => suspendEvent.forElement(this);
 
+  @override
   ElementStream<Event> get onTimeUpdate => timeUpdateEvent.forElement(this);
 
+  @override
   ElementStream<TouchEvent> get onTouchCancel =>
       touchCancelEvent.forElement(this);
 
+  @override
   ElementStream<TouchEvent> get onTouchEnd => touchEndEvent.forElement(this);
 
+  @override
   ElementStream<TouchEvent> get onTouchMove => touchMoveEvent.forElement(this);
 
+  @override
   ElementStream<TouchEvent> get onTouchStart =>
       touchStartEvent.forElement(this);
 
+  @override
   ElementStream<Event> get onVolumeChange => volumeChangeEvent.forElement(this);
 
+  @override
   ElementStream<Event> get onWaiting => waitingEvent.forElement(this);
 
+  @override
   ElementStream<WheelEvent> get onWheel => wheelEvent.forElement(this);
 }
 // Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
@@ -3439,7 +3521,7 @@ class SvgElement extends Element implements GlobalEventHandlers, NoncedElement {
 class SvgSvgElement extends GraphicsElement
     implements FitToViewBox, ZoomAndPan {
   factory SvgSvgElement() {
-    final el = new SvgElement.tag("svg");
+    final el = SvgElement.tag("svg");
     // The SVG spec requires the version attribute to match the spec version
     el.attributes['version'] = "1.1";
     return el as SvgSvgElement;
@@ -3447,13 +3529,11 @@ class SvgSvgElement extends GraphicsElement
 
   // To suppress missing implicit constructor warnings.
   factory SvgSvgElement._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
-  /**
-   * Constructor instantiated by the DOM when a custom element has been created.
-   *
-   * This can only be called by subclasses from their created constructor.
-   */
+  /// Constructor instantiated by the DOM when a custom element has been created.
+  ///
+  /// This can only be called by subclasses from their created constructor.
   SvgSvgElement.created() : super.created();
 
   num? get currentScale native;
@@ -3531,14 +3611,18 @@ class SvgSvgElement extends GraphicsElement
 
   // From SVGFitToViewBox
 
+  @override
   AnimatedPreserveAspectRatio? get preserveAspectRatio native;
 
+  @override
   AnimatedRect? get viewBox native;
 
   // From SVGZoomAndPan
 
+  @override
   int? get zoomAndPan native;
 
+  @override
   set zoomAndPan(int? value) native;
 }
 // Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
@@ -3550,17 +3634,15 @@ class SvgSvgElement extends GraphicsElement
 class SwitchElement extends GraphicsElement {
   // To suppress missing implicit constructor warnings.
   factory SwitchElement._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory SwitchElement() =>
       _SvgElementFactoryProvider.createSvgElement_tag("switch")
           as SwitchElement;
-  /**
-   * Constructor instantiated by the DOM when a custom element has been created.
-   *
-   * This can only be called by subclasses from their created constructor.
-   */
+  /// Constructor instantiated by the DOM when a custom element has been created.
+  ///
+  /// This can only be called by subclasses from their created constructor.
   SwitchElement.created() : super.created();
 }
 // Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
@@ -3572,23 +3654,23 @@ class SwitchElement extends GraphicsElement {
 class SymbolElement extends SvgElement implements FitToViewBox {
   // To suppress missing implicit constructor warnings.
   factory SymbolElement._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory SymbolElement() =>
       _SvgElementFactoryProvider.createSvgElement_tag("symbol")
           as SymbolElement;
-  /**
-   * Constructor instantiated by the DOM when a custom element has been created.
-   *
-   * This can only be called by subclasses from their created constructor.
-   */
+  /// Constructor instantiated by the DOM when a custom element has been created.
+  ///
+  /// This can only be called by subclasses from their created constructor.
   SymbolElement.created() : super.created();
 
   // From SVGFitToViewBox
 
+  @override
   AnimatedPreserveAspectRatio? get preserveAspectRatio native;
 
+  @override
   AnimatedRect? get viewBox native;
 }
 // Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
@@ -3600,16 +3682,14 @@ class SymbolElement extends SvgElement implements FitToViewBox {
 class TSpanElement extends TextPositioningElement {
   // To suppress missing implicit constructor warnings.
   factory TSpanElement._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory TSpanElement() =>
       _SvgElementFactoryProvider.createSvgElement_tag("tspan") as TSpanElement;
-  /**
-   * Constructor instantiated by the DOM when a custom element has been created.
-   *
-   * This can only be called by subclasses from their created constructor.
-   */
+  /// Constructor instantiated by the DOM when a custom element has been created.
+  ///
+  /// This can only be called by subclasses from their created constructor.
   TSpanElement.created() : super.created();
 }
 // Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
@@ -3620,7 +3700,7 @@ class TSpanElement extends TextPositioningElement {
 abstract class Tests extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory Tests._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   StringList? get requiredExtensions native;
@@ -3636,13 +3716,11 @@ abstract class Tests extends JavaScriptObject {
 class TextContentElement extends GraphicsElement {
   // To suppress missing implicit constructor warnings.
   factory TextContentElement._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
-  /**
-   * Constructor instantiated by the DOM when a custom element has been created.
-   *
-   * This can only be called by subclasses from their created constructor.
-   */
+  /// Constructor instantiated by the DOM when a custom element has been created.
+  ///
+  /// This can only be called by subclasses from their created constructor.
   TextContentElement.created() : super.created();
 
   static const int LENGTHADJUST_SPACING = 1;
@@ -3682,16 +3760,14 @@ class TextContentElement extends GraphicsElement {
 class TextElement extends TextPositioningElement {
   // To suppress missing implicit constructor warnings.
   factory TextElement._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory TextElement() =>
       _SvgElementFactoryProvider.createSvgElement_tag("text") as TextElement;
-  /**
-   * Constructor instantiated by the DOM when a custom element has been created.
-   *
-   * This can only be called by subclasses from their created constructor.
-   */
+  /// Constructor instantiated by the DOM when a custom element has been created.
+  ///
+  /// This can only be called by subclasses from their created constructor.
   TextElement.created() : super.created();
 }
 // Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
@@ -3703,13 +3779,11 @@ class TextElement extends TextPositioningElement {
 class TextPathElement extends TextContentElement implements UriReference {
   // To suppress missing implicit constructor warnings.
   factory TextPathElement._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
-  /**
-   * Constructor instantiated by the DOM when a custom element has been created.
-   *
-   * This can only be called by subclasses from their created constructor.
-   */
+  /// Constructor instantiated by the DOM when a custom element has been created.
+  ///
+  /// This can only be called by subclasses from their created constructor.
   TextPathElement.created() : super.created();
 
   static const int TEXTPATH_METHODTYPE_ALIGN = 1;
@@ -3732,6 +3806,7 @@ class TextPathElement extends TextContentElement implements UriReference {
 
   // From SVGURIReference
 
+  @override
   AnimatedString? get href native;
 }
 // Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
@@ -3743,13 +3818,11 @@ class TextPathElement extends TextContentElement implements UriReference {
 class TextPositioningElement extends TextContentElement {
   // To suppress missing implicit constructor warnings.
   factory TextPositioningElement._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
-  /**
-   * Constructor instantiated by the DOM when a custom element has been created.
-   *
-   * This can only be called by subclasses from their created constructor.
-   */
+  /// Constructor instantiated by the DOM when a custom element has been created.
+  ///
+  /// This can only be called by subclasses from their created constructor.
   TextPositioningElement.created() : super.created();
 
   AnimatedLengthList? get dx native;
@@ -3771,16 +3844,14 @@ class TextPositioningElement extends TextContentElement {
 class TitleElement extends SvgElement {
   // To suppress missing implicit constructor warnings.
   factory TitleElement._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory TitleElement() =>
       _SvgElementFactoryProvider.createSvgElement_tag("title") as TitleElement;
-  /**
-   * Constructor instantiated by the DOM when a custom element has been created.
-   *
-   * This can only be called by subclasses from their created constructor.
-   */
+  /// Constructor instantiated by the DOM when a custom element has been created.
+  ///
+  /// This can only be called by subclasses from their created constructor.
   TitleElement.created() : super.created();
 }
 // Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
@@ -3792,7 +3863,7 @@ class TitleElement extends SvgElement {
 class Transform extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory Transform._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   static const int SVG_TRANSFORM_MATRIX = 1;
@@ -3838,53 +3909,62 @@ class TransformList extends JavaScriptObject
     implements List<Transform> {
   // To suppress missing implicit constructor warnings.
   factory TransformList._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
+  @override
   int get length => JS("int", "#.length", this);
 
   int? get numberOfItems native;
 
+  @override
   Transform operator [](int index) {
-    if (JS("bool", "# >>> 0 !== # || # >= #", index, index, index, length))
-      throw new IndexError.withLength(index, length, indexable: this);
-    return this.getItem(index);
+    if (JS("bool", "# >>> 0 !== # || # >= #", index, index, index, length)) {
+      throw IndexError.withLength(index, length, indexable: this);
+    }
+    return getItem(index);
   }
 
+  @override
   void operator []=(int index, Transform value) {
-    throw new UnsupportedError("Cannot assign element of immutable List.");
+    throw UnsupportedError("Cannot assign element of immutable List.");
   }
   // -- start List<Transform> mixins.
   // Transform is the element type.
 
+  @override
   set length(int value) {
-    throw new UnsupportedError("Cannot resize immutable List.");
+    throw UnsupportedError("Cannot resize immutable List.");
   }
 
+  @override
   Transform get first {
-    if (this.length > 0) {
+    if (isNotEmpty) {
       return JS('Transform', '#[0]', this);
     }
-    throw new StateError("No elements");
+    throw StateError("No elements");
   }
 
+  @override
   Transform get last {
-    int len = this.length;
+    int len = length;
     if (len > 0) {
       return JS('Transform', '#[#]', this, len - 1);
     }
-    throw new StateError("No elements");
+    throw StateError("No elements");
   }
 
+  @override
   Transform get single {
-    int len = this.length;
+    int len = length;
     if (len == 1) {
       return JS('Transform', '#[0]', this);
     }
-    if (len == 0) throw new StateError("No elements");
-    throw new StateError("More than one element");
+    if (len == 0) throw StateError("No elements");
+    throw StateError("More than one element");
   }
 
+  @override
   Transform elementAt(int index) => this[index];
   // -- end List<Transform> mixins.
 
@@ -3892,6 +3972,7 @@ class TransformList extends JavaScriptObject
 
   Transform appendItem(Transform newItem) native;
 
+  @override
   void clear() native;
 
   Transform? consolidate() native;
@@ -3918,7 +3999,7 @@ class TransformList extends JavaScriptObject
 class UnitTypes extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory UnitTypes._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   static const int SVG_UNIT_TYPE_OBJECTBOUNDINGBOX = 2;
@@ -3935,7 +4016,7 @@ class UnitTypes extends JavaScriptObject {
 abstract class UriReference extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory UriReference._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   AnimatedString? get href native;
@@ -3949,16 +4030,14 @@ abstract class UriReference extends JavaScriptObject {
 class UseElement extends GraphicsElement implements UriReference {
   // To suppress missing implicit constructor warnings.
   factory UseElement._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory UseElement() =>
       _SvgElementFactoryProvider.createSvgElement_tag("use") as UseElement;
-  /**
-   * Constructor instantiated by the DOM when a custom element has been created.
-   *
-   * This can only be called by subclasses from their created constructor.
-   */
+  /// Constructor instantiated by the DOM when a custom element has been created.
+  ///
+  /// This can only be called by subclasses from their created constructor.
   UseElement.created() : super.created();
 
   AnimatedLength? get height native;
@@ -3971,6 +4050,7 @@ class UseElement extends GraphicsElement implements UriReference {
 
   // From SVGURIReference
 
+  @override
   AnimatedString? get href native;
 }
 // Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
@@ -3982,28 +4062,30 @@ class UseElement extends GraphicsElement implements UriReference {
 class ViewElement extends SvgElement implements FitToViewBox, ZoomAndPan {
   // To suppress missing implicit constructor warnings.
   factory ViewElement._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory ViewElement() =>
       _SvgElementFactoryProvider.createSvgElement_tag("view") as ViewElement;
-  /**
-   * Constructor instantiated by the DOM when a custom element has been created.
-   *
-   * This can only be called by subclasses from their created constructor.
-   */
+  /// Constructor instantiated by the DOM when a custom element has been created.
+  ///
+  /// This can only be called by subclasses from their created constructor.
   ViewElement.created() : super.created();
 
   // From SVGFitToViewBox
 
+  @override
   AnimatedPreserveAspectRatio? get preserveAspectRatio native;
 
+  @override
   AnimatedRect? get viewBox native;
 
   // From SVGZoomAndPan
 
+  @override
   int? get zoomAndPan native;
 
+  @override
   set zoomAndPan(int? value) native;
 }
 // Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
@@ -4014,7 +4096,7 @@ class ViewElement extends SvgElement implements FitToViewBox, ZoomAndPan {
 abstract class ZoomAndPan extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory ZoomAndPan._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   static const int SVG_ZOOMANDPAN_DISABLE = 1;
@@ -4036,13 +4118,11 @@ abstract class ZoomAndPan extends JavaScriptObject {
 class _GradientElement extends SvgElement implements UriReference {
   // To suppress missing implicit constructor warnings.
   factory _GradientElement._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
-  /**
-   * Constructor instantiated by the DOM when a custom element has been created.
-   *
-   * This can only be called by subclasses from their created constructor.
-   */
+  /// Constructor instantiated by the DOM when a custom element has been created.
+  ///
+  /// This can only be called by subclasses from their created constructor.
   _GradientElement.created() : super.created();
 
   static const int SVG_SPREADMETHOD_PAD = 1;
@@ -4061,6 +4141,7 @@ class _GradientElement extends SvgElement implements UriReference {
 
   // From SVGURIReference
 
+  @override
   AnimatedString? get href native;
 }
 // Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
@@ -4072,13 +4153,11 @@ class _GradientElement extends SvgElement implements UriReference {
 abstract class _SVGComponentTransferFunctionElement extends SvgElement {
   // To suppress missing implicit constructor warnings.
   factory _SVGComponentTransferFunctionElement._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
-  /**
-   * Constructor instantiated by the DOM when a custom element has been created.
-   *
-   * This can only be called by subclasses from their created constructor.
-   */
+  /// Constructor instantiated by the DOM when a custom element has been created.
+  ///
+  /// This can only be called by subclasses from their created constructor.
   _SVGComponentTransferFunctionElement.created() : super.created();
 }
 // Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
@@ -4090,13 +4169,11 @@ abstract class _SVGFEDropShadowElement extends SvgElement
     implements FilterPrimitiveStandardAttributes {
   // To suppress missing implicit constructor warnings.
   factory _SVGFEDropShadowElement._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
-  /**
-   * Constructor instantiated by the DOM when a custom element has been created.
-   *
-   * This can only be called by subclasses from their created constructor.
-   */
+  /// Constructor instantiated by the DOM when a custom element has been created.
+  ///
+  /// This can only be called by subclasses from their created constructor.
   _SVGFEDropShadowElement.created() : super.created();
 
   // From SVGFilterPrimitiveStandardAttributes
@@ -4110,17 +4187,15 @@ abstract class _SVGFEDropShadowElement extends SvgElement
 abstract class _SVGMPathElement extends SvgElement implements UriReference {
   // To suppress missing implicit constructor warnings.
   factory _SVGMPathElement._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory _SVGMPathElement() =>
       _SvgElementFactoryProvider.createSvgElement_tag("mpath")
           as _SVGMPathElement;
-  /**
-   * Constructor instantiated by the DOM when a custom element has been created.
-   *
-   * This can only be called by subclasses from their created constructor.
-   */
+  /// Constructor instantiated by the DOM when a custom element has been created.
+  ///
+  /// This can only be called by subclasses from their created constructor.
   _SVGMPathElement.created() : super.created();
 
   // From SVGURIReference

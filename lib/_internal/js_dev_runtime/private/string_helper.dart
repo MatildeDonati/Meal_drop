@@ -25,12 +25,16 @@ bool stringContainsStringUnchecked(receiver, other, startIndex) {
 }
 
 class StringMatch implements Match {
-  const StringMatch(int this.start, String this.input, String this.pattern);
+  const StringMatch(this.start, this.input, this.pattern);
 
+  @override
   int get end => start + pattern.length;
+  @override
   String operator [](int g) => group(g);
+  @override
   int get groupCount => 0;
 
+  @override
   String group(int group_) {
     if (group_ != 0) {
       throw RangeError.value(group_);
@@ -38,6 +42,7 @@ class StringMatch implements Match {
     return pattern;
   }
 
+  @override
   List<String> groups(List<int> groups_) {
     List<String> result = <String>[];
     for (int g in groups_) {
@@ -46,8 +51,11 @@ class StringMatch implements Match {
     return result;
   }
 
+  @override
   final int start;
+  @override
   final String input;
+  @override
   final String pattern;
 }
 
@@ -63,9 +71,11 @@ class _StringAllMatchesIterable extends Iterable<Match> {
 
   _StringAllMatchesIterable(this._input, this._pattern, this._index);
 
+  @override
   Iterator<Match> get iterator =>
       _StringAllMatchesIterator(_input, _pattern, _index);
 
+  @override
   Match get first {
     int index = stringIndexOfStringUnchecked(_input, _pattern, _index);
     if (index >= 0) {
@@ -83,6 +93,7 @@ class _StringAllMatchesIterator implements Iterator<Match> {
 
   _StringAllMatchesIterator(this._input, this._pattern, this._index);
 
+  @override
   bool moveNext() {
     if (_index + _pattern.length > _input.length) {
       _current = null;
@@ -102,6 +113,7 @@ class _StringAllMatchesIterator implements Iterator<Match> {
     return true;
   }
 
+  @override
   Match get current => _current!;
 }
 
@@ -190,8 +202,8 @@ String stringReplaceAllFuncUnchecked(
     @nullCheck Pattern pattern,
     String Function(Match)? onMatch,
     String Function(String)? onNonMatch) {
-  if (onMatch == null) onMatch = _matchString;
-  if (onNonMatch == null) onNonMatch = _stringIdentity;
+  onMatch ??= _matchString;
+  onNonMatch ??= _stringIdentity;
   if (pattern is String) {
     return stringReplaceAllStringFuncUnchecked(
         receiver, pattern, onMatch, onNonMatch);
@@ -209,7 +221,7 @@ String stringReplaceAllFuncUnchecked(
 
 @notNull
 String stringReplaceAllEmptyFuncUnchecked(String receiver,
-    String onMatch(Match match), String onNonMatch(String nonMatch)) {
+    String Function(Match match) onMatch, String Function(String nonMatch) onNonMatch) {
   // Pattern is the empty string.
   StringBuffer buffer = StringBuffer();
   int length = receiver.length;
@@ -239,7 +251,7 @@ String stringReplaceAllEmptyFuncUnchecked(String receiver,
 
 @notNull
 String stringReplaceAllStringFuncUnchecked(String receiver, String pattern,
-    String onMatch(Match match), String onNonMatch(String nonMatch)) {
+    String Function(Match match) onMatch, String Function(String nonMatch) onNonMatch) {
   int patternLength = pattern.length;
   if (patternLength == 0) {
     return stringReplaceAllEmptyFuncUnchecked(receiver, onMatch, onNonMatch);
@@ -282,11 +294,11 @@ String stringReplaceFirstUnchecked(@notNull String receiver,
 
 @notNull
 String stringReplaceFirstMappedUnchecked(String receiver, Pattern pattern,
-    String replace(Match current), int startIndex) {
+    String Function(Match current) replace, int startIndex) {
   Iterator<Match> matches = pattern.allMatches(receiver, startIndex).iterator;
   if (!matches.moveNext()) return receiver;
   Match match = matches.current;
-  String replacement = "${replace(match)}";
+  String replacement = replace(match);
   return receiver.replaceRange(match.start, match.end, replacement);
 }
 

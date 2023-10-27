@@ -31,6 +31,7 @@ base class CustomKeyHashMap<K, V> extends CustomHashMap<K, V> {
 
 base class CustomHashMap<K, V> extends InternalMap<K, V> {
   /// The backing store for this map.
+  @override
   @notNull
   final _map = JS('', 'new Map()');
 
@@ -46,6 +47,7 @@ base class CustomHashMap<K, V> extends InternalMap<K, V> {
   // always unboxed (Smi) values. Modification detection will be missed if you
   // make exactly some multiple of 2^30 modifications between advances of an
   // iterator.
+  @override
   @notNull
   int _modifications = 0;
 
@@ -54,18 +56,24 @@ base class CustomHashMap<K, V> extends InternalMap<K, V> {
 
   CustomHashMap(this._equals, this._hashCode);
 
+  @override
   @notNull
   int get length => JS<int>('!', '#.size', _map);
 
+  @override
   @notNull
   bool get isEmpty => JS<bool>('!', '#.size == 0', _map);
 
+  @override
   @notNull
   bool get isNotEmpty => JS<bool>('!', '#.size != 0', _map);
 
+  @override
   Iterable<K> get keys => _JSMapIterable<K>(this, true);
+  @override
   Iterable<V> get values => _JSMapIterable<V>(this, false);
 
+  @override
   @notNull
   bool containsKey(Object? key) {
     if (key is K) {
@@ -81,6 +89,7 @@ base class CustomHashMap<K, V> extends InternalMap<K, V> {
     return false;
   }
 
+  @override
   bool containsValue(Object? value) {
     for (var v in JS('', '#.values()', _map)) {
       if (value == v) return true;
@@ -88,12 +97,14 @@ base class CustomHashMap<K, V> extends InternalMap<K, V> {
     return false;
   }
 
+  @override
   void addAll(Map<K, V> other) {
     other.forEach((K key, V value) {
       this[key] = value;
     });
   }
 
+  @override
   V? operator [](Object? key) {
     if (key is K) {
       var buckets = JS('', '#.get(# & 0x3fffffff)', _keyMap, _hashCode(key));
@@ -103,7 +114,7 @@ base class CustomHashMap<K, V> extends InternalMap<K, V> {
           K k = JS('', '#[#]', buckets, i);
           if (equals(k, key)) {
             V value = JS('', '#.get(#)', _map, k);
-            return value == null ? null : value; // coerce undefined to null.
+            return value; // coerce undefined to null.
           }
         }
       }
@@ -111,6 +122,7 @@ base class CustomHashMap<K, V> extends InternalMap<K, V> {
     return null;
   }
 
+  @override
   void operator []=(K key, V value) {
     var keyMap = _keyMap;
     int hash = JS('!', '# & 0x3fffffff', _hashCode(key));
@@ -135,7 +147,8 @@ base class CustomHashMap<K, V> extends InternalMap<K, V> {
     _modifications = (_modifications + 1) & 0x3fffffff;
   }
 
-  V putIfAbsent(K key, V ifAbsent()) {
+  @override
+  V putIfAbsent(K key, V Function() ifAbsent) {
     var keyMap = _keyMap;
     int hash = JS('!', '# & 0x3fffffff', _hashCode(key));
     var buckets = JS('', '#.get(#)', keyMap, hash);
@@ -156,6 +169,7 @@ base class CustomHashMap<K, V> extends InternalMap<K, V> {
     return value;
   }
 
+  @override
   V? remove(Object? key) {
     if (key is K) {
       int hash = JS('!', '# & 0x3fffffff', _hashCode(key));
@@ -175,13 +189,14 @@ base class CustomHashMap<K, V> extends InternalMap<K, V> {
           V value = JS('', '#.get(#)', map, k);
           JS('', '#.delete(#)', map, k);
           _modifications = (_modifications + 1) & 0x3fffffff;
-          return value == null ? null : value; // coerce undefined to null.
+          return value; // coerce undefined to null.
         }
       }
     }
     return null;
   }
 
+  @override
   void clear() {
     var map = _map;
     if (JS<int>('!', '#.size', map) > 0) {
@@ -192,6 +207,6 @@ base class CustomHashMap<K, V> extends InternalMap<K, V> {
   }
 }
 
-typedef bool _Equality<K>(K a, K b);
-typedef int _Hasher<K>(K object);
-typedef bool _Predicate<T>(T value);
+typedef _Equality<K> = bool Function(K a, K b);
+typedef _Hasher<K> = int Function(K object);
+typedef _Predicate<T> = bool Function(T value);

@@ -4,7 +4,6 @@
 
 // Patch file for dart:math library.
 import 'dart:_foreign_helper' show JS;
-import 'dart:_internal' show patch;
 import 'dart:_js_helper' show nullCheck, notNull;
 import 'dart:typed_data' show ByteData;
 
@@ -90,16 +89,12 @@ class _JSRandom implements Random {
     return JS<int>("int", "(Math.random() * #) >>> 0", max);
   }
 
-  /**
-   * Generates a positive random floating point value uniformly distributed on
-   * the range from 0.0, inclusive, to 1.0, exclusive.
-   */
+  /// Generates a positive random floating point value uniformly distributed on
+  /// the range from 0.0, inclusive, to 1.0, exclusive.
   @notNull
   double nextDouble() => JS<double>("double", "Math.random()");
 
-  /**
-   * Generates a random boolean value.
-   */
+  /// Generates a random boolean value.
   @notNull
   bool nextBool() => JS<bool>("bool", "Math.random() < 0.5");
 }
@@ -129,9 +124,9 @@ class _Random implements Random {
   //   _hi = hash >> 32;
   // and then does four _nextState calls to shuffle bits around.
   _Random(int seed) {
-    int empty_seed = 0;
+    int emptySeed = 0;
     if (seed < 0) {
-      empty_seed = -1;
+      emptySeed = -1;
     }
     do {
       int low = seed & _MASK32;
@@ -186,7 +181,7 @@ class _Random implements Random {
       _hi = (_hi * 1037 + (tmplow - _lo) ~/ 0x100000000) & _MASK32;
       _lo ^= low;
       _hi ^= high;
-    } while (seed != empty_seed);
+    } while (seed != emptySeed);
 
     if (_hi == 0 && _lo == 0) {
       _lo = 0x5A17;

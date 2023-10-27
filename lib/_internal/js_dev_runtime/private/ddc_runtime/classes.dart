@@ -82,7 +82,7 @@ void _mixinSignature(@notNull Object to, @notNull Object from, kind) {
   JS('', '#[#] = #', to, kind, () {
     var baseMembers = _getMembers(jsObjectGetPrototypeOf(to), kind);
     // Coerce undefined to null.
-    baseMembers = baseMembers == null ? null : baseMembers;
+    baseMembers = baseMembers;
     var fromMembers = _getMembers(from, kind);
     if (fromMembers == null) return baseMembers;
     var toSignature = JS('', 'Object.create(#)', baseMembers);
@@ -390,7 +390,7 @@ fieldType(type, metadata) =>
 /// Returns undefined if the constructor is not found.
 classGetConstructorType(cls, name) {
   if (cls == null) return null;
-  if (name == null) name = 'new';
+  name ??= 'new';
   var ctors = getConstructors(cls);
   return ctors != null ? JS('', '#[#]', ctors, name) : null;
 }
@@ -638,7 +638,7 @@ void setExtensionBaseClass(@notNull Object dartType, @notNull Object jsType) {
 ///     main() { dynamic d = new D(); d as C<int>; }
 ///
 addTypeTests(ctor, isClass) {
-  if (isClass == null) isClass = JS('', 'Symbol("_is_" + ctor.name)');
+  isClass ??= JS('', 'Symbol("_is_" + ctor.name)');
   // TODO(jmesserly): since we know we're dealing with class/interface types,
   // we can optimize this rather than go through the generic `dart.is` helpers.
   JS('', '#.prototype[#] = true', ctor, isClass);
@@ -668,7 +668,7 @@ addTypeTests(ctor, isClass) {
 final _typeTagSymbols = JS<Object>('!', 'new Map()');
 
 Object typeTagSymbol(String recipe) {
-  var tag = '${JS_GET_NAME(JsGetName.OPERATOR_IS_PREFIX)}${recipe}';
+  var tag = '${JS_GET_NAME(JsGetName.OPERATOR_IS_PREFIX)}$recipe';
   var probe = JS<Object?>('', '#[#]', _typeTagSymbols, tag);
   if (probe != null) return probe;
   var tagSymbol = JS<Object>('!', 'Symbol(#)', tag);

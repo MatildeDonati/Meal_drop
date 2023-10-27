@@ -8,13 +8,13 @@ part of dart.developer;
 // void doSomething() {}
 
 const bool _hasTimeline =
-    const bool.fromEnvironment("dart.developer.timeline", defaultValue: true);
+    bool.fromEnvironment("dart.developer.timeline", defaultValue: true);
 
 /// A typedef for the function argument to [Timeline.timeSync].
 typedef TimelineSyncFunction<T> = T Function();
 
 // TODO: This typedef is not used.
-typedef Future TimelineAsyncFunction();
+typedef TimelineAsyncFunction = Future Function();
 
 // These values must be kept in sync with the enum "EventType" in
 // runtime/vm/timeline.h.
@@ -70,7 +70,7 @@ final class Flow {
   /// If [id] is not provided, an id that conflicts with no other Dart-generated
   /// flow id's will be generated.
   static Flow begin({int? id}) {
-    return new Flow._(_flowBegin, id ?? _getNextTaskId());
+    return Flow._(_flowBegin, id ?? _getNextTaskId());
   }
 
   /// A "step" Flow event.
@@ -78,14 +78,14 @@ final class Flow {
   /// When passed to a [Timeline] method, generates a "step" Flow event.
   /// The [id] argument is required. It can come either from another [Flow]
   /// event, or some id that comes from the environment.
-  static Flow step(int id) => new Flow._(_flowStep, id);
+  static Flow step(int id) => Flow._(_flowStep, id);
 
   /// An "end" Flow event.
   ///
   /// When passed to a [Timeline] method, generates a "end" Flow event.
   /// The [id] argument is required. It can come either from another [Flow]
   /// event, or some id that comes from the environment.
-  static Flow end(int id) => new Flow._(_flowEnd, id);
+  static Flow end(int id) => Flow._(_flowEnd, id);
 }
 
 /// Add to the timeline.
@@ -122,7 +122,7 @@ abstract final class Timeline {
       _stack.add(null);
       return;
     }
-    var block = new _SyncBlock._(name, _getNextTaskId(),
+    var block = _SyncBlock._(name, _getNextTaskId(),
         arguments: arguments, flow: flow);
     _stack.add(block);
     block._startSync();
@@ -134,7 +134,7 @@ abstract final class Timeline {
       return;
     }
     if (_stack.isEmpty) {
-      throw new StateError('Uneven calls to startSync and finishSync');
+      throw StateError('Uneven calls to startSync and finishSync');
     }
     // Pop top item off of stack.
     var block = _stack.removeLast();
@@ -201,7 +201,7 @@ final class TimelineTask {
   TimelineTask({TimelineTask? parent, String? filterKey})
       : _parent = parent,
         _filterKey = filterKey,
-        _taskId = _getNextTaskId() {}
+        _taskId = _getNextTaskId();
 
   /// Create a task with an explicit [taskId]. This is useful if you are
   /// passing a task from one isolate to another.
@@ -232,7 +232,7 @@ final class TimelineTask {
       _stack.add(null);
       return;
     }
-    var block = new _AsyncBlock._(name, _taskId);
+    var block = _AsyncBlock._(name, _taskId);
     _stack.add(block);
     // TODO(39115): Spurious error about collection literal ambiguity.
     // TODO(39117): Spurious error about typing of `...?arguments`.
@@ -261,7 +261,7 @@ final class TimelineTask {
     }
     Map? instantArguments;
     if (arguments != null) {
-      instantArguments = new Map.from(arguments);
+      instantArguments = Map.from(arguments);
     }
     if (_filterKey != null) {
       instantArguments ??= {};
@@ -277,8 +277,8 @@ final class TimelineTask {
     if (!_hasTimeline) {
       return;
     }
-    if (_stack.length == 0) {
-      throw new StateError('Uneven calls to start and finish');
+    if (_stack.isEmpty) {
+      throw StateError('Uneven calls to start and finish');
     }
     if (_filterKey != null) {
       arguments ??= {};
@@ -296,8 +296,8 @@ final class TimelineTask {
   /// Retrieve the [TimelineTask]'s task id. Will throw an exception if the
   /// stack is not empty.
   int pass() {
-    if (_stack.length > 0) {
-      throw new StateError(
+    if (_stack.isNotEmpty) {
+      throw StateError(
           'You cannot pass a TimelineTask without finishing all started '
           'operations');
     }
@@ -376,7 +376,7 @@ final class _SyncBlock {
 }
 
 String _argumentsAsJson(Map? arguments) {
-  if ((arguments == null) || (arguments.length == 0)) {
+  if ((arguments == null) || (arguments.isEmpty)) {
     // Fast path no arguments. Avoid calling jsonEncode.
     return '{}';
   }

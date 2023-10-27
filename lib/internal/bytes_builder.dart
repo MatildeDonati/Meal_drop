@@ -86,6 +86,7 @@ class _CopyingBytesBuilder implements BytesBuilder {
 
   _CopyingBytesBuilder() : _buffer = _emptyList;
 
+  @override
   void add(List<int> bytes) {
     int byteCount = bytes.length;
     if (byteCount == 0) return;
@@ -104,6 +105,7 @@ class _CopyingBytesBuilder implements BytesBuilder {
     _length = required;
   }
 
+  @override
   void addByte(int byte) {
     if (_buffer.length == _length) {
       // The grow algorithm always at least doubles.
@@ -129,6 +131,7 @@ class _CopyingBytesBuilder implements BytesBuilder {
     _buffer = newBuffer;
   }
 
+  @override
   Uint8List takeBytes() {
     if (_length == 0) return _emptyList;
     var buffer = Uint8List.view(_buffer.buffer, _buffer.offsetInBytes, _length);
@@ -136,18 +139,23 @@ class _CopyingBytesBuilder implements BytesBuilder {
     return buffer;
   }
 
+  @override
   Uint8List toBytes() {
     if (_length == 0) return _emptyList;
     return Uint8List.fromList(
         Uint8List.view(_buffer.buffer, _buffer.offsetInBytes, _length));
   }
 
+  @override
   int get length => _length;
 
+  @override
   bool get isEmpty => _length == 0;
 
+  @override
   bool get isNotEmpty => _length != 0;
 
+  @override
   void clear() {
     _clear();
   }
@@ -178,6 +186,7 @@ class _BytesBuilder implements BytesBuilder {
   int _length = 0;
   final List<Uint8List> _chunks = [];
 
+  @override
   void add(List<int> bytes) {
     Uint8List typedBytes;
     if (bytes is Uint8List) {
@@ -189,12 +198,14 @@ class _BytesBuilder implements BytesBuilder {
     _length += typedBytes.length;
   }
 
+  @override
   void addByte(int byte) {
     // TODO(lrn): Optimize repeated `addByte` calls.
     _chunks.add(Uint8List(1)..[0] = byte);
     _length++;
   }
 
+  @override
   Uint8List takeBytes() {
     if (_length == 0) return _CopyingBytesBuilder._emptyList;
     if (_chunks.length == 1) {
@@ -212,6 +223,7 @@ class _BytesBuilder implements BytesBuilder {
     return buffer;
   }
 
+  @override
   Uint8List toBytes() {
     if (_length == 0) return _CopyingBytesBuilder._emptyList;
     var buffer = Uint8List(_length);
@@ -223,12 +235,16 @@ class _BytesBuilder implements BytesBuilder {
     return buffer;
   }
 
+  @override
   int get length => _length;
 
+  @override
   bool get isEmpty => _length == 0;
 
+  @override
   bool get isNotEmpty => _length != 0;
 
+  @override
   void clear() {
     _clear();
   }

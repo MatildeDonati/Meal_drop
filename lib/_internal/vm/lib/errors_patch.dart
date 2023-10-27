@@ -74,6 +74,7 @@ class _AssertionError extends Error implements AssertionError {
     return Error.safeToString(msg);
   }
 
+  @override
   String toString() {
     if (_url == null) {
       if (message == null) return _failedAssertion.trim();
@@ -92,6 +93,7 @@ class _AssertionError extends Error implements AssertionError {
   final String? _url;
   final int _line;
   final int _column;
+  @override
   final Object? message;
 }
 
@@ -104,6 +106,7 @@ class _TypeError extends Error implements TypeError {
   external static _throwNew(
       int location, Object srcValue, _Type dstType, String dstName);
 
+  @override
   String toString() => _message;
 
   final String? _url;
@@ -115,7 +118,8 @@ class _TypeError extends Error implements TypeError {
 class _InternalError {
   @pragma("vm:entry-point")
   const _InternalError(this._msg);
-  String toString() => "InternalError: '${_msg}'";
+  @override
+  String toString() => "InternalError: '$_msg'";
   final String _msg;
 }
 
@@ -123,7 +127,7 @@ class _InternalError {
 @pragma("vm:entry-point")
 class UnsupportedError {
   static _throwNew(String msg) {
-    throw new UnsupportedError(msg);
+    throw UnsupportedError(msg);
   }
 }
 
@@ -132,7 +136,7 @@ class UnsupportedError {
 class StateError {
   @pragma("vm:entry-point")
   static _throwNew(String msg) {
-    throw new StateError(msg);
+    throw StateError(msg);
   }
 }
 
@@ -148,6 +152,7 @@ class _CyclicInitializationError extends Error {
   final String? variableName;
   @pragma("vm:entry-point")
   _CyclicInitializationError([this.variableName]);
+  @override
   String toString() {
     var variableName = this.variableName;
     return variableName == null
@@ -156,7 +161,7 @@ class _CyclicInitializationError extends Error {
   }
 
   static _throwNew(String variableName) {
-    throw new _CyclicInitializationError(variableName);
+    throw _CyclicInitializationError(variableName);
   }
 }
 
@@ -173,7 +178,7 @@ class NoSuchMethodError {
   NoSuchMethodError._withInvocation(this._receiver, this._invocation);
 
   static void _throwNewInvocation(Object? receiver, Invocation invocation) {
-    throw new NoSuchMethodError.withInvocation(receiver, invocation);
+    throw NoSuchMethodError.withInvocation(receiver, invocation);
   }
 
   // The compiler emits a call to _throwNew when it cannot resolve a static
@@ -188,18 +193,18 @@ class NoSuchMethodError {
       Object? typeArguments,
       List? arguments,
       List? argumentNames) {
-    throw new NoSuchMethodError._withType(receiver, memberName, invocationType,
+    throw NoSuchMethodError._withType(receiver, memberName, invocationType,
         typeArgumentsLength, typeArguments, arguments, argumentNames);
   }
 
   // Helper to build a map of named arguments.
   static Map<Symbol, dynamic> _NamedArgumentsMap(
       List arguments, List argumentNames) {
-    Map<Symbol, dynamic> namedArguments = new Map<Symbol, dynamic>();
+    Map<Symbol, dynamic> namedArguments = <Symbol, dynamic>{};
     int numPositionalArguments = arguments.length - argumentNames.length;
     for (int i = 0; i < argumentNames.length; i++) {
       final argValue = arguments[numPositionalArguments + i];
-      namedArguments[new Symbol(argumentNames[i])] = argValue;
+      namedArguments[Symbol(argumentNames[i])] = argValue;
     }
     return namedArguments;
   }
@@ -217,8 +222,8 @@ class NoSuchMethodError {
       Object? typeArguments,
       List? arguments,
       List? argumentNames)
-      : this._invocation = new _InvocationMirror._withType(
-            new Symbol(memberName),
+      : _invocation = _InvocationMirror._withType(
+            Symbol(memberName),
             invocationType,
             _InvocationMirror._unpackTypeArguments(
                 typeArguments, typeArgumentsLength),
@@ -233,6 +238,7 @@ class NoSuchMethodError {
   external static String? _existingMethodSignature(
       Object? receiver, String methodName, int invocationType);
 
+  @override
   @patch
   String toString() {
     final localInvocation = _invocation;
@@ -247,10 +253,10 @@ class NoSuchMethodError {
         return "NoSuchMethodError: Cannot assign to final variable '$memberName'";
       }
 
-      StringBuffer? typeArgumentsBuf = null;
+      StringBuffer? typeArgumentsBuf;
       final typeArguments = localInvocation.typeArguments;
-      if ((typeArguments != null) && (typeArguments.length > 0)) {
-        final argsBuf = new StringBuffer();
+      if ((typeArguments != null) && (typeArguments.isNotEmpty)) {
+        final argsBuf = StringBuffer();
         argsBuf.write("<");
         for (int i = 0; i < typeArguments.length; i++) {
           if (i > 0) {
@@ -261,33 +267,29 @@ class NoSuchMethodError {
         argsBuf.write(">");
         typeArgumentsBuf = argsBuf;
       }
-      StringBuffer argumentsBuf = new StringBuffer();
+      StringBuffer argumentsBuf = StringBuffer();
       var positionalArguments = localInvocation.positionalArguments;
       int argumentCount = 0;
-      if (positionalArguments != null) {
-        for (; argumentCount < positionalArguments.length; argumentCount++) {
-          if (argumentCount > 0) {
-            argumentsBuf.write(", ");
-          }
-          argumentsBuf
-              .write(Error.safeToString(positionalArguments[argumentCount]));
+      for (; argumentCount < positionalArguments.length; argumentCount++) {
+        if (argumentCount > 0) {
+          argumentsBuf.write(", ");
         }
+        argumentsBuf
+            .write(Error.safeToString(positionalArguments[argumentCount]));
       }
-      var namedArguments = localInvocation.namedArguments;
-      if (namedArguments != null) {
-        namedArguments.forEach((Symbol key, var value) {
-          if (argumentCount > 0) {
-            argumentsBuf.write(", ");
-          }
-          var internalName = key as internal.Symbol;
-          argumentsBuf
-              .write(internal.Symbol.computeUnmangledName(internalName));
-          argumentsBuf.write(": ");
-          argumentsBuf.write(Error.safeToString(value));
-          argumentCount++;
-        });
-      }
-      String? existingSig = _existingMethodSignature(
+          var namedArguments = localInvocation.namedArguments;
+      namedArguments.forEach((Symbol key, var value) {
+        if (argumentCount > 0) {
+          argumentsBuf.write(", ");
+        }
+        var internalName = key as internal.Symbol;
+        argumentsBuf
+            .write(internal.Symbol.computeUnmangledName(internalName));
+        argumentsBuf.write(": ");
+        argumentsBuf.write(Error.safeToString(value));
+        argumentCount++;
+      });
+          String? existingSig = _existingMethodSignature(
           _receiver, memberName, localInvocation._type);
       String argsMsg = existingSig != null ? " with matching arguments" : "";
 
@@ -302,7 +304,7 @@ class NoSuchMethodError {
         ])[kind];
       }
 
-      StringBuffer msgBuf = new StringBuffer("NoSuchMethodError: ");
+      StringBuffer msgBuf = StringBuffer("NoSuchMethodError: ");
       bool isTypeCall = false;
       switch (level) {
         case _InvocationMirror._DYNAMIC:
@@ -456,6 +458,7 @@ class NoSuchMethodError {
 class _CompileTimeError extends Error {
   final String _errorMsg;
   _CompileTimeError(this._errorMsg);
+  @override
   String toString() => _errorMsg;
 }
 
@@ -469,6 +472,7 @@ class _DuplicatedFieldInitializerError extends Error {
 
   _DuplicatedFieldInitializerError(this._name);
 
+  @override
   toString() => "Error: field '$_name' is already initialized.";
 }
 
@@ -479,7 +483,7 @@ class _DuplicatedFieldInitializerError extends Error {
 class OutOfMemoryError {
   StackTrace? get _stackTrace =>
       throw UnsupportedError('OutOfMemoryError._stackTrace');
-  void set _stackTrace(StackTrace? _) {
+  set _stackTrace(StackTrace? _) {
     throw UnsupportedError('OutOfMemoryError._stackTrace');
   }
 }
@@ -488,7 +492,7 @@ class OutOfMemoryError {
 class StackOverflowError {
   StackTrace? get _stackTrace =>
       throw UnsupportedError('StackOverflowError._stackTrace');
-  void set _stackTrace(StackTrace? _) {
+  set _stackTrace(StackTrace? _) {
     throw UnsupportedError('StackOverflowError._stackTrace');
   }
 }
@@ -497,7 +501,7 @@ class StackOverflowError {
 class IntegerDivisionByZeroException {
   StackTrace? get _stackTrace =>
       throw UnsupportedError('IntegerDivisionByZeroException._stackTrace');
-  void set _stackTrace(StackTrace? _) {
+  set _stackTrace(StackTrace? _) {
     throw UnsupportedError('IntegerDivisionByZeroException._stackTrace');
   }
 }

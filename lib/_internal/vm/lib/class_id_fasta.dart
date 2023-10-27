@@ -12,35 +12,35 @@ class ClassID {
   external static int getID(Object? value);
 
   @pragma("vm:entry-point")
-  static final int cidArray = 0;
+  static const int cidArray = 0;
   @pragma("vm:entry-point")
-  static final int cidExternalOneByteString = 0;
+  static const int cidExternalOneByteString = 0;
   @pragma("vm:entry-point")
-  static final int cidGrowableObjectArray = 0;
+  static const int cidGrowableObjectArray = 0;
   @pragma("vm:entry-point")
-  static final int cidImmutableArray = 0;
+  static const int cidImmutableArray = 0;
   @pragma("vm:entry-point")
-  static final int cidOneByteString = 0;
+  static const int cidOneByteString = 0;
   @pragma("vm:entry-point")
-  static final int cidTwoByteString = 0;
+  static const int cidTwoByteString = 0;
   @pragma("vm:entry-point")
-  static final int cidUint8ArrayView = 0;
+  static const int cidUint8ArrayView = 0;
   @pragma("vm:entry-point")
-  static final int cidUint8Array = 0;
+  static const int cidUint8Array = 0;
   @pragma("vm:entry-point")
-  static final int cidInt8ArrayView = 0;
+  static const int cidInt8ArrayView = 0;
   @pragma("vm:entry-point")
-  static final int cidInt8Array = 0;
+  static const int cidInt8Array = 0;
   @pragma("vm:entry-point")
-  static final int cidExternalUint8Array = 0;
+  static const int cidExternalUint8Array = 0;
   @pragma("vm:entry-point")
-  static final int cidExternalInt8Array = 0;
+  static const int cidExternalInt8Array = 0;
   @pragma("vm:entry-point")
-  static final int cidUint8ClampedArray = 0;
+  static const int cidUint8ClampedArray = 0;
   @pragma("vm:entry-point")
-  static final int cidExternalUint8ClampedArray = 0;
+  static const int cidExternalUint8ClampedArray = 0;
   // Used in const hashing to determine whether we're dealing with a
   // user-defined const. See lib/_internal/vm/lib/compact_hash.dart.
   @pragma("vm:entry-point")
-  static final int numPredefinedCids = 0;
+  static const int numPredefinedCids = 0;
 }

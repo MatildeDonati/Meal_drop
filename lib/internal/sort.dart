@@ -4,56 +4,48 @@
 
 part of dart._internal;
 
-/**
- * Dual-Pivot Quicksort algorithm.
- *
- * This class implements the dual-pivot quicksort algorithm as presented in
- * Vladimir Yaroslavskiy's paper.
- *
- * Some improvements have been copied from Android's implementation.
- */
+/// Dual-Pivot Quicksort algorithm.
+///
+/// This class implements the dual-pivot quicksort algorithm as presented in
+/// Vladimir Yaroslavskiy's paper.
+///
+/// Some improvements have been copied from Android's implementation.
 class Sort {
   // When a list has less than [:_INSERTION_SORT_THRESHOLD:] elements it will
   // be sorted by an insertion sort.
   static const int _INSERTION_SORT_THRESHOLD = 32;
 
-  /**
-   * Sorts all elements of the given list [:a:] according to the given
-   * [:compare:] function.
-   *
-   * The [:compare:] function takes two arguments [:x:] and [:y:] and returns
-   *  -1 if [:x < y:],
-   *   0 if [:x == y:], and
-   *   1 if [:x > y:].
-   *
-   * The function's behavior must be consistent. It must not return different
-   * results for the same values.
-   */
-  static void sort<E>(List<E> a, int compare(E a, E b)) {
+  /// Sorts all elements of the given list [:a:] according to the given
+  /// [:compare:] function.
+  ///
+  /// The [:compare:] function takes two arguments [:x:] and [:y:] and returns
+  ///  -1 if [:x < y:],
+  ///   0 if [:x == y:], and
+  ///   1 if [:x > y:].
+  ///
+  /// The function's behavior must be consistent. It must not return different
+  /// results for the same values.
+  static void sort<E>(List<E> a, int Function(E a, E b) compare) {
     _doSort(a, 0, a.length - 1, compare);
   }
 
-  /**
-   * Sorts all elements in the range [:from:] (inclusive) to [:to:] (exclusive)
-   * of the given list [:a:].
-   *
-   * If the given range is invalid an "OutOfRange" error is raised.
-   * TODO(floitsch): do we want an error?
-   *
-   * See [:sort:] for requirements of the [:compare:] function.
-   */
-  static void sortRange<E>(List<E> a, int from, int to, int compare(E a, E b)) {
+  /// Sorts all elements in the range [:from:] (inclusive) to [:to:] (exclusive)
+  /// of the given list [:a:].
+  ///
+  /// If the given range is invalid an "OutOfRange" error is raised.
+  /// TODO(floitsch): do we want an error?
+  ///
+  /// See [:sort:] for requirements of the [:compare:] function.
+  static void sortRange<E>(List<E> a, int from, int to, int Function(E a, E b) compare) {
     if ((from < 0) || (to > a.length) || (to < from)) {
       throw "OutOfRange";
     }
     _doSort(a, from, to - 1, compare);
   }
 
-  /**
-   * Sorts the list in the interval [:left:] to [:right:] (both inclusive).
-   */
+  /// Sorts the list in the interval [:left:] to [:right:] (both inclusive).
   static void _doSort<E>(
-      List<E> a, int left, int right, int compare(E a, E b)) {
+      List<E> a, int left, int right, int Function(E a, E b) compare) {
     if ((right - left) <= _INSERTION_SORT_THRESHOLD) {
       _insertionSort(a, left, right, compare);
     } else {
@@ -62,7 +54,7 @@ class Sort {
   }
 
   static void _insertionSort<E>(
-      List<E> a, int left, int right, int compare(E a, E b)) {
+      List<E> a, int left, int right, int Function(E a, E b) compare) {
     for (int i = left + 1; i <= right; i++) {
       var el = a[i];
       int j = i;
@@ -75,7 +67,7 @@ class Sort {
   }
 
   static void _dualPivotQuicksort<E>(
-      List<E> a, int left, int right, int compare(E a, E b)) {
+      List<E> a, int left, int right, int Function(E a, E b) compare) {
     assert(right - left > _INSERTION_SORT_THRESHOLD);
 
     // Compute the two pivots by looking at 5 elements.
@@ -154,8 +146,8 @@ class Sort {
     int less = left + 1; // First element in the middle partition.
     int great = right - 1; // Last element in the middle partition.
 
-    bool pivots_are_equal = (compare(pivot1, pivot2) == 0);
-    if (pivots_are_equal) {
+    bool pivotsAreEqual = (compare(pivot1, pivot2) == 0);
+    if (pivotsAreEqual) {
       var pivot = pivot1;
       // Degenerated case where the partitioning becomes a Dutch national flag
       // problem.
@@ -235,16 +227,16 @@ class Sort {
       //   3. for x in ]great, right[ : x > pivot2
       for (int k = less; k <= great; k++) {
         var ak = a[k];
-        int comp_pivot1 = compare(ak, pivot1);
-        if (comp_pivot1 < 0) {
+        int compPivot1 = compare(ak, pivot1);
+        if (compPivot1 < 0) {
           if (k != less) {
             a[k] = a[less];
             a[less] = ak;
           }
           less++;
         } else {
-          int comp_pivot2 = compare(ak, pivot2);
-          if (comp_pivot2 > 0) {
+          int compPivot2 = compare(ak, pivot2);
+          if (compPivot2 > 0) {
             while (true) {
               int comp = compare(a[great], pivot2);
               if (comp > 0) {
@@ -293,7 +285,7 @@ class Sort {
     _doSort(a, left, less - 2, compare);
     _doSort(a, great + 2, right, compare);
 
-    if (pivots_are_equal) {
+    if (pivotsAreEqual) {
       // All elements in the second partition are equal to the pivot. No
       // need to sort them.
       return;
@@ -329,16 +321,16 @@ class Sort {
       //   3. for x in ]great, * ] : x == pivot2
       for (int k = less; k <= great; k++) {
         var ak = a[k];
-        int comp_pivot1 = compare(ak, pivot1);
-        if (comp_pivot1 == 0) {
+        int compPivot1 = compare(ak, pivot1);
+        if (compPivot1 == 0) {
           if (k != less) {
             a[k] = a[less];
             a[less] = ak;
           }
           less++;
         } else {
-          int comp_pivot2 = compare(ak, pivot2);
-          if (comp_pivot2 == 0) {
+          int compPivot2 = compare(ak, pivot2);
+          if (compPivot2 == 0) {
             while (true) {
               int comp = compare(a[great], pivot2);
               if (comp == 0) {

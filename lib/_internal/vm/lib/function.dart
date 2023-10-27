@@ -10,9 +10,11 @@ final class _Closure implements Function {
     throw "Unreachable";
   }
 
+  @override
   @pragma("vm:external-name", "Closure_equals")
   external bool operator ==(Object other);
 
+  @override
   int get hashCode {
     _hash ??= _computeHash();
     return _hash;
@@ -51,5 +53,5 @@ final class _Closure implements Function {
   // This initializer makes _hash field nullable even without constructor
   // compilation.
   @pragma("vm:entry-point")
-  var _hash = null;
+  var _hash;
 }

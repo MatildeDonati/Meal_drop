@@ -9,7 +9,6 @@
 
 import "dart:_internal" as internal;
 
-import "dart:_internal" show patch;
 
 import "dart:async" show Future;
 
@@ -19,31 +18,25 @@ import "dart:collection" show UnmodifiableListView, UnmodifiableMapView;
 part "mirrors_impl.dart";
 part "mirror_reference.dart";
 
-/**
- * Returns a [MirrorSystem] for the current isolate.
- */
+/// Returns a [MirrorSystem] for the current isolate.
 @patch
 MirrorSystem currentMirrorSystem() {
   return _Mirrors.currentMirrorSystem();
 }
 
-/**
- * Returns an [InstanceMirror] for some Dart language object.
- *
- * This only works if this mirror system is associated with the
- * current running isolate.
- */
+/// Returns an [InstanceMirror] for some Dart language object.
+///
+/// This only works if this mirror system is associated with the
+/// current running isolate.
 @patch
 InstanceMirror reflect(dynamic reflectee) {
   return _Mirrors.reflect(reflectee);
 }
 
-/**
- * Returns a [ClassMirror] for the class represented by a Dart
- * Type object.
- *
- * This only works with objects local to the current isolate.
- */
+/// Returns a [ClassMirror] for the class represented by a Dart
+/// Type object.
+///
+/// This only works with objects local to the current isolate.
 @patch
 ClassMirror reflectClass(Type key) {
   return _Mirrors.reflectClass(key);
@@ -65,10 +58,10 @@ class MirrorSystem {
     }
     if (candidates.length > 1) {
       var uris = candidates.map((lib) => lib.uri.toString()).toList();
-      throw new Exception("There are multiple libraries named "
+      throw Exception("There are multiple libraries named "
           "'${getName(libraryName)}': $uris");
     }
-    throw new Exception("There is no library named '${getName(libraryName)}'");
+    throw Exception("There is no library named '${getName(libraryName)}'");
   }
 
   @patch
@@ -79,13 +72,13 @@ class MirrorSystem {
   @patch
   static Symbol getSymbol(String name, [LibraryMirror? library]) {
     if ((library != null && library is! _LibraryMirror) ||
-        ((name.length > 0) && (name[0] == '_') && (library == null))) {
-      throw new ArgumentError(library);
+        ((name.isNotEmpty) && (name[0] == '_') && (library == null))) {
+      throw ArgumentError(library);
     }
     if (library != null) {
       name = _mangleName(name, (library as _LibraryMirror)._reflectee);
     }
-    return new internal.Symbol.unvalidated(name);
+    return internal.Symbol.unvalidated(name);
   }
 
   @pragma("vm:external-name", "Mirrors_mangleName")
@@ -98,6 +91,7 @@ class AbstractClassInstantiationError {
   AbstractClassInstantiationError._create(
       this._className, this._url, this._line);
 
+  @override
   @patch
   String toString() {
     return "Cannot instantiate abstract class $_className: "
@@ -106,6 +100,6 @@ class AbstractClassInstantiationError {
 
   // These new fields cannot be declared final, because a constructor exists
   // in the original version of this patched class.
-  String? _url;
-  int _line = 0;
+  final String? _url;
+  final int _line = 0;
 }

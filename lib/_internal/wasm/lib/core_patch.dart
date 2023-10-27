@@ -28,11 +28,10 @@ import "dart:_internal"
         writeIntoOneByteString,
         writeIntoTwoByteString;
 
-import "dart:_internal" as _internal show Symbol;
+import "dart:_internal" as internal show Symbol;
 
 import 'dart:_js_helper' show JS, JSSyntaxRegExp, quoteStringForRegExp;
 
-import 'dart:_js_types' show JSStringImpl;
 
 import "dart:collection"
     show
@@ -50,7 +49,6 @@ import 'dart:convert' show Encoding, utf8;
 
 import 'dart:math' show Random;
 
-import "dart:typed_data" show Uint8List, Uint16List;
 
 import 'dart:_string_helper';
 
@@ -76,4 +74,4 @@ part "uri_patch.dart";
 typedef _Smi = int; // For compatibility with VM patch files
 
 String _symbolToString(Symbol s) =>
-    _internal.Symbol.getName(s as _internal.Symbol);
+    internal.Symbol.getName(s as internal.Symbol);

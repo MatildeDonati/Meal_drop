@@ -5,7 +5,6 @@
 // Patch file for the dart:isolate library.
 
 import 'dart:_js_helper' show NoReifyGeneric;
-import 'dart:_internal' show patch;
 import 'dart:async';
 import "dart:typed_data" show TypedData;
 
@@ -26,7 +25,7 @@ class Isolate {
   static Future<Uri?> resolvePackageUri(Uri packageUri) => _unsupported();
 
   @patch
-  static Future<Isolate> spawn<T>(void entryPoint(T message), T message,
+  static Future<Isolate> spawn<T>(void Function(T message) entryPoint, T message,
           {bool paused = false,
           bool errorsAreFatal = true,
           SendPort? onExit,
@@ -82,7 +81,7 @@ class Isolate {
       _unsupported();
 }
 
-/** Default factory for receive ports. */
+/// Default factory for receive ports.
 @patch
 class ReceivePort {
   @patch
@@ -103,6 +102,7 @@ class _ReceivePort extends Stream implements ReceivePort {
 
   get sendPort => _unsupported();
 
+  @override
   StreamSubscription listen(void Function(dynamic)? onData,
           {Function? onError,
           void Function()? onDone,

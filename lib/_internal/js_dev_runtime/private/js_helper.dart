@@ -44,8 +44,10 @@ class DartIterator<E> implements Iterator<E> {
 
   DartIterator(this._jsIterator);
 
+  @override
   E get current => _current as E;
 
+  @override
   bool moveNext() {
     final ret = JS('', '#.next()', _jsIterator);
     _current = JS('', '#.value', ret);
@@ -61,11 +63,12 @@ class SyncIterable<E> extends Iterable<E> {
   @JSExportName('Symbol.iterator')
   _jsIterator() => _initGenerator();
 
+  @override
   get iterator => DartIterator(_initGenerator());
 }
 
 class Primitives {
-  static int? parseInt(@nullCheck String source, int? _radix) {
+  static int? parseInt(@nullCheck String source, int? radix) {
     var re = JS('', r'/^\s*[+-]?((0x[a-f0-9]+)|(\d+)|([a-z0-9]+))\s*$/i');
     // This isn't reified List<String?>?, but it's safe to use as long as we use
     // it locally and don't expose it to user code.
@@ -80,19 +83,17 @@ class Primitives {
       return null;
     }
     var decimalMatch = match[decimalIndex];
-    if (_radix == null) {
-      if (decimalMatch != null) {
-        // Cannot fail because we know that the digits are all decimal.
-        return JS<int>('!', r'parseInt(#, 10)', source);
-      }
-      if (match[hexIndex] != null) {
-        // Cannot fail because we know that the digits are all hex.
-        return JS<int>('!', r'parseInt(#, 16)', source);
-      }
-      return null;
+    if (decimalMatch != null) {
+      // Cannot fail because we know that the digits are all decimal.
+      return JS<int>('!', r'parseInt(#, 10)', source);
     }
-    @notNull
-    var radix = _radix;
+    if (match[hexIndex] != null) {
+      // Cannot fail because we know that the digits are all hex.
+      return JS<int>('!', r'parseInt(#, 16)', source);
+    }
+    return null;
+      @notNull
+    var radix = radix;
     if (radix < 2 || radix > 36) {
       throw RangeError.range(radix, 2, 36, 'radix');
     }
@@ -202,7 +203,7 @@ class Primitives {
     return "Instance of '${dart.typeName(dart.getReifiedType(obj))}'";
   }
 
-  /** `r"$".codeUnitAt(0)` */
+  /// `r"$".codeUnitAt(0)`
   static const int DOLLAR_CHAR_VALUE = 36;
 
   static int dateNow() => JS<int>('!', r'Date.now()');
@@ -392,7 +393,7 @@ class Primitives {
       @nullCheck int seconds,
       @nullCheck int milliseconds,
       @nullCheck bool isUtc) {
-    final int MAX_MILLISECONDS_SINCE_EPOCH = 8640000000000000;
+    const int maxMillisecondsSinceEpoch = 8640000000000000;
     var jsMonth = month - 1;
     // The JavaScript Date constructor 'corrects' year NN to 19NN. Sidestep that
     // correction by adjusting years out of that range and compensating with an
@@ -411,8 +412,8 @@ class Primitives {
           jsMonth, day, hours, minutes, seconds, milliseconds);
     }
     if (value.isNaN ||
-        value < -MAX_MILLISECONDS_SINCE_EPOCH ||
-        value > MAX_MILLISECONDS_SINCE_EPOCH) {
+        value < -maxMillisecondsSinceEpoch ||
+        value > maxMillisecondsSinceEpoch) {
       return null;
     }
     if (years <= 0 || years < 100) return patchUpY2K(value, years, isUtc);
@@ -514,10 +515,8 @@ class Primitives {
   }
 }
 
-/**
- * Diagnoses an indexing error. Returns the ArgumentError or RangeError that
- * describes the problem.
- */
+/// Diagnoses an indexing error. Returns the ArgumentError or RangeError that
+/// describes the problem.
 Error diagnoseIndexError(indexable, int index) {
   int length = indexable.length;
   // The following returns the same error that would be thrown by calling
@@ -531,10 +530,8 @@ Error diagnoseIndexError(indexable, int index) {
   return RangeError.value(index, 'index');
 }
 
-/**
- * Diagnoses a range error. Returns the ArgumentError or RangeError that
- * describes the problem.
- */
+/// Diagnoses a range error. Returns the ArgumentError or RangeError that
+/// describes the problem.
 Error diagnoseRangeError(int? start, int? end, int length) {
   if (start == null) {
     return ArgumentError.value(start, 'start');
@@ -587,6 +584,7 @@ class JsNoSuchMethodError extends Error implements NoSuchMethodError {
         _receiver =
             match == null ? null : JS('String|Null', '#.receiver', match);
 
+  @override
   String toString() {
     if (_method == null) return 'NoSuchMethodError: $_message';
     if (_receiver == null) {
@@ -602,13 +600,12 @@ class UnknownJsTypeError extends Error {
 
   UnknownJsTypeError(this._message);
 
+  @override
   String toString() => _message.isEmpty ? 'Error' : 'Error: $_message';
 }
 
-/**
- * Called by generated code to build a map literal. [keyValuePairs] is
- * a list of key, value, key, value, ..., etc.
- */
+/// Called by generated code to build a map literal. [keyValuePairs] is
+/// a list of key, value, key, value, ..., etc.
 fillLiteralMap(keyValuePairs, Map result) {
   // TODO(johnniwinther): Use JSArray to optimize this code instead of calling
   // [getLength] and [getIndex].
@@ -630,95 +627,87 @@ jsPropertyAccess(jsObject, String property) {
   return JS('var', r'#[#]', jsObject, property);
 }
 
-/**
- * A metadata annotation describing the types instantiated by a native element.
- *
- * The annotation is valid on a native method and a field of a native class.
- *
- * By default, a field of a native class is seen as an instantiation point for
- * all native classes that are a subtype of the field's type, and a native
- * method is seen as an instantiation point fo all native classes that are a
- * subtype of the method's return type, or the argument types of the declared
- * type of the method's callback parameter.
- *
- * An @[Creates] annotation overrides the default set of instantiated types.  If
- * one or more @[Creates] annotations are present, the type of the native
- * element is ignored, and the union of @[Creates] annotations is used instead.
- * The names in the strings are resolved and the program will fail to compile
- * with dart2js if they do not name types.
- *
- * The argument to [Creates] is a string.  The string is parsed as the names of
- * one or more types, separated by vertical bars `|`.  There are some special
- * names:
- *
- * * `=Object`. This means 'exactly Object', which is a plain JavaScript object
- *   with properties and none of the subtypes of Object.
- *
- * Example: we may know that a method always returns a specific implementation:
- *
- *     @Creates('_NodeList')
- *     List<Node> getElementsByTagName(String tag) native;
- *
- * Useful trick: A method can be marked as not instantiating any native classes
- * with the annotation `@Creates('Null')`.  This is useful for fields on native
- * classes that are used only in Dart code.
- *
- *     @Creates('Null')
- *     var _cachedFoo;
- */
+/// A metadata annotation describing the types instantiated by a native element.
+///
+/// The annotation is valid on a native method and a field of a native class.
+///
+/// By default, a field of a native class is seen as an instantiation point for
+/// all native classes that are a subtype of the field's type, and a native
+/// method is seen as an instantiation point fo all native classes that are a
+/// subtype of the method's return type, or the argument types of the declared
+/// type of the method's callback parameter.
+///
+/// An @[Creates] annotation overrides the default set of instantiated types.  If
+/// one or more @[Creates] annotations are present, the type of the native
+/// element is ignored, and the union of @[Creates] annotations is used instead.
+/// The names in the strings are resolved and the program will fail to compile
+/// with dart2js if they do not name types.
+///
+/// The argument to [Creates] is a string.  The string is parsed as the names of
+/// one or more types, separated by vertical bars `|`.  There are some special
+/// names:
+///
+/// * `=Object`. This means 'exactly Object', which is a plain JavaScript object
+///   with properties and none of the subtypes of Object.
+///
+/// Example: we may know that a method always returns a specific implementation:
+///
+///     @Creates('_NodeList')
+///     List<Node> getElementsByTagName(String tag) native;
+///
+/// Useful trick: A method can be marked as not instantiating any native classes
+/// with the annotation `@Creates('Null')`.  This is useful for fields on native
+/// classes that are used only in Dart code.
+///
+///     @Creates('Null')
+///     var _cachedFoo;
 class Creates {
   final String types;
   const Creates(this.types);
 }
 
-/**
- * A metadata annotation describing the types returned or yielded by a native
- * element.
- *
- * The annotation is valid on a native method and a field of a native class.
- *
- * By default, a native method or field is seen as returning or yielding all
- * subtypes if the method return type or field type.  This annotation allows a
- * more precise set of types to be specified.
- *
- * See [Creates] for the syntax of the argument.
- *
- * Example: IndexedDB keys are numbers, strings and JavaScript Arrays of keys.
- *
- *     @Returns('String|num|JSExtendableArray')
- *     dynamic key;
- *
- *     // Equivalent:
- *     @Returns('String') @Returns('num') @Returns('JSExtendableArray')
- *     dynamic key;
- */
+/// A metadata annotation describing the types returned or yielded by a native
+/// element.
+///
+/// The annotation is valid on a native method and a field of a native class.
+///
+/// By default, a native method or field is seen as returning or yielding all
+/// subtypes if the method return type or field type.  This annotation allows a
+/// more precise set of types to be specified.
+///
+/// See [Creates] for the syntax of the argument.
+///
+/// Example: IndexedDB keys are numbers, strings and JavaScript Arrays of keys.
+///
+///     @Returns('String|num|JSExtendableArray')
+///     dynamic key;
+///
+///     // Equivalent:
+///     @Returns('String') @Returns('num') @Returns('JSExtendableArray')
+///     dynamic key;
 class Returns {
   final String types;
   const Returns(this.types);
 }
 
-/**
- * A metadata annotation placed on native methods and fields of native classes
- * to specify the JavaScript name.
- *
- * This example declares a Dart field + getter + setter called `$dom_title` that
- * corresponds to the JavaScript property `title`.
- *
- *     class Document native "*Foo" {
- *       @JSName('title')
- *       String $dom_title;
- *     }
- */
+/// A metadata annotation placed on native methods and fields of native classes
+/// to specify the JavaScript name.
+///
+/// This example declares a Dart field + getter + setter called `$dom_title` that
+/// corresponds to the JavaScript property `title`.
+///
+///     class Document native "*Foo" {
+///       @JSName('title')
+///       String $dom_title;
+///     }
 class JSName {
   final String name;
   const JSName(this.name);
 }
 
-/**
- * Special interface recognized by the compiler and implemented by DOM
- * objects that support integer indexing. This interface is not
- * visible to anyone, and is only injected into special libraries.
- */
+/// Special interface recognized by the compiler and implemented by DOM
+/// objects that support integer indexing. This interface is not
+/// visible to anyone, and is only injected into special libraries.
 abstract class JavaScriptIndexingBehavior<E> extends JSMutableIndexable<E> {}
 
 /// Thrown by type assertions that fail.
@@ -727,15 +716,15 @@ class TypeErrorImpl extends Error implements TypeError {
 
   TypeErrorImpl(this._message);
 
+  @override
   String toString() => _message;
 }
 
-/**
- * Error thrown when a runtime error occurs.
- */
+/// Error thrown when a runtime error occurs.
 class RuntimeError extends Error {
   final message;
   RuntimeError(this.message);
+  @override
   String toString() => "RuntimeError: $message";
 }
 
@@ -745,6 +734,7 @@ class DeferredNotLoadedError extends Error implements NoSuchMethodError {
 
   DeferredNotLoadedError(this.enclosingLibrary, this.importPrefix);
 
+  @override
   String toString() {
     return 'Deferred import $importPrefix (from $enclosingLibrary) was not loaded.';
   }
@@ -761,13 +751,14 @@ class AssertionErrorImpl extends AssertionError {
       [this._fileUri, this._line, this._column, this._conditionSource])
       : super(message);
 
+  @override
   String toString() {
     var failureMessage = "";
     if (_fileUri != null &&
         _line != null &&
         _column != null &&
         _conditionSource != null) {
-      failureMessage += "$_fileUri:${_line}:${_column}\n$_conditionSource\n";
+      failureMessage += "$_fileUri:$_line:$_column\n$_conditionSource\n";
     }
     failureMessage +=
         message != null ? Error.safeToString(message) : "is not true";
@@ -776,11 +767,9 @@ class AssertionErrorImpl extends AssertionError {
   }
 }
 
-/**
- * Creates a random number with 64 bits of randomness.
- *
- * This will be truncated to the 53 bits available in a double.
- */
+/// Creates a random number with 64 bits of randomness.
+///
+/// This will be truncated to the 53 bits available in a double.
 int random64() {
   // TODO(lrn): Use a secure random source.
   int int32a = JS("int", "(Math.random() * 0x100000000) >>> 0");
@@ -789,6 +778,7 @@ int random64() {
 }
 
 class BooleanConversionAssertionError extends AssertionError {
+  @override
   toString() => 'Failed assertion: boolean expression must not be null';
 }
 
@@ -833,14 +823,17 @@ class PrivateSymbol implements Symbol {
     return null;
   }
 
+  @override
   bool operator ==(other) =>
       other is PrivateSymbol &&
       _name == other._name &&
       identical(_nativeSymbol, other._nativeSymbol);
 
+  @override
   get hashCode => _name.hashCode;
 
   // TODO(jmesserly): is this equivalent to _nativeSymbol toString?
+  @override
   toString() => 'Symbol("$_name")';
 }
 
@@ -888,6 +881,7 @@ Object? createRecordTypePredicate(String partialShapeTag, JSArray fieldRtis) {
   } else {
     dart.throwUnimplementedInOldRti();
   }
+  return null;
 }
 
 /// Returns the Rti for the provided [record].

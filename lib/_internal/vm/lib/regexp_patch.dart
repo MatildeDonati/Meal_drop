@@ -12,19 +12,17 @@ class RegExp {
       bool caseSensitive = true,
       bool unicode = false,
       bool dotAll = false}) {
-    return new _RegExp(source,
+    return _RegExp(source,
         multiLine: multiLine,
         caseSensitive: caseSensitive,
         unicode: unicode,
         dotAll: dotAll);
   }
 
-  /**
-   * Finds the index of the first RegExp-significant char in [text].
-   *
-   * Starts looking from [start]. Returns `text.length` if no character
-   * is found that has special meaning in RegExp syntax.
-   */
+  /// Finds the index of the first RegExp-significant char in [text].
+  ///
+  /// Starts looking from [start]. Returns `text.length` if no character
+  /// is found that has special meaning in RegExp syntax.
   static int _findEscapeChar(String text, int start) {
     // Table where each character in the range U+0000 to U+007f is represented
     // by whether it needs to be escaped in a regexp.
@@ -55,7 +53,7 @@ class RegExp {
     // If the text contains no characters needing escape, return it directly.
     if (escapeCharIndex == text.length) return text;
 
-    var buffer = new StringBuffer();
+    var buffer = StringBuffer();
     int previousSliceEndIndex = 0;
     do {
       // Copy characters from previous escape to current escape into result.
@@ -79,7 +77,9 @@ class RegExp {
 class _RegExpMatch implements RegExpMatch {
   _RegExpMatch._(this._regexp, this.input, this._match);
 
+  @override
   int get start => _start(0);
+  @override
   int get end => _end(0);
 
   int _start(int groupIdx) {
@@ -90,9 +90,10 @@ class _RegExpMatch implements RegExpMatch {
     return _match[(groupIdx * _MATCH_PAIR) + 1];
   }
 
+  @override
   String? group(int groupIdx) {
     if (groupIdx < 0 || groupIdx > _regexp._groupCount) {
-      throw new RangeError.value(groupIdx);
+      throw RangeError.value(groupIdx);
     }
     int startIndex = _start(groupIdx);
     int endIndex = _end(groupIdx);
@@ -103,35 +104,42 @@ class _RegExpMatch implements RegExpMatch {
     return input._substringUnchecked(startIndex, endIndex);
   }
 
+  @override
   String? operator [](int groupIdx) {
-    return this.group(groupIdx);
+    return group(groupIdx);
   }
 
+  @override
   List<String?> groups(List<int> groupsSpec) {
-    var groupsList = new List<String?>.filled(groupsSpec.length, null);
+    var groupsList = List<String?>.filled(groupsSpec.length, null);
     for (int i = 0; i < groupsSpec.length; i++) {
       groupsList[i] = group(groupsSpec[i]);
     }
     return groupsList;
   }
 
+  @override
   int get groupCount => _regexp._groupCount;
 
+  @override
   RegExp get pattern => _regexp;
 
+  @override
   String? namedGroup(String name) {
     var idx = _regexp._groupNameIndex(name);
     if (idx < 0) {
-      throw ArgumentError("Not a capture group name: ${name}");
+      throw ArgumentError("Not a capture group name: $name");
     }
     return group(idx);
   }
 
+  @override
   Iterable<String> get groupNames {
     return _regexp._groupNames;
   }
 
   final RegExp _regexp;
+  @override
   final String input;
   final List<int> _match;
   static const int _MATCH_PAIR = 2;
@@ -150,46 +158,46 @@ class _RegExp implements RegExp {
 
   RegExpMatch? firstMatch(String input) {
     // TODO: Remove these null checks once all code is opted into strong nonnullable mode.
-    if (input == null) throw new ArgumentError.notNull('input');
+    if (input == null) throw ArgumentError.notNull('input');
     final match = _ExecuteMatch(input, 0);
     if (match == null) {
       return null;
     }
-    return new _RegExpMatch._(this, input, match);
+    return _RegExpMatch._(this, input, match);
   }
 
   Iterable<RegExpMatch> allMatches(String string, [int start = 0]) {
     // TODO: Remove these null checks once all code is opted into strong nonnullable mode.
-    if (string == null) throw new ArgumentError.notNull('string');
-    if (start == null) throw new ArgumentError.notNull('start');
+    if (string == null) throw ArgumentError.notNull('string');
+    if (start == null) throw ArgumentError.notNull('start');
     if (0 > start || start > string.length) {
-      throw new RangeError.range(start, 0, string.length);
+      throw RangeError.range(start, 0, string.length);
     }
-    return new _AllMatchesIterable(this, string, start);
+    return _AllMatchesIterable(this, string, start);
   }
 
   RegExpMatch? matchAsPrefix(String string, [int start = 0]) {
     // TODO: Remove these null checks once all code is opted into strong nonnullable mode.
-    if (string == null) throw new ArgumentError.notNull('string');
-    if (start == null) throw new ArgumentError.notNull('start');
+    if (string == null) throw ArgumentError.notNull('string');
+    if (start == null) throw ArgumentError.notNull('start');
     if (start < 0 || start > string.length) {
-      throw new RangeError.range(start, 0, string.length);
+      throw RangeError.range(start, 0, string.length);
     }
     final list = _ExecuteMatchSticky(string, start);
     if (list == null) return null;
-    return new _RegExpMatch._(this, string, list);
+    return _RegExpMatch._(this, string, list);
   }
 
   bool hasMatch(String input) {
     // TODO: Remove these null checks once all code is opted into strong nonnullable mode.
-    if (input == null) throw new ArgumentError.notNull('input');
+    if (input == null) throw ArgumentError.notNull('input');
     List? match = _ExecuteMatch(input, 0);
     return (match == null) ? false : true;
   }
 
   String? stringMatch(String input) {
     // TODO: Remove these null checks once all code is opted into strong nonnullable mode.
-    if (input == null) throw new ArgumentError.notNull('input');
+    if (input == null) throw ArgumentError.notNull('input');
     List? match = _ExecuteMatch(input, 0);
     if (match == null) {
       return null;
@@ -212,6 +220,7 @@ class _RegExp implements RegExp {
   @pragma("vm:external-name", "RegExp_getIsDotAll")
   external bool get isDotAll;
 
+  @override
   @pragma("vm:external-name", "RegExp_getGroupCount")
   external int get _groupCount;
 
@@ -225,6 +234,7 @@ class _RegExp implements RegExp {
   @pragma("vm:external-name", "RegExp_getGroupNameMap")
   external List? get _groupNameList;
 
+  @override
   Iterable<String> get _groupNames sync* {
     final nameList = _groupNameList;
     if (nameList == null) return;
@@ -233,6 +243,7 @@ class _RegExp implements RegExp {
     }
   }
 
+  @override
   int _groupNameIndex(String name) {
     var nameList = _groupNameList;
     if (nameList == null) return -1;
@@ -247,7 +258,7 @@ class _RegExp implements RegExp {
   // Byte map of one byte characters with a 0xff if the character is a word
   // character (digit, letter or underscore) and 0x00 otherwise.
   // Used by generated RegExp code.
-  static const List<int> _wordCharacterMap = const <int>[
+  static const List<int> _wordCharacterMap = <int>[
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -291,16 +302,16 @@ class _RegExp implements RegExp {
 
   @pragma("vm:recognized", "asm-intrinsic")
   @pragma("vm:external-name", "RegExp_ExecuteMatch")
-  external List<int>? _ExecuteMatch(String str, int start_index);
+  external List<int>? _ExecuteMatch(String str, int startIndex);
 
   @pragma("vm:recognized", "asm-intrinsic")
   @pragma("vm:external-name", "RegExp_ExecuteMatchSticky")
-  external List<int>? _ExecuteMatchSticky(String str, int start_index);
+  external List<int>? _ExecuteMatchSticky(String str, int startIndex);
 
-  static Int32List _getRegisters(int registers_count) {
+  static Int32List _getRegisters(int registersCount) {
     var registers = _registers;
-    if (registers == null || registers.length < registers_count) {
-      _registers = registers = Int32List(registers_count);
+    if (registers == null || registers.length < registersCount) {
+      _registers = registers = Int32List(registersCount);
     }
     return registers;
   }
@@ -330,8 +341,9 @@ class _AllMatchesIterable extends Iterable<RegExpMatch> {
 
   _AllMatchesIterable(this._re, this._str, this._start);
 
+  @override
   Iterator<RegExpMatch> get iterator =>
-      new _AllMatchesIterator(_re, _str, _start);
+      _AllMatchesIterator(_re, _str, _start);
 }
 
 class _AllMatchesIterator implements Iterator<RegExpMatch> {
@@ -342,6 +354,7 @@ class _AllMatchesIterator implements Iterator<RegExpMatch> {
 
   _AllMatchesIterator(this._re, this._str, this._nextIndex);
 
+  @override
   RegExpMatch get current => _current as RegExpMatch;
 
   static bool _isLeadSurrogate(int c) {
@@ -352,13 +365,14 @@ class _AllMatchesIterator implements Iterator<RegExpMatch> {
     return c >= 0xdc00 && c <= 0xdfff;
   }
 
+  @override
   bool moveNext() {
     final re = _re;
     if (re == null) return false; // Cleared after a failed match.
     if (_nextIndex <= _str.length) {
       final match = re._ExecuteMatch(_str, _nextIndex);
       if (match != null) {
-        var current = new _RegExpMatch._(re, _str, match);
+        var current = _RegExpMatch._(re, _str, match);
         _current = current;
         _nextIndex = current.end;
         if (_nextIndex == current.start) {

@@ -10,7 +10,6 @@ import 'dart:_js_embedded_names'
 import 'dart:collection' hide LinkedList, LinkedListEntry;
 import 'dart:_foreign_helper' show JS_GET_FLAG, TYPE_REF;
 import 'dart:_internal' hide Symbol;
-import "dart:_internal" as _symbol_dev show Symbol;
 import 'dart:_js_helper'
     show
         allMatchesInStringUnchecked,
@@ -146,7 +145,7 @@ getNativeInterceptor(object) {
       // instance-cached tag, defaulting to instance-cached if caching
       // unspecified.
       var discriminatedTag = JS('', '(#)(#, #)', proto, object, record);
-      throw new UnimplementedError('Return interceptor for $discriminatedTag');
+      throw UnimplementedError('Return interceptor for $discriminatedTag');
     }
   }
 
@@ -191,7 +190,7 @@ getNativeInterceptor(object) {
 }
 
 // A JS String or Symbol.
-dynamic _JS_INTEROP_INTERCEPTOR_TAG = null;
+dynamic _JS_INTEROP_INTERCEPTOR_TAG;
 get JS_INTEROP_INTERCEPTOR_TAG {
   return _JS_INTEROP_INTERCEPTOR_TAG ??= getIsolateAffinityTag(r'_$dart_js');
 }
@@ -319,10 +318,13 @@ findInterceptorForType(Type? type) {
 abstract class Interceptor {
   const Interceptor();
 
+  @override
   bool operator ==(Object other) => identical(this, other);
 
+  @override
   int get hashCode => Primitives.objectHashCode(this);
 
+  @override
   String toString() => Primitives.objectToHumanReadableString(this);
 
   // [Interceptor.noSuchMethod] is identical to [Object.noSuchMethod].  However,
@@ -339,10 +341,12 @@ abstract class Interceptor {
   // We don't allow [noSuchMethod] on intercepted classes (that would force all
   // calls to use interceptor calling convention).  If we did allow it, the
   // interceptor context would select the correct `this`.
+  @override
   dynamic noSuchMethod(Invocation invocation) {
-    throw new NoSuchMethodError.withInvocation(this, invocation);
+    throw NoSuchMethodError.withInvocation(this, invocation);
   }
 
+  @override
   Type get runtimeType =>
       getRuntimeTypeOfInterceptorNotArray(getInterceptor(this), this);
 }
@@ -352,19 +356,25 @@ final class JSBool extends Interceptor implements bool, TrustedGetRuntimeType {
   const JSBool();
 
   // Note: if you change this, also change the function [S].
+  @override
   String toString() => JS('String', r'String(#)', this);
 
+  @override
   bool operator &(bool other) => JS('bool', "# && #", checkBool(other), this);
 
+  @override
   bool operator |(bool other) => JS('bool', "# || #", checkBool(other), this);
 
+  @override
   bool operator ^(bool other) => !identical(this, checkBool(other));
 
   // The values here are SMIs, co-prime and differ about half of the bit
   // positions, including the low bit, so they are different mod 2^k.
+  @override
   int get hashCode => this ? (2 * 3 * 23 * 3761) : (269 * 811);
 
   // Same as `=> bool`, but without a constant-pool object.
+  @override
   Type get runtimeType => createRuntimeType(TYPE_REF<bool>());
 }
 
@@ -373,19 +383,24 @@ final class JSBool extends Interceptor implements bool, TrustedGetRuntimeType {
 /// This class defines implementations for *all* methods on [Object] since
 /// the methods on Object assume the receiver is non-null.  This means that
 /// JSNull will always be in the interceptor set for methods defined on Object.
-final class JSNull extends Interceptor implements Null, TrustedGetRuntimeType {
+final class JSNull extends Interceptor implements void, TrustedGetRuntimeType {
   const JSNull();
 
+  @override
   external bool operator ==(Object other);
 
   // Note: if you change this, also change the function [S].
+  @override
   String toString() => 'null';
 
+  @override
   int get hashCode => 0;
 
   // Same as `=> Null`, but without a constant-pool object.
-  Type get runtimeType => createRuntimeType(TYPE_REF<Null>());
+  @override
+  Type get runtimeType => createRuntimeType(TYPE_REF<void>());
 
+  @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
@@ -427,11 +442,14 @@ class LegacyJavaScriptObject extends JavaScriptObject {
   const LegacyJavaScriptObject();
 
   // It would be impolite to stash a property on the object.
+  @override
   int get hashCode => 0;
 
+  @override
   Type get runtimeType => JSObject;
 
   /// Returns the result of the JavaScript objects `toString` method.
+  @override
   String toString() => JS('String', 'String(#)', this);
 }
 
@@ -457,6 +475,7 @@ final class JavaScriptFunction extends LegacyJavaScriptObject
     implements Function {
   const JavaScriptFunction();
 
+  @override
   String toString() {
     var dartClosure = JS('', '#.#', this, DART_CLOSURE_PROPERTY_NAME);
     if (dartClosure == null) return super.toString();

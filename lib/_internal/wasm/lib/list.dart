@@ -9,9 +9,9 @@ const int _maxWasmArrayLength = 2147483647; // max i32
 @pragma("wasm:entry-point")
 abstract class _ListBase<E> extends ListBase<E> {
   @pragma("wasm:entry-point")
-  int _length;
+  final int _length;
   @pragma("wasm:entry-point")
-  WasmObjectArray<Object?> _data;
+  final WasmObjectArray<Object?> _data;
 
   _ListBase(int length, int capacity)
       : _length = length,
@@ -20,13 +20,16 @@ abstract class _ListBase<E> extends ListBase<E> {
 
   _ListBase._withData(this._length, this._data);
 
+  @override
   E operator [](int index) {
     IndexError.check(index, _length, indexable: this, name: "[]");
     return unsafeCast(_data.read(index));
   }
 
+  @override
   int get length => _length;
 
+  @override
   List<E> sublist(int start, [int? end]) {
     final int listLength = this.length;
     final int actualEnd = RangeError.checkValidRange(start, end, listLength);
@@ -35,7 +38,8 @@ abstract class _ListBase<E> extends ListBase<E> {
     return _GrowableList<E>(length)..setRange(0, length, this, start);
   }
 
-  void forEach(f(E element)) {
+  @override
+  void forEach(Function(E element) f) {
     final initialLength = length;
     for (int i = 0; i < initialLength; i++) {
       f(this[i]);
@@ -43,6 +47,7 @@ abstract class _ListBase<E> extends ListBase<E> {
     }
   }
 
+  @override
   List<E> toList({bool growable = true}) {
     return List.from(this, growable: growable);
   }
@@ -55,12 +60,14 @@ abstract class _ModifiableList<E> extends _ListBase<E> {
   _ModifiableList._withData(int length, WasmObjectArray<Object?> data)
       : super._withData(length, data);
 
+  @override
   void operator []=(int index, E value) {
     IndexError.check(index, _length, indexable: this, name: "[]=");
     _data.write(index, value);
   }
 
   // List interface.
+  @override
   void setRange(int start, int end, Iterable<E> iterable, [int skipCount = 0]) {
     RangeError.checkValidRange(start, end, this.length);
     int length = end - start;
@@ -83,9 +90,10 @@ abstract class _ModifiableList<E> extends _ListBase<E> {
     }
   }
 
+  @override
   void setAll(int index, Iterable<E> iterable) {
     if (index < 0 || index > this.length) {
-      throw new RangeError.range(index, 0, this.length, "index");
+      throw RangeError.range(index, 0, this.length, "index");
     }
     List<E> iterableAsList;
     if (identical(this, iterable)) {
@@ -100,7 +108,7 @@ abstract class _ModifiableList<E> extends _ListBase<E> {
     }
     int length = iterableAsList.length;
     if (index + length > this.length) {
-      throw new RangeError.range(index + length, 0, this.length);
+      throw RangeError.range(index + length, 0, this.length);
     }
     Lists.copy(iterableAsList, 0, this, index, length);
   }
@@ -130,7 +138,7 @@ class _List<E> extends _ModifiableList<E> with FixedLengthListMixin<E> {
 
   // Specialization of List.generate constructor for growable == false.
   // Used by pkg/vm/lib/transformations/list_factory_specializer.dart.
-  factory _List.generate(int length, E generator(int index)) {
+  factory _List.generate(int length, E Function(int index) generator) {
     final result = _List<E>(length);
     for (int i = 0; i < result.length; ++i) {
       result[i] = generator(i);
@@ -180,20 +188,22 @@ class _List<E> extends _ModifiableList<E> with FixedLengthListMixin<E> {
     return unsafeCast(makeListFixedLength(_GrowableList<E>._ofOther(elements)));
   }
 
+  @override
   Iterator<E> get iterator {
-    return new _FixedSizeListIterator<E>(this);
+    return _FixedSizeListIterator<E>(this);
   }
 }
 
 @pragma("wasm:entry-point")
 class _ImmutableList<E> extends _ListBase<E> with UnmodifiableListMixin<E> {
   factory _ImmutableList._uninstantiable() {
-    throw new UnsupportedError(
+    throw UnsupportedError(
         "_ImmutableList can only be allocated by the runtime");
   }
 
+  @override
   Iterator<E> get iterator {
-    return new _FixedSizeListIterator<E>(this);
+    return _FixedSizeListIterator<E>(this);
   }
 }
 
@@ -211,8 +221,10 @@ class _FixedSizeListIterator<E> implements Iterator<E> {
     assert(list is _List<E> || list is _ImmutableList<E>);
   }
 
+  @override
   E get current => _current as E;
 
+  @override
   bool moveNext() {
     if (_index >= _length) {
       _current = null;

@@ -13,7 +13,6 @@ library dart.dom.web_sql;
 
 import 'dart:async';
 import 'dart:collection' hide LinkedList, LinkedListEntry;
-import 'dart:_internal' show FixedLengthListMixin;
 import 'dart:html';
 import 'dart:html_common';
 import 'dart:_foreign_helper' show JS;
@@ -39,7 +38,7 @@ import 'dart:_js_helper'
 
 // WARNING: Do not edit - generated code.
 
-typedef void SqlStatementCallback(
+typedef SqlStatementCallback = void Function(
     SqlTransaction transaction, SqlResultSet resultSet);
 // Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
 // for details. All rights reserved. Use of this source code is governed by a
@@ -47,7 +46,7 @@ typedef void SqlStatementCallback(
 
 // WARNING: Do not edit - generated code.
 
-typedef void SqlStatementErrorCallback(
+typedef SqlStatementErrorCallback = void Function(
     SqlTransaction transaction, SqlError error);
 // Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
 // for details. All rights reserved. Use of this source code is governed by a
@@ -55,14 +54,14 @@ typedef void SqlStatementErrorCallback(
 
 // WARNING: Do not edit - generated code.
 
-typedef void SqlTransactionCallback(SqlTransaction transaction);
+typedef SqlTransactionCallback = void Function(SqlTransaction transaction);
 // Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
 // WARNING: Do not edit - generated code.
 
-typedef void SqlTransactionErrorCallback(SqlError error);
+typedef SqlTransactionErrorCallback = void Function(SqlError error);
 // Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
@@ -73,7 +72,7 @@ typedef void SqlTransactionErrorCallback(SqlError error);
 class SqlDatabase extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory SqlDatabase._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   /// Checks if this type is supported on the current platform.
@@ -82,42 +81,37 @@ class SqlDatabase extends JavaScriptObject {
   String? get version native;
 
   @JSName('changeVersion')
-  /**
-   * Atomically update the database version to [newVersion], asynchronously
-   * running [callback] on the [SqlTransaction] representing this
-   * [changeVersion] transaction.
-   *
-   * If [callback] runs successfully, then [successCallback] is called.
-   * Otherwise, [errorCallback] is called.
-   *
-   * [oldVersion] should match the database's current [version] exactly.
-   *
-   * See also:
-   *
-   * * [Database.changeVersion](http://www.w3.org/TR/webdatabase/#dom-database-changeversion) from W3C.
-   */
+  /// Atomically update the database version to [newVersion], asynchronously
+  /// running [callback] on the [SqlTransaction] representing this
+  /// [changeVersion] transaction.
+  ///
+  /// If [callback] runs successfully, then [successCallback] is called.
+  /// Otherwise, [errorCallback] is called.
+  ///
+  /// [oldVersion] should match the database's current [version] exactly.
+  ///
+  /// See also:
+  ///
+  /// * [Database.changeVersion](http://www.w3.org/TR/webdatabase/#dom-database-changeversion) from W3C.
   void _changeVersion(String oldVersion, String newVersion,
       [SqlTransactionCallback? callback,
-      SqlTransactionErrorCallback? errorCallback,
-      VoidCallback? successCallback]) native;
+      SqlTransactionErrorCallback? errorCallback]) native;
 
   @JSName('changeVersion')
-  /**
-   * Atomically update the database version to [newVersion], asynchronously
-   * running [callback] on the [SqlTransaction] representing this
-   * [changeVersion] transaction.
-   *
-   * If [callback] runs successfully, then [successCallback] is called.
-   * Otherwise, [errorCallback] is called.
-   *
-   * [oldVersion] should match the database's current [version] exactly.
-   *
-   * See also:
-   *
-   * * [Database.changeVersion](http://www.w3.org/TR/webdatabase/#dom-database-changeversion) from W3C.
-   */
+  /// Atomically update the database version to [newVersion], asynchronously
+  /// running [callback] on the [SqlTransaction] representing this
+  /// [changeVersion] transaction.
+  ///
+  /// If [callback] runs successfully, then [successCallback] is called.
+  /// Otherwise, [errorCallback] is called.
+  ///
+  /// [oldVersion] should match the database's current [version] exactly.
+  ///
+  /// See also:
+  ///
+  /// * [Database.changeVersion](http://www.w3.org/TR/webdatabase/#dom-database-changeversion) from W3C.
   Future<SqlTransaction> changeVersion(String oldVersion, String newVersion) {
-    var completer = new Completer<SqlTransaction>();
+    var completer = Completer<SqlTransaction>();
     _changeVersion(oldVersion, newVersion, (value) {
       completer.complete(value);
     }, (error) {
@@ -128,12 +122,11 @@ class SqlDatabase extends JavaScriptObject {
 
   @JSName('readTransaction')
   void _readTransaction(SqlTransactionCallback callback,
-      [SqlTransactionErrorCallback? errorCallback,
-      VoidCallback? successCallback]) native;
+      [SqlTransactionErrorCallback? errorCallback]) native;
 
   @JSName('readTransaction')
   Future<SqlTransaction> readTransaction() {
-    var completer = new Completer<SqlTransaction>();
+    var completer = Completer<SqlTransaction>();
     _readTransaction((value) {
       completer.complete(value);
     }, (error) {
@@ -148,7 +141,7 @@ class SqlDatabase extends JavaScriptObject {
 
   @JSName('transaction')
   Future<SqlTransaction> transaction_future() {
-    var completer = new Completer<SqlTransaction>();
+    var completer = Completer<SqlTransaction>();
     transaction((value) {
       applyExtension('SQLTransaction', value);
       completer.complete(value);
@@ -166,7 +159,7 @@ class SqlDatabase extends JavaScriptObject {
 class SqlError extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory SqlError._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   static const int CONSTRAINT_ERR = 6;
@@ -197,7 +190,7 @@ class SqlError extends JavaScriptObject {
 class SqlResultSet extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory SqlResultSet._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   int? get insertId native;
@@ -216,51 +209,60 @@ class SqlResultSetRowList extends JavaScriptObject
     implements List<Map> {
   // To suppress missing implicit constructor warnings.
   factory SqlResultSetRowList._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
+  @override
   int get length => JS("int", "#.length", this);
 
+  @override
   Map operator [](int index) {
-    if (JS("bool", "# >>> 0 !== # || # >= #", index, index, index, length))
-      throw new IndexError.withLength(index, length, indexable: this);
-    return this.item(index)!;
+    if (JS("bool", "# >>> 0 !== # || # >= #", index, index, index, length)) {
+      throw IndexError.withLength(index, length, indexable: this);
+    }
+    return item(index)!;
   }
 
+  @override
   void operator []=(int index, Map value) {
-    throw new UnsupportedError("Cannot assign element of immutable List.");
+    throw UnsupportedError("Cannot assign element of immutable List.");
   }
   // -- start List<Map> mixins.
   // Map is the element type.
 
+  @override
   set length(int value) {
-    throw new UnsupportedError("Cannot resize immutable List.");
+    throw UnsupportedError("Cannot resize immutable List.");
   }
 
+  @override
   Map get first {
-    if (this.length > 0) {
+    if (length > 0) {
       return JS('Map', '#[0]', this);
     }
-    throw new StateError("No elements");
+    throw StateError("No elements");
   }
 
+  @override
   Map get last {
-    int len = this.length;
+    int len = length;
     if (len > 0) {
       return JS('Map', '#[#]', this, len - 1);
     }
-    throw new StateError("No elements");
+    throw StateError("No elements");
   }
 
+  @override
   Map get single {
-    int len = this.length;
+    int len = length;
     if (len == 1) {
       return JS('Map', '#[0]', this);
     }
-    if (len == 0) throw new StateError("No elements");
-    throw new StateError("More than one element");
+    if (len == 0) throw StateError("No elements");
+    throw StateError("More than one element");
   }
 
+  @override
   Map elementAt(int index) => this[index];
   // -- end List<Map> mixins.
 
@@ -283,7 +285,7 @@ class SqlResultSetRowList extends JavaScriptObject
 class SqlTransaction extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory SqlTransaction._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   @JSName('executeSql')
@@ -294,7 +296,7 @@ class SqlTransaction extends JavaScriptObject {
 
   @JSName('executeSql')
   Future<SqlResultSet> executeSql(String sqlStatement, [List? arguments]) {
-    var completer = new Completer<SqlResultSet>();
+    var completer = Completer<SqlResultSet>();
     _executeSql(sqlStatement, arguments, (transaction, resultSet) {
       applyExtension('SQLResultSet', resultSet);
       applyExtension('SQLResultSetRowList', resultSet.rows);

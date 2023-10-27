@@ -83,7 +83,7 @@ class HttpDate {
   /// 3.1.1](http://tools.ietf.org/html/rfc2616#section-3.3.1
   /// "RFC-2616 section 3.1.1").
   static DateTime parse(String date) {
-    final int SP = 32;
+    const int SP = 32;
     const List wkdays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
     const List weekdays = [
       "Monday",
@@ -109,9 +109,9 @@ class HttpDate {
       "Dec"
     ];
 
-    final int formatRfc1123 = 0;
-    final int formatRfc850 = 1;
-    final int formatAsctime = 2;
+    const int formatRfc1123 = 0;
+    const int formatRfc850 = 1;
+    const int formatAsctime = 2;
 
     int index = 0;
     String tmp;
@@ -277,17 +277,25 @@ class HttpDate {
 
     int toInt(String s) {
       int index = 0;
-      for (; index < s.length && isDigit(s[index]); index++);
+      for (; index < s.length && isDigit(s[index]); index++) {
+         {}
+      }
       return int.parse(s.substring(0, index));
     }
 
     var tokens = <String>[];
     while (!isEnd()) {
-      while (!isEnd() && isDelimiter(date[position])) position++;
+      while (!isEnd() && isDelimiter(date[position])) {
+        position++;
+      }
       int start = position;
-      while (!isEnd() && isNonDelimiter(date[position])) position++;
+      while (!isEnd() && isNonDelimiter(date[position])) {
+        position++;
+      }
       tokens.add(date.substring(start, position).toLowerCase());
-      while (!isEnd() && isDelimiter(date[position])) position++;
+      while (!isEnd() && isDelimiter(date[position])) {
+        position++;
+      }
     }
 
     String? timeStr;
@@ -322,9 +330,9 @@ class HttpDate {
     }
 
     int year = toInt(yearStr);
-    if (year >= 70 && year <= 99)
+    if (year >= 70 && year <= 99) {
       year += 1900;
-    else if (year >= 0 && year <= 69) year += 2000;
+    } else if (year >= 0 && year <= 69) year += 2000;
     if (year < 1601) error();
 
     int dayOfMonth = toInt(dayOfMonthStr);

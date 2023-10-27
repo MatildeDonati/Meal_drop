@@ -4,7 +4,6 @@
 
 // Patch file for dart:js_util library.
 import 'dart:_foreign_helper' show JS;
-import 'dart:_internal' show patch;
 import 'dart:_runtime' as dart;
 
 Expando<Function> _interopExpando = Expando<Function>();

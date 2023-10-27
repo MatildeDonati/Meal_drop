@@ -2,7 +2,6 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import "dart:_internal" show patch;
 
 import "dart:typed_data" show Uint32List;
 
@@ -10,8 +9,8 @@ import "dart:typed_data" show Uint32List;
 class LinkedHashMap<K, V> {
   @patch
   factory LinkedHashMap(
-      {bool equals(K key1, K key2)?,
-      int hashCode(K key)?,
+      {bool Function(K key1, K key2)? equals,
+      int Function(K key)? hashCode,
       bool isValidKey(potentialKey)?}) {
     if (isValidKey == null) {
       if (hashCode == null && equals == null) {
@@ -38,8 +37,8 @@ class LinkedHashMap<K, V> {
 class LinkedHashSet<E> {
   @patch
   factory LinkedHashSet(
-      {bool equals(E e1, E e2)?,
-      int hashCode(E e)?,
+      {bool Function(E e1, E e2)? equals,
+      int Function(E e)? hashCode,
       bool isValidKey(potentialKey)?}) {
     if (isValidKey == null) {
       if (hashCode == null && equals == null) {

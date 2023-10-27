@@ -81,9 +81,9 @@ abstract class _HashBase {
 
   // Rotate left limiting to unsigned 32-bit values.
   int _rotl32(int val, int shift) {
-    var mod_shift = shift & 31;
-    return ((val << mod_shift) & _MASK_32) |
-        ((val & _MASK_32) >> (32 - mod_shift));
+    var modShift = shift & 31;
+    return ((val << modShift) & _MASK_32) |
+        ((val & _MASK_32) >> (32 - modShift));
   }
 
   // Compute the final result as a list of bytes from the hash words.
@@ -193,6 +193,7 @@ class _MD5 extends _HashBase {
 
   // Compute one iteration of the MD5 algorithm with a chunk of
   // 16 32-bit pieces.
+  @override
   void _updateHash(Uint32List m) {
     assert(m.length == 16);
 
@@ -251,6 +252,7 @@ class _SHA1 extends _HashBase {
 
   // Compute one iteration of the SHA1 algorithm with a chunk of
   // 16 32-bit pieces.
+  @override
   void _updateHash(Uint32List m) {
     assert(m.length == 16);
 

@@ -8,7 +8,6 @@ import 'dart:typed_data' show TypedData;
 
 import 'dart:_foreign_helper' show JS, DART_CLOSURE_TO_JS;
 import 'dart:_interceptors' show DART_CLOSURE_PROPERTY_NAME;
-import 'dart:_internal' show patch;
 import 'dart:_js_helper'
     show
         Primitives,
@@ -40,7 +39,7 @@ _convertDartFunction(Function f, {bool captureThis = false}) {
 
 _callDartFunction(callback, bool captureThis, self, List arguments) {
   if (captureThis) {
-    arguments = [self]..addAll(arguments);
+    arguments = [self, ...arguments];
   }
   var dartArgs = List.from(arguments.map(_convertToDart));
   return _convertToJS(Function.apply(callback, dartArgs));
@@ -52,9 +51,7 @@ class JsObject {
   final Object _jsObject;
 
   // This should only be called from _wrapToDart
-  JsObject._fromJs(this._jsObject) {
-    assert(_jsObject != null);
-  }
+  JsObject._fromJs(this._jsObject);
 
   @patch
   factory JsObject(JsFunction constructor, [List? arguments]) {
@@ -103,7 +100,7 @@ class JsObject {
     // the arguments list passed to apply().
     // After that, use the JavaScript 'new' operator which overrides any binding
     // of 'this' with the new instance.
-    var args = <Object?>[null]..addAll(arguments.map(_convertToJS));
+    var args = <Object?>[null, ...arguments.map(_convertToJS)];
     var factoryFunction = JS('', '#.bind.apply(#, #)', ctor, ctor, args);
     // Without this line, calling factoryFunction as a constructor throws
     JS('String', 'String(#)', factoryFunction);
@@ -123,7 +120,7 @@ class JsObject {
 
   @patch
   factory JsObject.fromBrowserObject(Object object) {
-    if (object is num || object is String || object is bool || object == null) {
+    if (object is num || object is String || object is bool) {
       throw ArgumentError("object cannot be a num, string, bool, or null");
     }
     return _castToJsObject(_wrapToDart(_convertToJS(object)));
@@ -138,22 +135,22 @@ class JsObject {
   }
 
   static _convertDataTree(Object data) {
-    var _convertedObjects = HashMap.identity();
+    var convertedObjects = HashMap.identity();
 
     _convert(Object? o) {
-      if (_convertedObjects.containsKey(o)) {
-        return _convertedObjects[o];
+      if (convertedObjects.containsKey(o)) {
+        return convertedObjects[o];
       }
       if (o is Map) {
         final convertedMap = JS('=Object', '{}');
-        _convertedObjects[o] = convertedMap;
+        convertedObjects[o] = convertedMap;
         for (var key in o.keys) {
           JS('=Object', '#[#] = #', convertedMap, key, _convert(o[key]));
         }
         return convertedMap;
       } else if (o is Iterable) {
         var convertedList = [];
-        _convertedObjects[o] = convertedList;
+        convertedObjects[o] = convertedList;
         convertedList.addAll(o.map(_convert));
         return convertedList;
       } else {
@@ -180,6 +177,7 @@ class JsObject {
     JS('', '#[#] = #', _jsObject, property, _convertToJS(value));
   }
 
+  @override
   @patch
   bool operator ==(Object other) =>
       other is JsObject && JS('bool', '# === #', _jsObject, other._jsObject);
@@ -205,6 +203,7 @@ class JsObject {
     return JS('bool', '# instanceof #', _jsObject, _convertToJS(type));
   }
 
+  @override
   @patch
   String toString() {
     try {
@@ -251,18 +250,18 @@ class JsArray<E> /*extends JsObject with ListMixin<E>*/ {
 
   @patch
   factory JsArray.from(Iterable<E> other) =>
-      JsArray<E>._fromJs([]..addAll(other.map(_convertToJS)));
+      JsArray<E>._fromJs([...other.map(_convertToJS)]);
 
   JsArray._fromJs(Object jsObject) : super._fromJs(jsObject);
 
   _checkIndex(int index) {
-    if (index is int && (index < 0 || index >= length)) {
+    if ((index < 0 || index >= length)) {
       throw RangeError.range(index, 0, length);
     }
   }
 
   _checkInsertIndex(int index) {
-    if (index is int && (index < 0 || index >= length + 1)) {
+    if ((index < 0 || index >= length + 1)) {
       throw RangeError.range(index, 0, length);
     }
   }
@@ -306,7 +305,7 @@ class JsArray<E> /*extends JsObject with ListMixin<E>*/ {
   }
 
   @patch
-  void set length(int length) {
+  set length(int length) {
     super['length'] = length;
   }
 
@@ -358,13 +357,13 @@ class JsArray<E> /*extends JsObject with ListMixin<E>*/ {
     int length = end - start;
     if (length == 0) return;
     if (skipCount < 0) throw ArgumentError(skipCount);
-    var args = <Object?>[start, length]
-      ..addAll(iterable.skip(skipCount).take(length));
+    var args = <Object?>[start, length, ...iterable.skip(skipCount).take(length)]
+      ;
     callMethod('splice', args);
   }
 
   @patch
-  void sort([int compare(E a, E b)?]) {
+  void sort([int Function(E a, E b)? compare]) {
     // Note: arr.sort(null) is a type error in FF
     callMethod('sort', compare == null ? [] : [compare]);
   }

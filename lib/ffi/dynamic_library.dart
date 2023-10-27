@@ -62,9 +62,11 @@ final class DynamicLibrary {
   external void close();
 
   /// Dynamic libraries are equal if they load the same library.
+  @override
   external bool operator ==(Object other);
 
   /// The hash code for a [DynamicLibrary] only depends on the loaded library.
+  @override
   external int get hashCode;
 
   /// The opaque handle to the dynamic library.

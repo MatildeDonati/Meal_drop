@@ -15,7 +15,8 @@ abstract base class InternalMap<K, V> extends MapBase<K, V>
   @notNull
   int get _modifications;
 
-  void forEach(void action(K key, V value)) {
+  @override
+  void forEach(void Function(K key, V value) action) {
     int modifications = _modifications;
     for (var entry in JS('Iterable', '#.entries()', _map)) {
       action(JS('', '#[0]', entry), JS('', '#[1]', entry));
@@ -39,6 +40,7 @@ base class LinkedMap<K, V> extends InternalMap<K, V> {
   /// Keys that use identity equality are stored directly. For other types of
   /// keys, we first look them up (by hashCode) in the [_keyMap] map, then
   /// we lookup the key in this map.
+  @override
   @notNull
   final _map = JS('', 'new Map()');
 
@@ -59,6 +61,7 @@ base class LinkedMap<K, V> extends InternalMap<K, V> {
   // always unboxed (Smi) values. Modification detection will be missed if you
   // make exactly some multiple of 2^30 modifications between advances of an
   // iterator.
+  @override
   @notNull
   int _modifications = 0;
 
@@ -81,18 +84,24 @@ base class LinkedMap<K, V> extends InternalMap<K, V> {
     }
   }
 
+  @override
   @notNull
   int get length => JS<int>('!', '#.size', _map);
 
+  @override
   @notNull
   bool get isEmpty => JS<bool>('!', '#.size == 0', _map);
 
+  @override
   @notNull
   bool get isNotEmpty => JS<bool>('!', '#.size != 0', _map);
 
+  @override
   Iterable<K> get keys => _JSMapIterable<K>(this, true);
+  @override
   Iterable<V> get values => _JSMapIterable<V>(this, false);
 
+  @override
   @notNull
   bool containsKey(Object? key) {
     if (key == null) {
@@ -111,6 +120,7 @@ base class LinkedMap<K, V> extends InternalMap<K, V> {
     return JS<bool>('!', '#.has(#)', _map, key);
   }
 
+  @override
   bool containsValue(Object? value) {
     for (var v in JS('', '#.values()', _map)) {
       if (v == value) return true;
@@ -118,6 +128,7 @@ base class LinkedMap<K, V> extends InternalMap<K, V> {
     return false;
   }
 
+  @override
   void addAll(Map<K, V> other) {
     var map = _map;
     int length = JS('', '#.size', map);
@@ -135,6 +146,7 @@ base class LinkedMap<K, V> extends InternalMap<K, V> {
     }
   }
 
+  @override
   V? operator [](Object? key) {
     if (key == null) {
       key = JS('', 'null');
@@ -150,9 +162,10 @@ base class LinkedMap<K, V> extends InternalMap<K, V> {
       return null;
     }
     V value = JS('', '#.get(#)', _map, key);
-    return value == null ? null : value; // coerce undefined to null.
+    return value; // coerce undefined to null.
   }
 
+  @override
   void operator []=(K key, V value) {
     if (key == null) {
       key = JS('', 'null');
@@ -168,7 +181,8 @@ base class LinkedMap<K, V> extends InternalMap<K, V> {
     }
   }
 
-  V putIfAbsent(K key, V ifAbsent()) {
+  @override
+  V putIfAbsent(K key, V Function() ifAbsent) {
     var map = _map;
     if (key == null) {
       key = JS('', 'null');
@@ -192,14 +206,13 @@ base class LinkedMap<K, V> extends InternalMap<K, V> {
       return JS('', '#.get(#)', map, key);
     }
     V value = ifAbsent();
-    if (value == null) {
-      value = JS('', 'null');
-    }
+    value ??= JS('', 'null');
     JS('', '#.set(#, #)', map, key, value);
     _modifications = (_modifications + 1) & 0x3fffffff;
     return value;
   }
 
+  @override
   V? remove(Object? key) {
     if (key == null) {
       key = JS('', 'null');
@@ -228,9 +241,10 @@ base class LinkedMap<K, V> extends InternalMap<K, V> {
     if (JS<bool>('!', '#.delete(#)', map, key)) {
       _modifications = (_modifications + 1) & 0x3fffffff;
     }
-    return value == null ? null : value; // coerce undefined to null.
+    return value; // coerce undefined to null.
   }
 
+  @override
   void clear() {
     var map = _map;
     if (JS<int>('!', '#.size', map) > 0) {
@@ -261,14 +275,19 @@ K putLinkedMapKey<K>(@notNull K key, keyMap) {
 base class ImmutableMap<K, V> extends LinkedMap<K, V> {
   ImmutableMap.from(JSArray entries) : super.from(entries);
 
+  @override
   void operator []=(K key, V value) {
     throw _unsupported();
   }
 
+  @override
   void addAll(Object other) => throw _unsupported();
+  @override
   void clear() => throw _unsupported();
+  @override
   V? remove(Object? key) => throw _unsupported();
-  V putIfAbsent(K key, V ifAbsent()) => throw _unsupported();
+  @override
+  V putIfAbsent(K key, V Function() ifAbsent) => throw _unsupported();
 
   static Error _unsupported() =>
       UnsupportedError("Cannot modify unmodifiable map");

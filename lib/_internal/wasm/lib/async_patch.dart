@@ -1,4 +1,3 @@
-import 'dart:_internal' show _AsyncCompleter, patch;
 
 import 'dart:_js_helper' show JS;
 
@@ -31,7 +30,7 @@ class _AsyncSuspendState {
 
   // CFG target index for the next resumption.
   @pragma("wasm:entry-point")
-  WasmI32 _targetIndex;
+  final WasmI32 _targetIndex;
 
   // The completer. The inner function calls `_completer.complete` or
   // `_completer.onError` on completion.
@@ -41,18 +40,18 @@ class _AsyncSuspendState {
   // When a called function throws this stores the thrown exception. Used when
   // performing type tests in catch blocks.
   @pragma("wasm:entry-point")
-  Object? _currentException;
+  final Object? _currentException;
 
   // When a called function throws this stores the stack trace.
   @pragma("wasm:entry-point")
-  StackTrace? _currentExceptionStackTrace;
+  final StackTrace? _currentExceptionStackTrace;
 
   // When running finalizers and the continuation is "return", the value to
   // return after the last finalizer.
   //
   // Used in finalizer blocks.
   @pragma("wasm:entry-point")
-  Object? _currentReturnValue;
+  final Object? _currentReturnValue;
 
   @pragma("wasm:entry-point")
   _AsyncSuspendState(this._resume, this._context, this._completer)

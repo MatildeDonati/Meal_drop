@@ -13,6 +13,7 @@ final class _Record implements Record {
 
   // Do not inline to avoid mixing _fieldAt with
   // record field accesses.
+  @override
   @pragma("vm:never-inline")
   bool operator ==(Object other) {
     if (identical(this, other)) {
@@ -39,6 +40,7 @@ final class _Record implements Record {
 
   // Do not inline to avoid mixing _fieldAt with
   // record field accesses.
+  @override
   @pragma("vm:never-inline")
   int get hashCode {
     int hash = _shape;
@@ -51,6 +53,7 @@ final class _Record implements Record {
 
   // Do not inline to avoid mixing _fieldAt with
   // record field accesses.
+  @override
   @pragma("vm:never-inline")
   String toString() {
     StringBuffer buffer = StringBuffer("(");

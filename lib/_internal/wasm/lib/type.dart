@@ -284,8 +284,8 @@ class _NamedParameter {
   bool operator ==(Object o) {
     if (ClassID.getID(this) != ClassID.getID(o)) return false;
     _NamedParameter other = unsafeCast<_NamedParameter>(o);
-    return this.name == other.name &&
-        this.type == other.type &&
+    return name == other.name &&
+        type == other.type &&
         isRequired == other.isRequired;
   }
 
@@ -355,6 +355,7 @@ class _FunctionType extends _Type {
       namedParameters,
       true);
 
+  @override
   bool operator ==(Object o) {
     if (!(super == o)) return false;
     _FunctionType other = unsafeCast<_FunctionType>(o);
@@ -1116,7 +1117,7 @@ void _checkClosureType(_FunctionType functionType, List<_Type> typeArguments,
     List<Object?> positionalArguments, List<dynamic> namedArguments) {
   assert(functionType.typeParameterBounds.length == typeArguments.length);
 
-  if (!typeArguments.isEmpty) {
+  if (typeArguments.isNotEmpty) {
     for (int i = 0; i < typeArguments.length; i += 1) {
       final typeArgument = typeArguments[i];
       final paramBound = _TypeUniverse.substituteTypeArgument(

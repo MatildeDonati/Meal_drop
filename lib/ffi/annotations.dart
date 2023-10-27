@@ -32,4 +32,4 @@ final class Unsized {
 /// This [NativeType] does not have predefined size.
 ///
 /// Unsized NativeTypes do not support [sizeOf] because their size is unknown.
-const unsized = const Unsized();
+const unsized = Unsized();

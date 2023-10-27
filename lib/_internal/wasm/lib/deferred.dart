@@ -15,6 +15,7 @@ class DeferredNotLoadedError extends Error implements NoSuchMethodError {
 
   DeferredNotLoadedError(this.libraryName, this.prefix);
 
+  @override
   String toString() {
     return 'Deferred library $libraryName has not loaded $prefix.';
   }

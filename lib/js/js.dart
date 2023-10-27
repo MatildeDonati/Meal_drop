@@ -132,8 +132,10 @@ class JsObject {
   // The type of [property] must be either [String] or [num].
   external void operator []=(Object property, Object? value);
 
+  @override
   int get hashCode => 0;
 
+  @override
   external bool operator ==(Object other);
 
   /// Returns `true` if the JavaScript object contains the specified property
@@ -153,6 +155,7 @@ class JsObject {
   external bool instanceof(JsFunction type);
 
   /// Returns the result of the JavaScript objects `toString` method.
+  @override
   external String toString();
 
   /// Calls [method] on the JavaScript object with the arguments [args] and
@@ -184,30 +187,42 @@ class JsArray<E> extends JsObject with ListMixin<E> {
 
   // Methods required by ListMixin
 
+  @override
   external E operator [](Object index);
 
+  @override
   external void operator []=(Object index, E value);
 
+  @override
   external int get length;
 
-  external void set length(int length);
+  @override
+  external set length(int length);
 
   // Methods overridden for better performance
 
+  @override
   external void add(E value);
 
+  @override
   external void addAll(Iterable<E> iterable);
 
+  @override
   external void insert(int index, E element);
 
+  @override
   external E removeAt(int index);
 
+  @override
   external E removeLast();
 
+  @override
   external void removeRange(int start, int end);
 
+  @override
   external void setRange(int start, int end, Iterable<E> iterable,
       [int skipCount = 0]);
 
-  external void sort([int compare(E a, E b)?]);
+  @override
+  external void sort([int Function(E a, E b)? compare]);
 }

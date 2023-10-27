@@ -53,9 +53,7 @@ import "dart:collection"
 
 import "dart:convert" show ascii, Encoding, json, latin1, utf8;
 
-import "dart:ffi" show Pointer, Struct, Union, NativePort;
 
-import "dart:isolate" show Isolate, RawReceivePort;
 
 import "dart:typed_data" show Uint8List, Uint16List, Int32List;
 

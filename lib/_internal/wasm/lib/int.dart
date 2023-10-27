@@ -40,12 +40,12 @@ final class _BoxedInt extends int {
 
   @pragma("wasm:prefer-inline")
   double operator /(num other) {
-    return this.toDouble() / other.toDouble();
+    return toDouble() / other.toDouble();
   }
 
   @pragma("wasm:prefer-inline")
   int operator ~/(num other) => other is int
-      ? _truncDiv(this.value, other)
+      ? _truncDiv(value, other)
       : _BoxedDouble._truncDiv(toDouble(), unsafeCast<double>(other));
 
   @pragma("wasm:prefer-inline")
@@ -69,9 +69,9 @@ final class _BoxedInt extends int {
   static int _truncDiv(int a, int b) {
     // Division special case: overflow in I64.
     // MIN_VALUE / -1 = (MAX_VALUE + 1), which wraps around to MIN_VALUE
-    const int MIN_INT = -9223372036854775808;
-    if (a == MIN_INT && b == -1) {
-      return MIN_INT;
+    const int minInt = -9223372036854775808;
+    if (a == minInt && b == -1) {
+      return minInt;
     }
 
     if (b == 0) {
@@ -96,7 +96,7 @@ final class _BoxedInt extends int {
   int operator >>(int shift) {
     // Unsigned comparison to check for large and negative shifts
     if (shift._lt_u(64)) {
-      return this._shr_s(shift);
+      return _shr_s(shift);
     }
 
     if (shift < 0) {
@@ -104,14 +104,14 @@ final class _BoxedInt extends int {
     }
 
     // shift >= 64, 0 or -1 depending on sign: `this >= 0 ? 0 : -1`
-    return this._shr_s(63);
+    return _shr_s(63);
   }
 
   @pragma("wasm:prefer-inline")
   int operator >>>(int shift) {
     // Unsigned comparison to check for large and negative shifts
     if (shift._lt_u(64)) {
-      return this._shr_u(shift);
+      return _shr_u(shift);
     }
 
     if (shift < 0) {
@@ -126,7 +126,7 @@ final class _BoxedInt extends int {
   int operator <<(int shift) {
     // Unsigned comparison to check for large and negative shifts
     if (shift._lt_u(64)) {
-      return this._shl(shift);
+      return _shl(shift);
     }
 
     if (shift < 0) {
@@ -142,12 +142,13 @@ final class _BoxedInt extends int {
   external bool operator >=(num other);
   external bool operator <=(num other);
 
+  @override
   @pragma("wasm:prefer-inline")
   bool operator ==(Object other) {
     return other is int
         ? this == other // Intrinsic ==
         : other is double
-            ? this.toDouble() == other // Intrinsic ==
+            ? toDouble() == other // Intrinsic ==
             : false;
   }
 
@@ -197,8 +198,8 @@ final class _BoxedInt extends int {
   int compareTo(num other) {
     const int EQUAL = 0, LESS = -1, GREATER = 1;
     if (other is double) {
-      const int MAX_EXACT_INT_TO_DOUBLE = 9007199254740992; // 2^53.
-      const int MIN_EXACT_INT_TO_DOUBLE = -MAX_EXACT_INT_TO_DOUBLE;
+      const int maxExactIntToDouble = 9007199254740992; // 2^53.
+      const int minExactIntToDouble = -maxExactIntToDouble;
       // With int limited to 64 bits, double.toInt() clamps
       // double value to fit into the MIN_INT64..MAX_INT64 range.
       // Check if the double value is outside of this range.
@@ -215,9 +216,9 @@ final class _BoxedInt extends int {
       if (other.isNaN) {
         return LESS;
       }
-      if (MIN_EXACT_INT_TO_DOUBLE <= this && this <= MAX_EXACT_INT_TO_DOUBLE) {
+      if (minExactIntToDouble <= this && this <= maxExactIntToDouble) {
         // Let the double implementation deal with -0.0.
-        return -(other.compareTo(this.toDouble()));
+        return -(other.compareTo(toDouble()));
       } else {
         // If abs(other) > MAX_EXACT_INT_TO_DOUBLE, then other has an integer
         // value (no bits below the decimal point).
@@ -255,22 +256,22 @@ final class _BoxedInt extends int {
 
   @pragma("wasm:prefer-inline")
   double roundToDouble() {
-    return this.toDouble();
+    return toDouble();
   }
 
   @pragma("wasm:prefer-inline")
   double floorToDouble() {
-    return this.toDouble();
+    return toDouble();
   }
 
   @pragma("wasm:prefer-inline")
   double ceilToDouble() {
-    return this.toDouble();
+    return toDouble();
   }
 
   @pragma("wasm:prefer-inline")
   double truncateToDouble() {
-    return this.toDouble();
+    return toDouble();
   }
 
   num clamp(num lowerLimit, num upperLimit) {
@@ -282,12 +283,12 @@ final class _BoxedInt extends int {
     }
     // Generic case involving doubles, and invalid integer ranges.
     if (lowerLimit.compareTo(upperLimit) > 0) {
-      throw new ArgumentError(lowerLimit);
+      throw ArgumentError(lowerLimit);
     }
     if (lowerLimit.isNaN) return lowerLimit;
     // Note that we don't need to care for -0.0 for the lower limit.
     if (this < lowerLimit) return lowerLimit;
-    if (this.compareTo(upperLimit) > 0) return upperLimit;
+    if (compareTo(upperLimit) > 0) return upperLimit;
     return this;
   }
 
@@ -299,27 +300,27 @@ final class _BoxedInt extends int {
   external double toDouble();
 
   String toStringAsFixed(int fractionDigits) {
-    return this.toDouble().toStringAsFixed(fractionDigits);
+    return toDouble().toStringAsFixed(fractionDigits);
   }
 
   String toStringAsExponential([int? fractionDigits]) {
-    return this.toDouble().toStringAsExponential(fractionDigits);
+    return toDouble().toStringAsExponential(fractionDigits);
   }
 
   String toStringAsPrecision(int precision) {
-    return this.toDouble().toStringAsPrecision(precision);
+    return toDouble().toStringAsPrecision(precision);
   }
 
   static const _digits = "0123456789abcdefghijklmnopqrstuvwxyz";
 
   String toRadixString(int radix) {
     if (radix < 2 || 36 < radix) {
-      throw new RangeError.range(radix, 2, 36, "radix");
+      throw RangeError.range(radix, 2, 36, "radix");
     }
     if (radix & (radix - 1) == 0) {
       return _toPow2String(radix);
     }
-    if (radix == 10) return this.toString();
+    if (radix == 10) return toString();
     final bool isNegative = this < 0;
     int value = isNegative ? -this : this;
     if (value < 0) {
@@ -395,8 +396,8 @@ final class _BoxedInt extends int {
 
   // Returns pow(this, e) % m.
   int modPow(int e, int m) {
-    if (e < 0) throw new RangeError.range(e, 0, null, "exponent");
-    if (m <= 0) throw new RangeError.range(m, 1, null, "modulus");
+    if (e < 0) throw RangeError.range(e, 0, null, "exponent");
+    if (m <= 0) throw RangeError.range(m, 1, null, "modulus");
     if (e == 0) return 1;
 
     // This is floor(sqrt(2^63)).
@@ -481,7 +482,7 @@ final class _BoxedInt extends int {
     } while (u != 0);
     if (!inv) return v << s;
     if (v != 1) {
-      throw new Exception("Not coprime");
+      throw Exception("Not coprime");
     }
     if (d < 0) {
       d += x;
@@ -495,20 +496,20 @@ final class _BoxedInt extends int {
 
   // Returns 1/this % m, with m > 0.
   int modInverse(int m) {
-    if (m <= 0) throw new RangeError.range(m, 1, null, "modulus");
+    if (m <= 0) throw RangeError.range(m, 1, null, "modulus");
     if (m == 1) return 0;
     int t = this;
     if ((t < 0) || (t >= m)) t %= m;
     if (t == 1) return 1;
     if ((t == 0) || (t.isEven && m.isEven)) {
-      throw new Exception("Not coprime");
+      throw Exception("Not coprime");
     }
     return _binaryGcd(m, t, true);
   }
 
   // Returns gcd of abs(this) and abs(other).
   int gcd(int other) {
-    int x = this.abs();
+    int x = abs();
     int y = other.abs();
     if (x == 0) return y;
     if (y == 0) return x;
@@ -516,26 +517,25 @@ final class _BoxedInt extends int {
     return _binaryGcd(x, y, false);
   }
 
+  @override
   int get hashCode => _intHashCode(this);
 
   static int _intHashCode(int value) {
     const int magic = 0x2D51;
     int lower = (value & 0xFFFFFFFF) * magic;
     int upper = (value >>> 32) * magic;
-    int upper_accum = upper + (lower >>> 32);
-    return (lower ^ upper_accum ^ (upper_accum >>> 32)) & 0x3FFFFFFF;
+    int upperAccum = upper + (lower >>> 32);
+    return (lower ^ upperAccum ^ (upperAccum >>> 32)) & 0x3FFFFFFF;
   }
 
   external int operator ~();
   external int get bitLength;
 
-  /**
-   * The digits of '00', '01', ... '99' as a single array.
-   *
-   * Get the digits of `n`, with `0 <= n < 100`, as
-   * `_digitTable[n * 2]` and `_digitTable[n * 2 + 1]`.
-   */
-  static const _digitTable = const [
+  /// The digits of '00', '01', ... '99' as a single array.
+  ///
+  /// Get the digits of `n`, with `0 <= n < 100`, as
+  /// `_digitTable[n * 2]` and `_digitTable[n * 2 + 1]`.
+  static const _digitTable = [
     0x30, 0x30, 0x30, 0x31, 0x30, 0x32, 0x30, 0x33, //
     0x30, 0x34, 0x30, 0x35, 0x30, 0x36, 0x30, 0x37, //
     0x30, 0x38, 0x30, 0x39, 0x31, 0x30, 0x31, 0x31, //
@@ -563,10 +563,8 @@ final class _BoxedInt extends int {
     0x39, 0x36, 0x39, 0x37, 0x39, 0x38, 0x39, 0x39, //
   ];
 
-  /**
-   * Result of int.toString for -99, -98, ..., 98, 99.
-   */
-  static const _smallLookupTable = const [
+  /// Result of int.toString for -99, -98, ..., 98, 99.
+  static const _smallLookupTable = [
     "-99", "-98", "-97", "-96", "-95", "-94", "-93", "-92", "-91", "-90", //
     "-89", "-88", "-87", "-86", "-85", "-84", "-83", "-82", "-81", "-80", //
     "-79", "-78", "-77", "-76", "-75", "-74", "-73", "-72", "-71", "-70", //
@@ -615,6 +613,7 @@ final class _BoxedInt extends int {
     return 9 + _positiveBase10Length(smi);
   }
 
+  @override
   String toString() {
     if (this < 100 && this > -100) {
       // Issue(https://dartbug.com/39639): The analyzer incorrectly reports the
@@ -625,7 +624,7 @@ final class _BoxedInt extends int {
     // Inspired by Andrei Alexandrescu: "Three Optimization Tips for C++"
     // Avoid expensive remainder operation by doing it on more than
     // one digit at a time.
-    const int DIGIT_ZERO = 0x30;
+    const int digitZero = 0x30;
     int length = _positiveBase10Length(this);
     _OneByteString result = _OneByteString._allocate(length);
     int index = length - 1;
@@ -643,7 +642,7 @@ final class _BoxedInt extends int {
       // Character code for '0'.
       // Issue(https://dartbug.com/39639): The analyzer incorrectly reports the
       // result type as `num`.
-      result._setAt(index, DIGIT_ZERO + smi);
+      result._setAt(index, digitZero + smi);
     } else {
       // No remainder for this case.
       // Issue(https://dartbug.com/39639): The analyzer incorrectly reports the
@@ -681,13 +680,13 @@ final class _BoxedInt extends int {
   // would become a non-smi.
   static String _negativeToString(int negSmi) {
     // Character code for '-'
-    const int MINUS_SIGN = 0x2d;
+    const int minusSign = 0x2d;
     // Character code for '0'.
-    const int DIGIT_ZERO = 0x30;
+    const int digitZero = 0x30;
     // Number of digits, not including minus.
     int digitCount = _negativeBase10Length(negSmi);
     _OneByteString result = _OneByteString._allocate(digitCount + 1);
-    result._setAt(0, MINUS_SIGN); // '-'.
+    result._setAt(0, minusSign); // '-'.
     int index = digitCount;
     do {
       int twoDigits = unsafeCast<int>(negSmi.remainder(100));
@@ -698,7 +697,7 @@ final class _BoxedInt extends int {
       index -= 2;
     } while (negSmi <= -100);
     if (negSmi > -10) {
-      result._setAt(index, DIGIT_ZERO - negSmi);
+      result._setAt(index, digitZero - negSmi);
     } else {
       // No remainder necessary for this case.
       int digitIndex = -negSmi * 2;

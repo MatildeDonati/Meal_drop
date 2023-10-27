@@ -38,22 +38,20 @@ convertNativeToDart_SerializedScriptValue(object) {
   return convertNativeToDart_AcceptStructuredClone(object, mustCopy: true);
 }
 
-/**
- * Converts a Dart value into a JavaScript SerializedScriptValue.  Returns the
- * original input or a functional 'copy'.  Does not mutate the original.
- *
- * The main transformation is the translation of Dart Maps are converted to
- * JavaScript Objects.
- *
- * The algorithm is essentially a dry-run of the structured clone algorithm
- * described at
- * http://www.whatwg.org/specs/web-apps/current-work/multipage/common-dom-interfaces.html#structured-clone
- * https://www.khronos.org/registry/typedarray/specs/latest/#9
- *
- * Since the result of this function is expected to be passed only to JavaScript
- * operations that perform the structured clone algorithm which does not mutate
- * its output, the result may share structure with the input [value].
- */
+/// Converts a Dart value into a JavaScript SerializedScriptValue.  Returns the
+/// original input or a functional 'copy'.  Does not mutate the original.
+///
+/// The main transformation is the translation of Dart Maps are converted to
+/// JavaScript Objects.
+///
+/// The algorithm is essentially a dry-run of the structured clone algorithm
+/// described at
+/// http://www.whatwg.org/specs/web-apps/current-work/multipage/common-dom-interfaces.html#structured-clone
+/// https://www.khronos.org/registry/typedarray/specs/latest/#9
+///
+/// Since the result of this function is expected to be passed only to JavaScript
+/// operations that perform the structured clone algorithm which does not mutate
+/// its output, the result may share structure with the input [value].
 abstract class _StructuredClone {
   // TODO(sra): Replace slots with identity hash table.
   var values = [];
@@ -94,7 +92,7 @@ abstract class _StructuredClone {
     }
     if (e is RegExp) {
       // TODO(sra).
-      throw new UnimplementedError('structured clone of RegExp');
+      throw UnimplementedError('structured clone of RegExp');
     }
 
     // The browser's internal structured cloning algorithm will copy certain
@@ -150,7 +148,7 @@ abstract class _StructuredClone {
       return copy;
     }
 
-    throw new UnimplementedError('structured clone of other type');
+    throw UnimplementedError('structured clone of other type');
   }
 
   List copyList(List e, int slot) {
@@ -171,24 +169,22 @@ abstract class _StructuredClone {
   }
 }
 
-/**
- * Converts a native value into a Dart object.
- *
- * If [mustCopy] is [:false:], may return the original input.  May mutate the
- * original input (but will be idempotent if mutation occurs).  It is assumed
- * that this conversion happens on native serializable script values such values
- * from native DOM calls.
- *
- * [object] is the result of a structured clone operation.
- *
- * If necessary, JavaScript Dates are converted into Dart Dates.
- *
- * If [mustCopy] is [:true:], the entire object is copied and the original input
- * is not mutated.  This should be the case where Dart and JavaScript code can
- * access the value, for example, via multiple event listeners for
- * MessageEvents.  Mutating the object to make it more 'Dart-like' would corrupt
- * the value as seen from the JavaScript listeners.
- */
+/// Converts a native value into a Dart object.
+///
+/// If [mustCopy] is [:false:], may return the original input.  May mutate the
+/// original input (but will be idempotent if mutation occurs).  It is assumed
+/// that this conversion happens on native serializable script values such values
+/// from native DOM calls.
+///
+/// [object] is the result of a structured clone operation.
+///
+/// If necessary, JavaScript Dates are converted into Dart Dates.
+///
+/// If [mustCopy] is [:true:], the entire object is copied and the original input
+/// is not mutated.  This should be the case where Dart and JavaScript code can
+/// access the value, for example, via multiple event listeners for
+/// MessageEvents.  Mutating the object to make it more 'Dart-like' would corrupt
+/// the value as seen from the JavaScript listeners.
 abstract class _AcceptStructuredClone {
   // TODO(sra): Replace slots with identity hash table.
   var values = [];
@@ -232,7 +228,7 @@ abstract class _AcceptStructuredClone {
 
     if (isJavaScriptRegExp(e)) {
       // TODO(sra).
-      throw new UnimplementedError('structured clone of RegExp');
+      throw UnimplementedError('structured clone of RegExp');
     }
 
     if (isJavaScriptPromise(e)) {
@@ -308,7 +304,7 @@ convertNativeToDart_ContextAttributes(nativeContextAttributes) {
   // On Firefox the above test fails because ContextAttributes is a plain
   // object so we create a _TypedContextAttributes.
 
-  return new ContextAttributes(
+  return ContextAttributes(
       JS('var', '#.alpha', nativeContextAttributes),
       JS('var', '#.antialias', nativeContextAttributes),
       JS('var', '#.depth', nativeContextAttributes),
@@ -323,8 +319,14 @@ convertNativeToDart_ContextAttributes(nativeContextAttributes) {
 // On Firefox, the returned ImageData is a plain object.
 
 class _TypedImageData implements ImageData {
+  @override
+  @override
   final Uint8ClampedList data;
+  @override
+  @override
   final int height;
+  @override
+  @override
   final int width;
 
   _TypedImageData(this.data, this.height, this.width);
@@ -358,7 +360,7 @@ ImageData convertNativeToDart_ImageData(nativeImageData) {
   // On Firefox the above test fails because [nativeImageData] is a plain
   // object.  So we create a _TypedImageData.
 
-  return new _TypedImageData(
+  return _TypedImageData(
       JS('NativeUint8ClampedList', '#.data', nativeImageData),
       JS('var', '#.height', nativeImageData),
       JS('var', '#.width', nativeImageData));

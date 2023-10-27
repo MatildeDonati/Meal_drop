@@ -3,9 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 
 // Patch file for dart:core classes.
-import 'dart:_internal' as _symbol_dev;
-import 'dart:_internal' show patch;
-import 'dart:_interceptors';
+import 'dart:_internal' as symbol_dev;
 import 'dart:_js_helper'
     show
         checkInt,
@@ -31,7 +29,7 @@ part 'bigint_patch.dart';
 
 String _symbolToString(Symbol symbol) => symbol is PrivateSymbol
     ? PrivateSymbol.getName(symbol)
-    : _symbol_dev.Symbol.getName(symbol as _symbol_dev.Symbol);
+    : symbol_dev.Symbol.getName(symbol as symbol_dev.Symbol);
 
 @patch
 int identityHashCode(Object? object) {
@@ -49,21 +47,26 @@ int identityHashCode(Object? object) {
 // Patch for Object implementation.
 @patch
 class Object {
+  @override
   @patch
   bool operator ==(Object other) => identical(this, other);
 
+  @override
   @patch
   int get hashCode => identityHashCode(this);
 
+  @override
   @patch
   String toString() =>
       "Instance of '${dart.typeName(dart.getReifiedType(this))}'";
 
+  @override
   @patch
   dynamic noSuchMethod(Invocation invocation) {
     return dart.defaultNoSuchMethod(this, invocation);
   }
 
+  @override
   @patch
   Type get runtimeType => JS_GET_FLAG('NEW_RUNTIME_TYPES')
       ? rti.createRuntimeType(JS<rti.Rti>('!', '#', dart.getReifiedType(this)))
@@ -75,11 +78,12 @@ class Object {
 
   @JSExportName('as')
   static Object? _as_Object(Object? o) =>
-      o == null ? dart.cast(o, dart.unwrapType(Object)) : o;
+      o ?? dart.cast(o, dart.unwrapType(Object));
 }
 
 @patch
 class Null {
+  @override
   @patch
   int get hashCode => super.hashCode;
 
@@ -156,12 +160,11 @@ class Expando<T extends Object> {
   T? operator [](Object object) {
     // JavaScript's WeakMap semantics return 'undefined' for invalid getter
     // keys, so we must check them explicitly.
-    if (object == null ||
-        object is bool ||
+    if (object is bool ||
         object is num ||
         object is String ||
         object is Record) {
-      throw new ArgumentError.value(
+      throw ArgumentError.value(
           object,
           "Expandos are not allowed on strings, numbers, booleans, records,"
           " or null");
@@ -174,7 +177,7 @@ class Expando<T extends Object> {
     // JavaScript's WeakMap already throws on non-Object setter keys, so
     // we can rely on the underlying behavior for all non-Records.
     if (object is Record) {
-      throw new ArgumentError.value(
+      throw ArgumentError.value(
           object,
           "Expandos are not allowed on strings, numbers, booleans, records,"
           " or null");
@@ -239,11 +242,11 @@ class _FinalizationRegistryWrapper<T> implements Finalizer<T> {
 class int {
   @patch
   static int parse(String source,
-      {int? radix, @deprecated int onError(String source)?}) {
+      {int? radix, int Function(String source)? onError}) {
     var value = tryParse(source, radix: radix);
     if (value != null) return value;
     if (onError != null) return onError(source);
-    throw new FormatException(source);
+    throw FormatException(source);
   }
 
   @patch
@@ -277,11 +280,11 @@ class int {
 class double {
   @patch
   static double parse(String source,
-      [@deprecated double onError(String source)?]) {
+      [double Function(String source)? onError]) {
     var value = tryParse(source);
     if (value != null) return value;
     if (onError != null) return onError(source);
-    throw new FormatException('Invalid double', source);
+    throw FormatException('Invalid double', source);
   }
 
   @patch
@@ -459,6 +462,7 @@ class DateTime {
   @patch
   int get weekday => Primitives.getWeekday(this);
 
+  @override
   @patch
   bool operator ==(Object other) =>
       other is DateTime &&
@@ -562,7 +566,7 @@ class List<E> {
   }
 
   @patch
-  factory List.generate(int length, E generator(int index),
+  factory List.generate(int length, E Function(int index) generator,
       {bool growable = true}) {
     final result = JSArray<E>.of(JS('', 'new Array(#)', length));
     if (!growable) JSArray.markFixedList(result);
@@ -650,7 +654,9 @@ class String {
     }
     var list = JSArray<int>.of(JS('', 'new Array()'));
     if (end == null) {
-      while (it.moveNext()) list.add(it.current);
+      while (it.moveNext()) {
+        list.add(it.current);
+      }
     } else {
       for (int i = start; i < end; i++) {
         if (!it.moveNext()) {
@@ -701,6 +707,7 @@ class bool {
     return Primitives.parseBool(source, caseSensitive);
   }
 
+  @override
   @patch
   int get hashCode => super.hashCode;
 
@@ -775,6 +782,7 @@ class StringBuffer {
     _contents = "";
   }
 
+  @override
   @patch
   String toString() => Primitives.flattenString(_contents);
 
@@ -808,6 +816,7 @@ class StringBuffer {
 class _CompileTimeError extends Error {
   final String _errorMsg;
   _CompileTimeError(this._errorMsg);
+  @override
   String toString() => _errorMsg;
 }
 
@@ -838,6 +847,7 @@ class NoSuchMethodError {
         _namedArguments = invocation.namedArguments,
         _invocation = invocation;
 
+  @override
   @patch
   String toString() {
     StringBuffer sb = StringBuffer('');
@@ -869,7 +879,7 @@ class NoSuchMethodError {
         : 'method not found';
     return "NoSuchMethodError: '$memberName'\n"
         "$failureMessage\n"
-        "Receiver: ${receiverText}\n"
+        "Receiver: $receiverText\n"
         "Arguments: [$actualParameters]";
   }
 }
@@ -879,7 +889,7 @@ class Uri {
   @patch
   static Uri get base {
     String uri = Primitives.currentUri();
-    if (uri != null) return Uri.parse(uri);
+    return Uri.parse(uri);
     throw UnsupportedError("'Uri.base' is not supported");
   }
 }
@@ -900,11 +910,9 @@ class _Uri {
   // are not encoded by any encoding table.
   static final RegExp _needsNoEncoding = RegExp(r'^[\-\.0-9A-Z_a-z~]*$');
 
-  /**
-   * This is the internal implementation of JavaScript's encodeURI function.
-   * It encodes all characters in the string [text] except for those
-   * that appear in [canonicalTable], and returns the escaped string.
-   */
+  /// This is the internal implementation of JavaScript's encodeURI function.
+  /// It encodes all characters in the string [text] except for those
+  /// that appear in [canonicalTable], and returns the escaped string.
   @patch
   static String _uriEncode(List<int> canonicalTable, String text,
       Encoding encoding, bool spaceToPlus) {
@@ -949,5 +957,6 @@ class _DuplicatedFieldInitializerError {
 
   _DuplicatedFieldInitializerError(this._name);
 
+  @override
   toString() => "Error: field '$_name' is already initialized.";
 }

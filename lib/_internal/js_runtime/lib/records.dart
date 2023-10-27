@@ -17,6 +17,7 @@ abstract final class _Record implements Record {
   // TODO(50081): Replace with a Map view.
   List<Object?> _getFieldValues();
 
+  @override
   Type get runtimeType {
     // TODO(51040): Consider caching.
     return newRti.getRuntimeTypeOfRecord(this);
@@ -62,7 +63,9 @@ abstract final class _Record implements Record {
   /// named fields of this record.
   List<Object> _fieldKeys() {
     int shapeTag = _shapeTag;
-    while (_computedFieldKeys.length <= shapeTag) _computedFieldKeys.add(null);
+    while (_computedFieldKeys.length <= shapeTag) {
+      _computedFieldKeys.add(null);
+    }
     return _computedFieldKeys[shapeTag] ??= _computeFieldKeys();
   }
 
@@ -91,7 +94,9 @@ abstract final class _Record implements Record {
       List<String> names = joinedNames.split(',');
       int last = arity;
       int i = names.length;
-      while (i > 0) result[--last] = names[--i];
+      while (i > 0) {
+        result[--last] = names[--i];
+      }
     }
 
     return List.unmodifiable(result);
@@ -236,7 +241,7 @@ final class _RecordN extends _Record {
 void _recordImpactModel() {
   // Record classes are instantiated.
   Object? anything() => _inscrutable(0);
-  final r0 = const _EmptyRecord();
+  const r0 = _EmptyRecord();
   final r1 = _Record1(anything());
   final r2 = _Record2(anything(), anything());
   final r3 = _Record3(anything(), anything(), anything());

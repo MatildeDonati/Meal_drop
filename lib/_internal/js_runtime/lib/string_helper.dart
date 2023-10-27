@@ -26,24 +26,29 @@ List<String> stringSplitUnchecked(
     String receiver,
     /* String | JavaScript RegExp */
     pattern) {
-  return new JSArray<String>.markGrowable(JS(
+  return JSArray<String>.markGrowable(JS(
       'returns:JSExtendableArray;new:true', '#.split(#)', receiver, pattern));
 }
 
 class StringMatch implements Match {
-  const StringMatch(int this.start, String this.input, String this.pattern);
+  const StringMatch(this.start, this.input, this.pattern);
 
+  @override
   int get end => start + pattern.length;
+  @override
   String operator [](int g) => group(g);
+  @override
   int get groupCount => 0;
 
+  @override
   String group(int group_) {
     if (group_ != 0) {
-      throw new RangeError.value(group_);
+      throw RangeError.value(group_);
     }
     return pattern;
   }
 
+  @override
   List<String> groups(List<int> groups_) {
     List<String> result = <String>[];
     for (int g in groups_) {
@@ -52,14 +57,17 @@ class StringMatch implements Match {
     return result;
   }
 
+  @override
   final int start;
+  @override
   final String input;
+  @override
   final String pattern;
 }
 
 Iterable<Match> allMatchesInStringUnchecked(
     String pattern, String string, int startIndex) {
-  return new _StringAllMatchesIterable(string, pattern, startIndex);
+  return _StringAllMatchesIterable(string, pattern, startIndex);
 }
 
 class _StringAllMatchesIterable extends Iterable<Match> {
@@ -69,13 +77,15 @@ class _StringAllMatchesIterable extends Iterable<Match> {
 
   _StringAllMatchesIterable(this._input, this._pattern, this._index);
 
+  @override
   Iterator<Match> get iterator =>
-      new _StringAllMatchesIterator(_input, _pattern, _index);
+      _StringAllMatchesIterator(_input, _pattern, _index);
 
+  @override
   Match get first {
     int index = stringIndexOfStringUnchecked(_input, _pattern, _index);
     if (index >= 0) {
-      return new StringMatch(index, _input, _pattern);
+      return StringMatch(index, _input, _pattern);
     }
     throw IterableElementError.noElement();
   }
@@ -89,6 +99,7 @@ class _StringAllMatchesIterator implements Iterator<Match> {
 
   _StringAllMatchesIterator(this._input, this._pattern, this._index);
 
+  @override
   bool moveNext() {
     if (_index + _pattern.length > _input.length) {
       _current = null;
@@ -101,13 +112,14 @@ class _StringAllMatchesIterator implements Iterator<Match> {
       return false;
     }
     int end = index + _pattern.length;
-    _current = new StringMatch(index, _input, _pattern);
+    _current = StringMatch(index, _input, _pattern);
     // Empty match, don't start at same location again.
     if (end == _index) end++;
     _index = end;
     return true;
   }
 
+  @override
   Match get current => _current!;
 }
 
@@ -200,7 +212,7 @@ String stringReplaceAllUncheckedString(
     if (receiver == "") {
       return JS('String', '#', replacement); // help type inference.
     }
-    StringBuffer result = new StringBuffer('');
+    StringBuffer result = StringBuffer('');
     int length = receiver.length;
     result.write(replacement);
     for (int i = 0; i < length; i++) {
@@ -251,9 +263,9 @@ String stringReplaceAllFuncUnchecked(String receiver, Pattern pattern,
   // top of the method but it saves an extra check on the `pattern is String`
   // path.
   if (pattern is! Pattern) {
-    throw new ArgumentError.value(pattern, 'pattern', 'is not a Pattern');
+    throw ArgumentError.value(pattern, 'pattern', 'is not a Pattern');
   }
-  StringBuffer buffer = new StringBuffer('');
+  StringBuffer buffer = StringBuffer('');
   int startIndex = 0;
   for (Match match in pattern.allMatches(receiver)) {
     buffer.write(onNonMatch(receiver.substring(startIndex, match.start)));
@@ -272,7 +284,7 @@ String stringReplaceAllEmptyFuncUnchecked(String receiver,
   int i = 0;
   buffer.write(onNonMatch(""));
   while (i < length) {
-    buffer.write(onMatch(new StringMatch(i, receiver, "")));
+    buffer.write(onMatch(StringMatch(i, receiver, "")));
     // Special case to avoid splitting a surrogate pair.
     int code = receiver.codeUnitAt(i);
     if ((code & ~0x3FF) == 0xD800 && length > i + 1) {
@@ -288,7 +300,7 @@ String stringReplaceAllEmptyFuncUnchecked(String receiver,
     buffer.write(onNonMatch(receiver[i]));
     i++;
   }
-  buffer.write(onMatch(new StringMatch(i, receiver, "")));
+  buffer.write(onMatch(StringMatch(i, receiver, "")));
   buffer.write(onNonMatch(""));
   return buffer.toString();
 }
@@ -300,7 +312,7 @@ String stringReplaceAllStringFuncUnchecked(String receiver, String pattern,
     return stringReplaceAllEmptyFuncUnchecked(receiver, onMatch, onNonMatch);
   }
   int length = receiver.length;
-  StringBuffer buffer = new StringBuffer('');
+  StringBuffer buffer = StringBuffer('');
   int startIndex = 0;
   while (startIndex < length) {
     int position = stringIndexOfStringUnchecked(receiver, pattern, startIndex);
@@ -308,7 +320,7 @@ String stringReplaceAllStringFuncUnchecked(String receiver, String pattern,
       break;
     }
     buffer.write(onNonMatch(receiver.substring(startIndex, position)));
-    buffer.write(onMatch(new StringMatch(position, receiver, pattern)));
+    buffer.write(onMatch(StringMatch(position, receiver, pattern)));
     startIndex = position + patternLength;
   }
   buffer.write(onNonMatch(receiver.substring(startIndex)));
@@ -340,7 +352,7 @@ String stringReplaceFirstMappedUnchecked(String receiver, Pattern pattern,
   Iterator<Match> matches = pattern.allMatches(receiver, startIndex).iterator;
   if (!matches.moveNext()) return receiver;
   Match match = matches.current;
-  String replacement = "${replace(match)}";
+  String replacement = replace(match);
   return receiver.replaceRange(match.start, match.end, replacement);
 }
 

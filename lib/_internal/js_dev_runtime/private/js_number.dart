@@ -20,6 +20,7 @@ final class JSNumber extends Interceptor
     implements double, TrustedGetRuntimeType {
   const JSNumber();
 
+  @override
   @notNull
   int compareTo(@nullCheck num b) {
     if (this < b) {
@@ -44,29 +45,36 @@ final class JSNumber extends Interceptor
     }
   }
 
+  @override
   @notNull
   bool get isNegative => (this == 0) ? (1 / this) < 0 : this < 0;
 
+  @override
   @notNull
   bool get isNaN => JS<bool>('!', r'isNaN(#)', this);
 
+  @override
   @notNull
   bool get isInfinite {
     return JS<bool>('!', r'# == (1/0)', this) ||
         JS<bool>('!', r'# == (-1/0)', this);
   }
 
+  @override
   @notNull
   bool get isFinite => JS<bool>('!', r'isFinite(#)', this);
 
+  @override
   @notNull
   JSNumber remainder(@nullCheck num b) {
     return JS<JSNumber>('!', r'# % #', this, b);
   }
 
+  @override
   @notNull
   JSNumber abs() => JS<JSNumber>('!', r'Math.abs(#)', this);
 
+  @override
   @notNull
   JSNumber get sign => this > 0
       ? JS<JSNumber>('!', '1')
@@ -79,6 +87,7 @@ final class JSNumber extends Interceptor
   @notNull
   static const int _MAX_INT32 = 0x7FFFFFFF;
 
+  @override
   @notNull
   int toInt() {
     if (this >= _MIN_INT32 && this <= _MAX_INT32) {
@@ -92,15 +101,19 @@ final class JSNumber extends Interceptor
     throw UnsupportedError(JS("String", '"" + #', this));
   }
 
+  @override
   @notNull
   int truncate() => toInt();
 
+  @override
   @notNull
   int ceil() => ceilToDouble().toInt();
 
+  @override
   @notNull
   int floor() => floorToDouble().toInt();
 
+  @override
   @notNull
   int round() {
     if (this > 0) {
@@ -121,12 +134,15 @@ final class JSNumber extends Interceptor
     throw UnsupportedError(JS("String", '"" + #', this));
   }
 
+  @override
   @notNull
   double ceilToDouble() => JS<double>('!', r'Math.ceil(#)', this);
 
+  @override
   @notNull
   double floorToDouble() => JS<double>('!', r'Math.floor(#)', this);
 
+  @override
   @notNull
   double roundToDouble() {
     if (this < 0) {
@@ -136,22 +152,26 @@ final class JSNumber extends Interceptor
     }
   }
 
+  @override
   @notNull
   double truncateToDouble() => this < 0 ? ceilToDouble() : floorToDouble();
 
+  @override
   @notNull
   num clamp(@nullCheck num lowerLimit, @nullCheck num upperLimit) {
     if (lowerLimit.compareTo(upperLimit) > 0) {
       throw argumentErrorValue(lowerLimit);
     }
-    if (this.compareTo(lowerLimit) < 0) return lowerLimit;
-    if (this.compareTo(upperLimit) > 0) return upperLimit;
+    if (compareTo(lowerLimit) < 0) return lowerLimit;
+    if (compareTo(upperLimit) > 0) return upperLimit;
     return this;
   }
 
+  @override
   @notNull
   double toDouble() => JS<double>('!', '#', this);
 
+  @override
   @notNull
   String toStringAsFixed(@nullCheck int fractionDigits) {
     if (fractionDigits < 0 || fractionDigits > 20) {
@@ -162,16 +182,17 @@ final class JSNumber extends Interceptor
     return result;
   }
 
+  @override
   @notNull
   String toStringAsExponential([int? fractionDigits]) {
     String result;
     if (fractionDigits != null) {
       @notNull
-      var _fractionDigits = fractionDigits;
-      if (_fractionDigits < 0 || _fractionDigits > 20) {
-        throw RangeError.range(_fractionDigits, 0, 20, "fractionDigits");
+      var fractionDigits0 = fractionDigits;
+      if (fractionDigits0 < 0 || fractionDigits0 > 20) {
+        throw RangeError.range(fractionDigits0, 0, 20, "fractionDigits");
       }
-      result = JS<String>('!', r'#.toExponential(#)', this, _fractionDigits);
+      result = JS<String>('!', r'#.toExponential(#)', this, fractionDigits0);
     } else {
       result = JS<String>('!', r'#.toExponential()', this);
     }
@@ -179,6 +200,7 @@ final class JSNumber extends Interceptor
     return result;
   }
 
+  @override
   @notNull
   String toStringAsPrecision(@nullCheck int precision) {
     if (precision < 1 || precision > 21) {
@@ -222,6 +244,7 @@ final class JSNumber extends Interceptor
   }
 
   // Note: if you change this, also change the function [S].
+  @override
   @notNull
   String toString() {
     if (this == 0 && JS<bool>('!', '(1 / #) < 0', this)) {
@@ -231,6 +254,7 @@ final class JSNumber extends Interceptor
     }
   }
 
+  @override
   @notNull
   int get hashCode {
     int intValue = JS<int>('!', '# | 0', this);
@@ -267,29 +291,35 @@ final class JSNumber extends Interceptor
     return h;
   }
 
+  @override
   @notNull
   JSNumber operator -() => JS<JSNumber>('!', r'-#', this);
 
+  @override
   @notNull
   JSNumber operator +(@nullCheck num other) {
     return JS<JSNumber>('!', '# + #', this, other);
   }
 
+  @override
   @notNull
   JSNumber operator -(@nullCheck num other) {
     return JS<JSNumber>('!', '# - #', this, other);
   }
 
+  @override
   @notNull
   double operator /(@nullCheck num other) {
     return JS<double>('!', '# / #', this, other);
   }
 
+  @override
   @notNull
   JSNumber operator *(@nullCheck num other) {
     return JS<JSNumber>('!', '# * #', this, other);
   }
 
+  @override
   @notNull
   JSNumber operator %(@nullCheck num other) {
     // Euclidean Modulo.
@@ -309,6 +339,7 @@ final class JSNumber extends Interceptor
   bool _isInt32(@notNull num value) =>
       JS<bool>('!', '(# | 0) === #', value, value);
 
+  @override
   @notNull
   int operator ~/(@nullCheck num other) {
     if (_isInt32(this) && _isInt32(other) && 0 != other && -1 != other) {
@@ -394,21 +425,25 @@ final class JSNumber extends Interceptor
     return JS<int>('!', r'(# ^ #) >>> 0', this, other);
   }
 
+  @override
   @notNull
   bool operator <(@nullCheck num other) {
     return JS<bool>('!', '# < #', this, other);
   }
 
+  @override
   @notNull
   bool operator >(@nullCheck num other) {
     return JS<bool>('!', '# > #', this, other);
   }
 
+  @override
   @notNull
   bool operator <=(@nullCheck num other) {
     return JS<bool>('!', '# <= #', this, other);
   }
 
+  @override
   @notNull
   bool operator >=(@nullCheck num other) {
     return JS<bool>('!', '# >= #', this, other);

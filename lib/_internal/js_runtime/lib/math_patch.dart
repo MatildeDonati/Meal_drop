@@ -4,7 +4,6 @@
 
 // Patch file for dart:math library.
 import 'dart:_foreign_helper' show JS;
-import 'dart:_internal' show patch;
 import 'dart:_js_helper' show checkNum;
 import 'dart:typed_data' show ByteData;
 
@@ -80,7 +79,7 @@ class _JSRandom implements Random {
 
   int nextInt(int max) {
     if (max <= 0 || max > _POW2_32) {
-      throw new RangeError('max must be in range 0 < max ≤ 2^32, was $max');
+      throw RangeError('max must be in range 0 < max ≤ 2^32, was $max');
     }
     return JS('int', '(Math.random() * #) >>> 0', max);
   }
@@ -116,9 +115,9 @@ class _Random implements Random {
   //   _hi = hash >> 32;
   // and then does four _nextState calls to shuffle bits around.
   _Random(int seed) {
-    int empty_seed = 0;
+    int emptySeed = 0;
     if (seed < 0) {
-      empty_seed = -1;
+      emptySeed = -1;
     }
     do {
       int low = seed & _MASK32;
@@ -173,7 +172,7 @@ class _Random implements Random {
       _hi = (_hi * 1037 + (tmplow - _lo) ~/ 0x100000000) & _MASK32;
       _lo ^= low;
       _hi ^= high;
-    } while (seed != empty_seed);
+    } while (seed != emptySeed);
 
     if (_hi == 0 && _lo == 0) {
       _lo = 0x5A17;
@@ -212,7 +211,7 @@ class _Random implements Random {
 
   int nextInt(int max) {
     if (max <= 0 || max > _POW2_32) {
-      throw new RangeError('max must be in range 0 < max ≤ 2^32, was $max');
+      throw RangeError('max must be in range 0 < max ≤ 2^32, was $max');
     }
     if ((max & (max - 1)) == 0) {
       // Fast case for powers of two.
@@ -225,7 +224,7 @@ class _Random implements Random {
     do {
       _nextState();
       rnd32 = _lo;
-      result = rnd32.remainder(max) as int; // % max;
+      result = rnd32.remainder(max); // % max;
     } while ((rnd32 - result + max) >= _POW2_32);
     return result;
   }
@@ -246,7 +245,7 @@ class _Random implements Random {
 
 class _JSSecureRandom implements Random {
   // Reused buffer with room enough for a double.
-  final _buffer = new ByteData(8);
+  final _buffer = ByteData(8);
 
   _JSSecureRandom() {
     var crypto = JS('', 'self.crypto');
@@ -256,7 +255,7 @@ class _JSSecureRandom implements Random {
         return;
       }
     }
-    throw new UnsupportedError(
+    throw UnsupportedError(
         'No source of cryptographically secure random numbers available.');
   }
 
@@ -293,7 +292,7 @@ class _JSSecureRandom implements Random {
 
   int nextInt(int max) {
     if (max <= 0 || max > _POW2_32) {
-      throw new RangeError('max must be in range 0 < max ≤ 2^32, was $max');
+      throw RangeError('max must be in range 0 < max ≤ 2^32, was $max');
     }
     int byteCount = 1;
     if (max > 0xFF) {
@@ -316,7 +315,7 @@ class _JSSecureRandom implements Random {
         // Max is power of 2.
         return random & (max - 1);
       }
-      int result = random.remainder(max) as int;
+      int result = random.remainder(max);
       // Ensure results have equal probability by rejecting values in the
       // last range of k*max .. 256**byteCount.
       // TODO: Consider picking a higher byte count if the last range is a

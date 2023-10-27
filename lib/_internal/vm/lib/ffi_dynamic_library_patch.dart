@@ -2,10 +2,6 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import "dart:_internal" show patch;
-import 'dart:typed_data';
-import 'dart:isolate';
-import 'dart:typed_data';
 
 @pragma("vm:external-name", "Ffi_dl_open")
 external DynamicLibrary _open(String path);
@@ -43,6 +39,7 @@ final class DynamicLibrary {
   @pragma("vm:external-name", "Ffi_dl_close")
   external void close();
 
+  @override
   @patch
   bool operator ==(Object other) {
     if (other is! DynamicLibrary) return false;
@@ -50,6 +47,7 @@ final class DynamicLibrary {
     return getHandle() == otherLib.getHandle();
   }
 
+  @override
   @patch
   int get hashCode {
     return getHandle().hashCode;

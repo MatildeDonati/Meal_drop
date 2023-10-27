@@ -39,66 +39,85 @@ abstract class ConstantMap<K, V> implements Map<K, V> {
 
   const ConstantMap._();
 
+  @override
   Map<RK, RV> cast<RK, RV>() => Map.castFrom<K, V, RK, RV>(this);
+  @override
   bool get isEmpty => length == 0;
 
+  @override
   bool get isNotEmpty => !isEmpty;
 
+  @override
   String toString() => MapBase.mapToString(this);
 
   static Never _throwUnmodifiable() {
     throw UnsupportedError('Cannot modify unmodifiable Map');
   }
 
+  @override
   void operator []=(K key, V value) {
     _throwUnmodifiable();
   }
 
-  V putIfAbsent(K key, V ifAbsent()) {
+  @override
+  V putIfAbsent(K key, V Function() ifAbsent) {
     _throwUnmodifiable();
   }
 
+  @override
   V? remove(Object? key) {
     _throwUnmodifiable();
   }
 
+  @override
   void clear() {
     _throwUnmodifiable();
   }
 
+  @override
   void addAll(Map<K, V> other) {
     _throwUnmodifiable();
   }
 
+  @override
   Iterable<MapEntry<K, V>> get entries sync* {
     // `this[key]` has static type `V?` but is always `V`. Rather than `as V`,
     // we use `as dynamic` so the upcast requires no checking and the implicit
     // downcast to `V` will be discarded in production.
-    for (var key in keys) yield MapEntry<K, V>(key, this[key] as dynamic);
+    for (var key in keys) {
+      yield MapEntry<K, V>(key, this[key] as dynamic);
+    }
   }
 
+  @override
   void addEntries(Iterable<MapEntry<K, V>> entries) {
-    for (var entry in entries) this[entry.key] = entry.value;
+    for (var entry in entries) {
+      this[entry.key] = entry.value;
+    }
   }
 
-  Map<K2, V2> map<K2, V2>(MapEntry<K2, V2> transform(K key, V value)) {
+  @override
+  Map<K2, V2> map<K2, V2>(MapEntry<K2, V2> Function(K key, V value) transform) {
     var result = <K2, V2>{};
-    this.forEach((K key, V value) {
+    forEach((K key, V value) {
       var entry = transform(key, value);
       result[entry.key] = entry.value;
     });
     return result;
   }
 
-  V update(K key, V update(V value), {V ifAbsent()?}) {
+  @override
+  V update(K key, V Function(V value) update, {V Function()? ifAbsent}) {
     _throwUnmodifiable();
   }
 
-  void updateAll(V update(K key, V value)) {
+  @override
+  void updateAll(V Function(K key, V value) update) {
     _throwUnmodifiable();
   }
 
-  void removeWhere(bool test(K key, V value)) {
+  @override
+  void removeWhere(bool Function(K key, V value) test) {
     _throwUnmodifiable();
   }
 }
@@ -113,6 +132,7 @@ class ConstantStringMap<K, V> extends ConstantMap<K, V> {
   final Object _jsIndex;
   final JSArray _values;
 
+  @override
   int get length => _values.length;
 
   JSArray get _keys {
@@ -129,23 +149,27 @@ class ConstantStringMap<K, V> extends ConstantMap<K, V> {
     return this; // Allow chaining in JavaScript of constant pool code.
   }
 
+  @override
   bool containsValue(Object? needle) {
     return _values.contains(needle);
   }
 
+  @override
   bool containsKey(Object? key) {
     if (key is! String) return false;
     if ('__proto__' == key) return false;
     return jsHasOwnProperty(_jsIndex, key);
   }
 
+  @override
   V? operator [](Object? key) {
     if (!containsKey(key)) return null;
     int index = JS('', '#[#]', _jsIndex, key);
     return JS('', '#[#]', _values, index);
   }
 
-  void forEach(void f(K key, V value)) {
+  @override
+  void forEach(void Function(K key, V value) f) {
     final keys = _keys;
     final values = _values;
     for (int i = 0; i < keys.length; i++) {
@@ -155,8 +179,10 @@ class ConstantStringMap<K, V> extends ConstantMap<K, V> {
     }
   }
 
+  @override
   Iterable<K> get keys => _KeysOrValues<K>(_keys);
 
+  @override
   Iterable<V> get values => _KeysOrValues<V>(_values);
 }
 
@@ -191,10 +217,14 @@ class _KeysOrValues<E> extends Iterable<E> {
   final JSArray _elements;
   _KeysOrValues(this._elements);
 
+  @override
   int get length => _elements.length;
+  @override
   bool get isEmpty => 0 == length;
+  @override
   bool get isNotEmpty => 0 != length;
 
+  @override
   _KeysOrValuesOrElementsIterator<E> get iterator =>
       _KeysOrValuesOrElementsIterator<E>(this._elements);
 }
@@ -207,8 +237,10 @@ class _KeysOrValuesOrElementsIterator<E> implements Iterator<E> {
   E? _current;
   _KeysOrValuesOrElementsIterator(this._elements) : _length = _elements.length;
 
+  @override
   E get current => _current as E;
 
+  @override
   bool moveNext() {
     if (_index >= _length) {
       _current = null;
@@ -249,30 +281,37 @@ class GeneralConstantMap<K, V> extends ConstantMap<K, V> {
 
   static bool Function(Object?) _typeTest<T>() => (Object? o) => o is T;
 
+  @override
   bool containsValue(Object? needle) {
     return _getMap().containsValue(needle);
   }
 
+  @override
   bool containsKey(Object? key) {
     return _getMap().containsKey(key);
   }
 
+  @override
   V? operator [](Object? key) {
     return _getMap()[key];
   }
 
-  void forEach(void f(K key, V value)) {
+  @override
+  void forEach(void Function(K key, V value) f) {
     _getMap().forEach(f);
   }
 
+  @override
   Iterable<K> get keys {
     return _getMap().keys;
   }
 
+  @override
   Iterable<V> get values {
     return _getMap().values;
   }
 
+  @override
   int get length => _getMap().length;
 }
 
@@ -283,35 +322,43 @@ abstract class ConstantSet<E> extends SetBase<E> {
     throw UnsupportedError('Cannot modify constant Set');
   }
 
+  @override
   void clear() {
     _throwUnmodifiable();
   }
 
+  @override
   bool add(E value) {
     _throwUnmodifiable();
   }
 
+  @override
   void addAll(Iterable<E> elements) {
     _throwUnmodifiable();
   }
 
+  @override
   bool remove(Object? value) {
     _throwUnmodifiable();
   }
 
+  @override
   void removeAll(Iterable<Object?> elements) {
     _throwUnmodifiable();
   }
 
-  void removeWhere(bool test(E element)) {
+  @override
+  void removeWhere(bool Function(E element) test) {
     _throwUnmodifiable();
   }
 
+  @override
   void retainAll(Iterable<Object?> elements) {
     _throwUnmodifiable();
   }
 
-  void retainWhere(bool test(E element)) {
+  @override
+  void retainWhere(bool Function(E element) test) {
     _throwUnmodifiable();
   }
 }
@@ -326,8 +373,11 @@ class ConstantStringSet<E> extends ConstantSet<E> {
 
   const ConstantStringSet(this._jsIndex, this._length);
 
+  @override
   int get length => JS('JSUInt31', '#', _length);
+  @override
   bool get isEmpty => _length == 0;
+  @override
   bool get isNotEmpty => !isEmpty;
 
   JSArray get _keys {
@@ -344,14 +394,17 @@ class ConstantStringSet<E> extends ConstantSet<E> {
     return this; // Allow chaining in JavaScript of constant pool code.
   }
 
+  @override
   Iterator<E> get iterator => _KeysOrValuesOrElementsIterator<E>(_keys);
 
+  @override
   bool contains(Object? key) {
     if (key is! String) return false;
     if ('__proto__' == key) return false;
     return jsHasOwnProperty(_jsIndex, key);
   }
 
+  @override
   E? lookup(Object? element) {
     // There is no way to tell the Set element from [element] for strings, so we
     // don't bother to return the stored element. If the set contains the
@@ -360,6 +413,7 @@ class ConstantStringSet<E> extends ConstantSet<E> {
   }
 
   // TODO(sra): Use the `_keys` Array.
+  @override
   Set<E> toSet() => Set.of(this);
 
   // Consider implementations of operations that can directly use the untyped
@@ -373,10 +427,14 @@ class GeneralConstantSet<E> extends ConstantSet<E> {
   final JSArray _elements;
   const GeneralConstantSet(this._elements);
 
+  @override
   int get length => _elements.length;
+  @override
   bool get isEmpty => length == 0;
+  @override
   bool get isNotEmpty => !isEmpty;
 
+  @override
   Iterator<E> get iterator => _KeysOrValuesOrElementsIterator(_elements);
 
   // We cannot create the backing map on creation since hashCode interceptors
@@ -395,11 +453,14 @@ class GeneralConstantSet<E> extends ConstantSet<E> {
     return backingMap;
   }
 
+  @override
   bool contains(Object? key) {
     return _getMap().containsKey(key);
   }
 
+  @override
   E? lookup(Object? element) => _getMap()[element];
 
+  @override
   Set<E> toSet() => Set.of(this);
 }

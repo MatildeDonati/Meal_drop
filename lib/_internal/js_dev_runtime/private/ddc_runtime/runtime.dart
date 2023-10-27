@@ -239,9 +239,13 @@ int hotRestartIteration = 0;
 void hotRestart() {
   // TODO(sigmund): prevent DOM callbacks from firing.
   hotRestartIteration++;
-  for (var f in resetFields) f();
+  for (var f in resetFields) {
+    f();
+  }
   resetFields.clear();
-  for (var m in _cacheMaps) JS('', '#.clear()', m);
+  for (var m in _cacheMaps) {
+    JS('', '#.clear()', m);
+  }
   _cacheMaps.clear();
   JS('', '#.clear()', _nullComparisonSet);
   JS('', '#.clear()', constantMaps);

@@ -20,11 +20,11 @@ class Expando<T> {
   @patch
   Expando([String? name])
       : name = name,
-        _data = new List<_WeakProperty?>.filled(_minSize, null),
+        _data = List<_WeakProperty?>.filled(_minSize, null),
         _used = 0;
 
   static const _minSize = 8;
-  static final _deletedEntry = new _WeakProperty();
+  static final _deletedEntry = _WeakProperty();
 
   @patch
   T? operator [](Object object) {
@@ -54,7 +54,7 @@ class Expando<T> {
 
     var mask = _size - 1;
     var idx = object._identityHashCode & mask;
-    var empty_idx = -1;
+    var emptyIdx = -1;
     var wp = _data[idx];
 
     while (wp != null) {
@@ -67,13 +67,13 @@ class Expando<T> {
           _data[idx] = _deletedEntry;
         }
         return;
-      } else if ((empty_idx < 0) && identical(wp, _deletedEntry)) {
-        empty_idx = idx; // Insert at this location if not found.
+      } else if ((emptyIdx < 0) && identical(wp, _deletedEntry)) {
+        emptyIdx = idx; // Insert at this location if not found.
       } else if (wp.key == null) {
         // This entry has been cleared by the GC.
         _data[idx] = _deletedEntry;
-        if (empty_idx < 0) {
-          empty_idx = idx; // Insert at this location if not found.
+        if (emptyIdx < 0) {
+          emptyIdx = idx; // Insert at this location if not found.
         }
       }
       idx = (idx + 1) & mask;
@@ -86,14 +86,14 @@ class Expando<T> {
       return;
     }
 
-    if (empty_idx >= 0) {
+    if (emptyIdx >= 0) {
       // We will be reusing the empty slot below.
       _used--;
-      idx = empty_idx;
+      idx = emptyIdx;
     }
 
     if (_used < _limit) {
-      var ephemeron = new _WeakProperty();
+      var ephemeron = _WeakProperty();
       ephemeron.key = object;
       ephemeron.value = value;
       _data[idx] = ephemeron;
@@ -110,31 +110,31 @@ class Expando<T> {
     // Determine the population count of the map to allocate an appropriately
     // sized map below.
     var count = 0;
-    var old_data = _data;
-    var len = old_data.length;
+    var oldData = _data;
+    var len = oldData.length;
     for (var i = 0; i < len; i++) {
-      var entry = old_data[i];
+      var entry = oldData[i];
       if ((entry != null) && (entry.key != null)) {
         // Only count non-cleared entries.
         count++;
       }
     }
 
-    var new_size = _size;
-    if (count <= (new_size >> 2)) {
-      new_size = new_size >> 1;
-    } else if (count > (new_size >> 1)) {
-      new_size = new_size << 1;
+    var newSize = _size;
+    if (count <= (newSize >> 2)) {
+      newSize = newSize >> 1;
+    } else if (count > (newSize >> 1)) {
+      newSize = newSize << 1;
     }
-    new_size = (new_size < _minSize) ? _minSize : new_size;
+    newSize = (newSize < _minSize) ? _minSize : newSize;
 
     // Reset the mappings to empty so that we can just add the existing
     // valid entries.
-    _data = new List<_WeakProperty?>.filled(new_size, null);
+    _data = List<_WeakProperty?>.filled(newSize, null);
     _used = 0;
 
-    for (var i = 0; i < old_data.length; i++) {
-      var entry = old_data[i];
+    for (var i = 0; i < oldData.length; i++) {
+      var entry = oldData[i];
       if (entry != null) {
         // Ensure that the entry.key is not cleared between checking for it and
         // inserting it into the new table.

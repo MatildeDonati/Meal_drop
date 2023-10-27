@@ -72,7 +72,7 @@ final class ServiceExtensionResponse {
     if ((errorCode >= extensionErrorMin) && (errorCode <= extensionErrorMax)) {
       return;
     }
-    throw new ArgumentError.value(errorCode, "errorCode", "Out of range");
+    throw ArgumentError.value(errorCode, "errorCode", "Out of range");
   }
 
   /// Determines if this response represents an error.
@@ -96,7 +96,7 @@ final class ServiceExtensionResponse {
 /// parameters to the service protocol request.
 ///
 /// *NOTE*: all parameter names and values are encoded as strings.
-typedef Future<ServiceExtensionResponse> ServiceExtensionHandler(
+typedef ServiceExtensionHandler = Future<ServiceExtensionResponse> Function(
     String method, Map<String, String> parameters);
 
 /// Register a [ServiceExtensionHandler] that will be invoked in this isolate
@@ -115,10 +115,10 @@ void registerExtension(String method, ServiceExtensionHandler handler) {
   // TODO: When NNBD is complete, delete the following line.
   checkNotNullable(method, 'method');
   if (!method.startsWith('ext.')) {
-    throw new ArgumentError.value(method, 'method', 'Must begin with ext.');
+    throw ArgumentError.value(method, 'method', 'Must begin with ext.');
   }
   if (_lookupExtension(method) != null) {
-    throw new ArgumentError('Extension already registered: $method');
+    throw ArgumentError('Extension already registered: $method');
   }
   // TODO: When NNBD is complete, delete the following line.
   checkNotNullable(handler, 'handler');

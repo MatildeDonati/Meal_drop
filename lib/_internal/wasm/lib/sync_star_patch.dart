@@ -29,10 +29,10 @@ class _SuspendState {
   _SyncStarIterator? _iterator;
   // Context containing the local variables of the function.
   @pragma("wasm:entry-point")
-  WasmStructRef? _context;
+  final WasmStructRef? _context;
   // CFG target index for the next resumption.
   @pragma("wasm:entry-point")
-  WasmI32 _targetIndex;
+  final WasmI32 _targetIndex;
 
   _SuspendState(_SyncStarIterable iterable, _SuspendState? parent)
       : _resume = iterable._resume,
@@ -54,6 +54,7 @@ class _SyncStarIterable<T> extends Iterable<T> {
 
   external _SyncStarIterable();
 
+  @override
   @pragma("wasm:entry-point")
   Iterator<T> get iterator {
     return _SyncStarIterator<T>(this);

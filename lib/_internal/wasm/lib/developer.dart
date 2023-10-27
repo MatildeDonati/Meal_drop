@@ -4,7 +4,6 @@
 
 // This is a stub implementation of `dart:developer`.
 
-import "dart:_internal" show patch;
 
 import "dart:async" show Zone;
 

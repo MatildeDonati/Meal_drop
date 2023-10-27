@@ -3,12 +3,8 @@
 
 library html_common;
 
-import 'dart:async';
 import 'dart:collection';
 import 'dart:html';
-import 'dart:js' as js;
-import 'dart:_internal' show WhereIterable;
-import 'dart:nativewrappers';
 import 'dart:typed_data';
 import 'dart:web_gl' as gl;
 

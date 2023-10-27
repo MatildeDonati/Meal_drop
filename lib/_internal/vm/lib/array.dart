@@ -5,10 +5,12 @@
 part of "core_patch.dart";
 
 abstract class _Array<E> extends FixedLengthListBase<E> {
+  @override
   @pragma("vm:recognized", "graph-intrinsic")
   @pragma("vm:external-name", "List_getIndexed")
   external E operator [](int index);
 
+  @override
   @pragma("vm:recognized", "graph-intrinsic")
   @pragma("vm:exact-result-type", "dart:core#_Smi")
   @pragma("vm:prefer-inline")
@@ -18,7 +20,7 @@ abstract class _Array<E> extends FixedLengthListBase<E> {
   @pragma("vm:prefer-inline")
   _List _slice(int start, int count, bool needsTypeArgument) {
     if (count <= 64) {
-      final result = needsTypeArgument ? new _List<E>(count) : new _List(count);
+      final result = needsTypeArgument ? _List<E>(count) : _List(count);
       for (int i = 0; i < result.length; i++) {
         result[i] = this[start + i];
       }
@@ -33,46 +35,52 @@ abstract class _Array<E> extends FixedLengthListBase<E> {
 
   // Iterable interface.
 
+  @override
   @pragma("vm:prefer-inline")
-  void forEach(f(E element)) {
+  void forEach(Function(E element) f) {
     final length = this.length;
     for (int i = 0; i < length; i++) {
       f(this[i]);
     }
   }
 
+  @override
   @pragma("vm:prefer-inline")
   Iterator<E> get iterator {
-    return new _ArrayIterator<E>(this);
+    return _ArrayIterator<E>(this);
   }
 
+  @override
   E get first {
     if (length > 0) return this[0];
     throw IterableElementError.noElement();
   }
 
+  @override
   E get last {
     if (length > 0) return this[length - 1];
     throw IterableElementError.noElement();
   }
 
+  @override
   E get single {
     if (length == 1) return this[0];
     if (length == 0) throw IterableElementError.noElement();
     throw IterableElementError.tooMany();
   }
 
+  @override
   List<E> toList({bool growable = true}) {
     var length = this.length;
     if (length > 0) {
       _List result = _slice(0, length, !growable);
       if (growable) {
-        return new _GrowableList<E>._withData(result).._setLength(length);
+        return _GrowableList<E>._withData(result).._setLength(length);
       }
       return unsafeCast<_List<E>>(result);
     }
     // _GrowableList._withData must not be called with empty list.
-    return growable ? <E>[] : new _List<E>(0);
+    return growable ? <E>[] : _List<E>(0);
   }
 }
 
@@ -106,7 +114,7 @@ class _List<E> extends _Array<E> {
   // Specialization of List.generate constructor for growable == false.
   // Used by pkg/vm/lib/transformations/list_factory_specializer.dart.
   @pragma("vm:prefer-inline")
-  factory _List.generate(int length, E generator(int index)) {
+  factory _List.generate(int length, E Function(int index) generator) {
     final result = _List<E>(length);
     for (int i = 0; i < result.length; ++i) {
       result[i] = generator(i);
@@ -175,6 +183,7 @@ class _List<E> extends _Array<E> {
     return unsafeCast(makeListFixedLength(_GrowableList<E>._ofOther(elements)));
   }
 
+  @override
   @pragma("vm:recognized", "other")
   void operator []=(int index, E value) {
     _setIndexed(index, value);
@@ -185,12 +194,13 @@ class _List<E> extends _Array<E> {
   external void _setIndexed(int index, E value);
 
   // List interface.
+  @override
   void setRange(int start, int end, Iterable<E> iterable, [int skipCount = 0]) {
     if (start < 0 || start > this.length) {
-      throw new RangeError.range(start, 0, this.length);
+      throw RangeError.range(start, 0, this.length);
     }
     if (end < start || end > this.length) {
-      throw new RangeError.range(end, start, this.length);
+      throw RangeError.range(end, start, this.length);
     }
     int length = end - start;
     if (length == 0) return;
@@ -214,9 +224,10 @@ class _List<E> extends _Array<E> {
     }
   }
 
+  @override
   void setAll(int index, Iterable<E> iterable) {
     if (index < 0 || index > this.length) {
-      throw new RangeError.range(index, 0, this.length, "index");
+      throw RangeError.range(index, 0, this.length, "index");
     }
     List<E> iterableAsList;
     if (identical(this, iterable)) {
@@ -233,17 +244,18 @@ class _List<E> extends _Array<E> {
     }
     int length = iterableAsList.length;
     if (index + length > this.length) {
-      throw new RangeError.range(index + length, 0, this.length);
+      throw RangeError.range(index + length, 0, this.length);
     }
     Lists.copy(iterableAsList, 0, this, index, length);
   }
 
+  @override
   List<E> sublist(int start, [int? end]) {
     final int listLength = this.length;
     final int actualEnd = RangeError.checkValidRange(start, end, listLength);
     int length = actualEnd - start;
     if (length == 0) return <E>[];
-    var result = new _GrowableList<E>._withData(_slice(start, length, false));
+    var result = _GrowableList<E>._withData(_slice(start, length, false));
     result._setLength(length);
     return result;
   }
@@ -253,7 +265,7 @@ class _List<E> extends _Array<E> {
 @pragma("vm:entry-point")
 class _ImmutableList<E> extends _Array<E> with UnmodifiableListMixin<E> {
   factory _ImmutableList._uninstantiable() {
-    throw new UnsupportedError(
+    throw UnsupportedError(
         "ImmutableArray can only be allocated by the VM");
   }
 
@@ -271,10 +283,12 @@ class _ArrayIterator<E> implements Iterator<E> {
   _ArrayIterator(_Array<E> array)
       : _array = array,
         _length = array.length,
-        _index = 0 {}
+        _index = 0;
 
+  @override
   E get current => _current as E;
 
+  @override
   @pragma("vm:prefer-inline")
   bool moveNext() {
     if (_index >= _length) {

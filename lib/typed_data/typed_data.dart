@@ -390,10 +390,10 @@ final class Endian {
   final bool _littleEndian;
   const Endian._(this._littleEndian);
 
-  static const Endian big = const Endian._(false);
-  static const Endian little = const Endian._(true);
+  static const Endian big = Endian._(false);
+  static const Endian little = Endian._(true);
   static final Endian host =
-      (new ByteData.view(new Uint16List.fromList([1]).buffer)).getInt8(0) == 1
+      (ByteData.view(Uint16List.fromList([1]).buffer)).getInt8(0) == 1
           ? little
           : big;
 }
@@ -816,6 +816,7 @@ abstract final class Int8List implements List<int>, _TypedIntList {
   /// The `start` and `end` positions must satisfy the relations
   /// 0 ≤ `start` ≤ `end` ≤ `this.length`
   /// If `end` is equal to `start`, then the returned list is empty.
+  @override
   Int8List sublist(int start, [int? end]);
 
   static const int bytesPerElement = 1;
@@ -913,6 +914,7 @@ abstract final class Uint8List implements List<int>, _TypedIntList {
   /// If [other] is also a typed-data list, then the return list will be a
   /// typed data list capable of holding both unsigned 8-bit integers and
   /// the elements of [other], otherwise it'll be a normal list of integers.
+  @override
   List<int> operator +(List<int> other);
 
   /// Returns a new list containing the elements between [start] and [end].
@@ -936,6 +938,7 @@ abstract final class Uint8List implements List<int>, _TypedIntList {
   /// The `start` and `end` positions must satisfy the relations
   /// 0 ≤ `start` ≤ `end` ≤ `this.length`
   /// If `end` is equal to `start`, then the returned list is empty.
+  @override
   Uint8List sublist(int start, [int? end]);
 
   static const int bytesPerElement = 1;
@@ -1051,6 +1054,7 @@ abstract final class Uint8ClampedList implements List<int>, _TypedIntList {
   /// The `start` and `end` positions must satisfy the relations
   /// 0 ≤ `start` ≤ `end` ≤ `this.length`
   /// If `end` is equal to `start`, then the returned list is empty.
+  @override
   Uint8ClampedList sublist(int start, [int? end]);
 
   static const int bytesPerElement = 1;
@@ -1148,8 +1152,7 @@ abstract final class Int16List implements List<int>, _TypedIntList {
         start, end, data.lengthInBytes ~/ elementSize);
     int byteLength = (end - start) * elementSize;
     if (byteLength % bytesPerElement != 0) {
-      throw ArgumentError("The number of bytes to view must be a multiple of " +
-          "$bytesPerElement");
+      throw ArgumentError("The number of bytes to view must be a multiple of " "$bytesPerElement");
     }
     return data.buffer.asInt16List(data.offsetInBytes + start * elementSize,
         byteLength ~/ bytesPerElement);
@@ -1176,6 +1179,7 @@ abstract final class Int16List implements List<int>, _TypedIntList {
   /// The `start` and `end` positions must satisfy the relations
   /// 0 ≤ `start` ≤ `end` ≤ `this.length`
   /// If `end` is equal to `start`, then the returned list is empty.
+  @override
   Int16List sublist(int start, [int? end]);
 
   static const int bytesPerElement = 2;
@@ -1274,8 +1278,7 @@ abstract final class Uint16List implements List<int>, _TypedIntList {
         start, end, data.lengthInBytes ~/ elementSize);
     int byteLength = (end - start) * elementSize;
     if (byteLength % bytesPerElement != 0) {
-      throw ArgumentError("The number of bytes to view must be a multiple of " +
-          "$bytesPerElement");
+      throw ArgumentError("The number of bytes to view must be a multiple of " "$bytesPerElement");
     }
     return data.buffer.asUint16List(data.offsetInBytes + start * elementSize,
         byteLength ~/ bytesPerElement);
@@ -1302,6 +1305,7 @@ abstract final class Uint16List implements List<int>, _TypedIntList {
   /// The `start` and `end` positions must satisfy the relations
   /// 0 ≤ `start` ≤ `end` ≤ `this.length`
   /// If `end` is equal to `start`, then the returned list is empty.
+  @override
   Uint16List sublist(int start, [int? end]);
 
   static const int bytesPerElement = 2;
@@ -1399,8 +1403,7 @@ abstract final class Int32List implements List<int>, _TypedIntList {
         start, end, data.lengthInBytes ~/ elementSize);
     int byteLength = (end - start) * elementSize;
     if (byteLength % bytesPerElement != 0) {
-      throw ArgumentError("The number of bytes to view must be a multiple of " +
-          "$bytesPerElement");
+      throw ArgumentError("The number of bytes to view must be a multiple of " "$bytesPerElement");
     }
     return data.buffer.asInt32List(data.offsetInBytes + start * elementSize,
         byteLength ~/ bytesPerElement);
@@ -1427,6 +1430,7 @@ abstract final class Int32List implements List<int>, _TypedIntList {
   /// The `start` and `end` positions must satisfy the relations
   /// 0 ≤ `start` ≤ `end` ≤ `this.length`
   /// If `end` is equal to `start`, then the returned list is empty.
+  @override
   Int32List sublist(int start, [int? end]);
 
   static const int bytesPerElement = 4;
@@ -1525,8 +1529,7 @@ abstract final class Uint32List implements List<int>, _TypedIntList {
         start, end, data.lengthInBytes ~/ elementSize);
     int byteLength = (end - start) * elementSize;
     if (byteLength % bytesPerElement != 0) {
-      throw ArgumentError("The number of bytes to view must be a multiple of " +
-          "$bytesPerElement");
+      throw ArgumentError("The number of bytes to view must be a multiple of " "$bytesPerElement");
     }
     return data.buffer.asUint32List(data.offsetInBytes + start * elementSize,
         byteLength ~/ bytesPerElement);
@@ -1553,6 +1556,7 @@ abstract final class Uint32List implements List<int>, _TypedIntList {
   /// The `start` and `end` positions must satisfy the relations
   /// 0 ≤ `start` ≤ `end` ≤ `this.length`
   /// If `end` is equal to `start`, then the returned list is empty.
+  @override
   Uint32List sublist(int start, [int? end]);
 
   static const int bytesPerElement = 4;
@@ -1650,8 +1654,7 @@ abstract final class Int64List implements List<int>, _TypedIntList {
         start, end, data.lengthInBytes ~/ elementSize);
     int byteLength = (end - start) * elementSize;
     if (byteLength % bytesPerElement != 0) {
-      throw ArgumentError("The number of bytes to view must be a multiple of " +
-          "$bytesPerElement");
+      throw ArgumentError("The number of bytes to view must be a multiple of " "$bytesPerElement");
     }
     return data.buffer.asInt64List(data.offsetInBytes + start * elementSize,
         byteLength ~/ bytesPerElement);
@@ -1678,6 +1681,7 @@ abstract final class Int64List implements List<int>, _TypedIntList {
   /// The `start` and `end` positions must satisfy the relations
   /// 0 ≤ `start` ≤ `end` ≤ `this.length`
   /// If `end` is equal to `start`, then the returned list is empty.
+  @override
   Int64List sublist(int start, [int? end]);
 
   static const int bytesPerElement = 8;
@@ -1776,8 +1780,7 @@ abstract final class Uint64List implements List<int>, _TypedIntList {
         start, end, data.lengthInBytes ~/ elementSize);
     int byteLength = (end - start) * elementSize;
     if (byteLength % bytesPerElement != 0) {
-      throw ArgumentError("The number of bytes to view must be a multiple of " +
-          "$bytesPerElement");
+      throw ArgumentError("The number of bytes to view must be a multiple of " "$bytesPerElement");
     }
     return data.buffer.asUint64List(data.offsetInBytes + start * elementSize,
         byteLength ~/ bytesPerElement);
@@ -1804,6 +1807,7 @@ abstract final class Uint64List implements List<int>, _TypedIntList {
   /// The `start` and `end` positions must satisfy the relations
   /// 0 ≤ `start` ≤ `end` ≤ `this.length`
   /// If `end` is equal to `start`, then the returned list is empty.
+  @override
   Uint64List sublist(int start, [int? end]);
 
   static const int bytesPerElement = 8;
@@ -1902,8 +1906,7 @@ abstract final class Float32List implements List<double>, _TypedFloatList {
         start, end, data.lengthInBytes ~/ elementSize);
     int byteLength = (end - start) * elementSize;
     if (byteLength % bytesPerElement != 0) {
-      throw ArgumentError("The number of bytes to view must be a multiple of " +
-          "$bytesPerElement");
+      throw ArgumentError("The number of bytes to view must be a multiple of " "$bytesPerElement");
     }
     return data.buffer.asFloat32List(data.offsetInBytes + start * elementSize,
         byteLength ~/ bytesPerElement);
@@ -1930,6 +1933,7 @@ abstract final class Float32List implements List<double>, _TypedFloatList {
   /// The `start` and `end` positions must satisfy the relations
   /// 0 ≤ `start` ≤ `end` ≤ `this.length`
   /// If `end` is equal to `start`, then the returned list is empty.
+  @override
   Float32List sublist(int start, [int? end]);
 
   static const int bytesPerElement = 4;
@@ -2021,8 +2025,7 @@ abstract final class Float64List implements List<double>, _TypedFloatList {
         start, end, data.lengthInBytes ~/ elementSize);
     int byteLength = (end - start) * elementSize;
     if (byteLength % bytesPerElement != 0) {
-      throw ArgumentError("The number of bytes to view must be a multiple of " +
-          "$bytesPerElement");
+      throw ArgumentError("The number of bytes to view must be a multiple of " "$bytesPerElement");
     }
     return data.buffer.asFloat64List(data.offsetInBytes + start * elementSize,
         byteLength ~/ bytesPerElement);
@@ -2049,6 +2052,7 @@ abstract final class Float64List implements List<double>, _TypedFloatList {
   /// The `start` and `end` positions must satisfy the relations
   /// 0 ≤ `start` ≤ `end` ≤ `this.length`
   /// If `end` is equal to `start`, then the returned list is empty.
+  @override
   Float64List sublist(int start, [int? end]);
 
   static const int bytesPerElement = 8;
@@ -2139,8 +2143,7 @@ abstract final class Float32x4List implements List<Float32x4>, TypedData {
         start, end, data.lengthInBytes ~/ elementSize);
     int byteLength = (end - start) * elementSize;
     if (byteLength % bytesPerElement != 0) {
-      throw ArgumentError("The number of bytes to view must be a multiple of " +
-          "$bytesPerElement");
+      throw ArgumentError("The number of bytes to view must be a multiple of " "$bytesPerElement");
     }
     return data.buffer.asFloat32x4List(data.offsetInBytes + start * elementSize,
         byteLength ~/ bytesPerElement);
@@ -2150,6 +2153,7 @@ abstract final class Float32x4List implements List<Float32x4>, TypedData {
   ///
   /// If [other] is also a [Float32x4List], the result is a new [Float32x4List],
   /// otherwise the result is a normal growable `List<Float32x4>`.
+  @override
   List<Float32x4> operator +(List<Float32x4> other);
 
   /// Returns a new list containing the elements between [start] and [end].
@@ -2173,6 +2177,7 @@ abstract final class Float32x4List implements List<Float32x4>, TypedData {
   /// The `start` and `end` positions must satisfy the relations
   /// 0 ≤ `start` ≤ `end` ≤ `this.length`
   /// If `end` is equal to `start`, then the returned list is empty.
+  @override
   Float32x4List sublist(int start, [int? end]);
 
   static const int bytesPerElement = 16;
@@ -2260,8 +2265,7 @@ abstract final class Int32x4List implements List<Int32x4>, TypedData {
         start, end, data.lengthInBytes ~/ elementSize);
     int byteLength = (end - start) * elementSize;
     if (byteLength % bytesPerElement != 0) {
-      throw ArgumentError("The number of bytes to view must be a multiple of " +
-          "$bytesPerElement");
+      throw ArgumentError("The number of bytes to view must be a multiple of " "$bytesPerElement");
     }
     return data.buffer.asInt32x4List(data.offsetInBytes + start * elementSize,
         byteLength ~/ bytesPerElement);
@@ -2271,6 +2275,7 @@ abstract final class Int32x4List implements List<Int32x4>, TypedData {
   ///
   /// If [other] is also a [Int32x4List], the result is a new [Int32x4List],
   /// otherwise the result is a normal growable `List<Int32x4>`.
+  @override
   List<Int32x4> operator +(List<Int32x4> other);
 
   /// Returns a new list containing the elements between [start] and [end].
@@ -2294,6 +2299,7 @@ abstract final class Int32x4List implements List<Int32x4>, TypedData {
   /// The `start` and `end` positions must satisfy the relations
   /// 0 ≤ `start` ≤ `end` ≤ `this.length`
   /// If `end` is equal to `start`, then the returned list is empty.
+  @override
   Int32x4List sublist(int start, [int? end]);
 
   static const int bytesPerElement = 16;
@@ -2326,6 +2332,7 @@ abstract final class Float64x2List implements List<Float64x2>, TypedData {
   ///
   /// If [other] is also a [Float64x2List], the result is a new [Float64x2List],
   /// otherwise the result is a normal growable `List<Float64x2>`.
+  @override
   List<Float64x2> operator +(List<Float64x2> other);
 
   /// Creates a [Float64x2List] _view_ of the specified region in [buffer].
@@ -2390,8 +2397,7 @@ abstract final class Float64x2List implements List<Float64x2>, TypedData {
         start, end, data.lengthInBytes ~/ elementSize);
     int byteLength = (end - start) * elementSize;
     if (byteLength % bytesPerElement != 0) {
-      throw ArgumentError("The number of bytes to view must be a multiple of " +
-          "$bytesPerElement");
+      throw ArgumentError("The number of bytes to view must be a multiple of " "$bytesPerElement");
     }
     return data.buffer.asFloat64x2List(data.offsetInBytes + start * elementSize,
         byteLength ~/ bytesPerElement);
@@ -2418,6 +2424,7 @@ abstract final class Float64x2List implements List<Float64x2>, TypedData {
   /// The `start` and `end` positions must satisfy the relations
   /// 0 ≤ `start` ≤ `end` ≤ `this.length`
   /// If `end` is equal to `start`, then the returned list is empty.
+  @override
   Float64x2List sublist(int start, [int? end]);
 
   static const int bytesPerElement = 16;

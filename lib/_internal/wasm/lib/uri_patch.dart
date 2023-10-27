@@ -15,10 +15,8 @@ class Uri {
       }
       return null;
     }""");
-    if (currentUri != null) {
-      return Uri.parse(currentUri);
-    }
-    throw UnsupportedError("'Uri.base' is not supported");
+    return Uri.parse(currentUri);
+      throw UnsupportedError("'Uri.base' is not supported");
   }
 }
 
@@ -38,11 +36,9 @@ class _Uri {
   // are not encoded by any encoding table.
   static final RegExp _needsNoEncoding = RegExp(r'^[\-\.0-9A-Z_a-z~]*$');
 
-  /**
-   * This is the internal implementation of JavaScript's encodeURI function.
-   * It encodes all characters in the string [text] except for those
-   * that appear in [canonicalTable], and returns the escaped string.
-   */
+  /// This is the internal implementation of JavaScript's encodeURI function.
+  /// It encodes all characters in the string [text] except for those
+  /// that appear in [canonicalTable], and returns the escaped string.
   @patch
   static String _uriEncode(List<int> canonicalTable, String text,
       Encoding encoding, bool spaceToPlus) {

@@ -3,7 +3,6 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'dart:_foreign_helper' show JS;
-import 'dart:_internal' show patch;
 import 'dart:_js_helper'
     show convertDartClosureToJS, assertInterop, assertInteropArgs;
 import 'dart:collection' show HashMap;
@@ -32,26 +31,26 @@ dynamic jsify(Object? object) {
   if (_noJsifyRequired(object)) {
     return object;
   }
-  final _convertedObjects = HashMap<Object?, Object?>.identity();
+  final convertedObjects = HashMap<Object?, Object?>.identity();
 
   Object? _convert(Object? o) {
     // Fast path for primitives.
     if (_noJsifyRequired(o)) {
       return o;
     }
-    if (_convertedObjects.containsKey(o)) {
-      return _convertedObjects[o];
+    if (convertedObjects.containsKey(o)) {
+      return convertedObjects[o];
     }
     if (o is Map<Object?, Object?>) {
       final convertedMap = JS('=Object', '{}');
-      _convertedObjects[o] = convertedMap;
+      convertedObjects[o] = convertedMap;
       for (var key in o.keys) {
         JS('=Object', '#[#]=#', convertedMap, key, _convert(o[key]));
       }
       return convertedMap;
     } else if (o is Iterable<Object?>) {
       final convertedList = [];
-      _convertedObjects[o] = convertedList;
+      convertedObjects[o] = convertedList;
       convertedList.addAll(o.map(_convert));
       return convertedList;
     } else {
@@ -277,7 +276,7 @@ T callConstructor<T>(Object constr, List<Object?>? arguments) {
   // the arguments list passed to apply().
   // After that, use the JavaScript 'new' operator which overrides any binding
   // of 'this' with the new instance.
-  var args = <dynamic>[null]..addAll(arguments);
+  var args = <dynamic>[null, ...arguments];
   var factoryFunction = JS('', '#.bind.apply(#, #)', constr, constr, args);
   // Without this line, calling factoryFunction as a constructor throws
   JS('String', 'String(#)', factoryFunction);
@@ -525,7 +524,7 @@ bool _isJavaScriptPromise(value) =>
 
 DateTime _dateToDateTime(date) {
   int millisSinceEpoch = JS('int', '#.getTime()', date);
-  return new DateTime.fromMillisecondsSinceEpoch(millisSinceEpoch, isUtc: true);
+  return DateTime.fromMillisecondsSinceEpoch(millisSinceEpoch, isUtc: true);
 }
 
 bool _noDartifyRequired(Object? o) =>
@@ -567,7 +566,7 @@ Object? dartify(Object? o) {
     return o;
   }
 
-  final _convertedObjects = HashMap<Object?, Object?>.identity();
+  final convertedObjects = HashMap<Object?, Object?>.identity();
 
   Object? convert(Object? o) {
     // Fast path for primitives.
@@ -575,8 +574,8 @@ Object? dartify(Object? o) {
       return o;
     }
 
-    if (_convertedObjects.containsKey(o!)) {
-      return _convertedObjects[o];
+    if (convertedObjects.containsKey(o!)) {
+      return convertedObjects[o];
     }
 
     if (_isJavaScriptDate(o)) {
@@ -586,7 +585,7 @@ Object? dartify(Object? o) {
     if (_isJavaScriptRegExp(o)) {
       // TODO(joshualitt): Consider investigating if there is a way to convert
       // from `JSRegExp` to `RegExp`.
-      throw new ArgumentError('structured clone of RegExp');
+      throw ArgumentError('structured clone of RegExp');
     }
 
     if (_isJavaScriptPromise(o)) {
@@ -595,7 +594,7 @@ Object? dartify(Object? o) {
 
     if (isJavaScriptSimpleObject(o)) {
       final dartObject = <Object?, Object?>{};
-      _convertedObjects[o] = dartObject;
+      convertedObjects[o] = dartObject;
       final originalKeys = objectKeys(o);
       final dartKeys = <Object?>[];
       for (final key in originalKeys) {
@@ -614,7 +613,7 @@ Object? dartify(Object? o) {
     if (isJavaScriptArray(o)) {
       final l = JS<List<Object?>>('returns:List;creates:;', '#', o);
       final dartObject = <Object?>[];
-      _convertedObjects[o] = dartObject;
+      convertedObjects[o] = dartObject;
       final length = getProperty<int>(o, 'length');
       for (int i = 0; i < length; i++) {
         dartObject.add(convert(l[i]));

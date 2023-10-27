@@ -15,7 +15,7 @@ void _checkValidWeakTarget(Object object) {
       (object is Pointer) ||
       (object is Struct) ||
       (object is Union)) {
-    throw new ArgumentError.value(
+    throw ArgumentError.value(
         object,
         "A string, number, boolean, record, Pointer, Struct or Union "
         "can't be a weak target");
@@ -45,7 +45,7 @@ class Expando<T> {
   void operator []=(Object object, T? value) {
     _checkValidWeakTarget(object);
     JS<void>(
-        "(map, o, v) => map.set(o, v)", _jsWeakMap, object, value as Object?);
+        "(map, o, v) => map.set(o, v)", _jsWeakMap, object, value);
   }
 }
 
@@ -62,7 +62,7 @@ class _WeakReferenceWrapper<T extends Object> implements WeakReference<T> {
 
   _WeakReferenceWrapper(T object) {
     _checkValidWeakTarget(object);
-    _jsWeakRef = JS<WasmExternRef?>("o => new WeakRef(o)", object as Object);
+    _jsWeakRef = JS<WasmExternRef?>("o => new WeakRef(o)", object);
   }
 
   T? get target {

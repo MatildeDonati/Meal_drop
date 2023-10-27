@@ -7,10 +7,10 @@ part of "async_patch.dart";
 @patch
 class Timer {
   @patch
-  static Timer _createTimer(Duration duration, void callback()) {
+  static Timer _createTimer(Duration duration, void Function() callback) {
     final factory = VMLibraryHooks.timerFactory;
     if (factory == null) {
-      throw new UnsupportedError("Timer interface not supported.");
+      throw UnsupportedError("Timer interface not supported.");
     }
     int milliseconds = duration.inMilliseconds;
     if (milliseconds < 0) milliseconds = 0;
@@ -21,10 +21,10 @@ class Timer {
 
   @patch
   static Timer _createPeriodicTimer(
-      Duration duration, void callback(Timer timer)) {
+      Duration duration, void Function(Timer timer) callback) {
     final factory = VMLibraryHooks.timerFactory;
     if (factory == null) {
-      throw new UnsupportedError("Timer interface not supported.");
+      throw UnsupportedError("Timer interface not supported.");
     }
     int milliseconds = duration.inMilliseconds;
     if (milliseconds < 0) milliseconds = 0;

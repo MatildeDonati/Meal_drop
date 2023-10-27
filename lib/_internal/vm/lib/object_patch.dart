@@ -13,6 +13,7 @@ external int _getHash(obj);
 @pragma("vm:entry-point")
 class Object {
   // The VM has its own implementation of equals.
+  @override
   @patch
   @pragma("vm:recognized", "asm-intrinsic")
   @pragma("vm:exact-result-type", bool)
@@ -20,10 +21,12 @@ class Object {
   @pragma("vm:external-name", "Object_equals")
   external bool operator ==(Object other);
 
+  @override
   @patch
   int get hashCode => _getHash(this);
   int get _identityHashCode => _getHash(this);
 
+  @override
   @patch
   @pragma("vm:external-name", "Object_toString")
   external String toString();
@@ -31,13 +34,15 @@ class Object {
   @pragma("vm:external-name", "Object_toString")
   external static String _toString(obj);
 
+  @override
   @patch
   @pragma("vm:entry-point", "call")
   dynamic noSuchMethod(Invocation invocation) {
     // TODO(regis): Remove temp constructor identifier 'withInvocation'.
-    throw new NoSuchMethodError.withInvocation(this, invocation);
+    throw NoSuchMethodError.withInvocation(this, invocation);
   }
 
+  @override
   @patch
   @pragma("vm:recognized", "asm-intrinsic")
   // Result type is either "dart:core#_Type" or "dart:core#_FunctionType".

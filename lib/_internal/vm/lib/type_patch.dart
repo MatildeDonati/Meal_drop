@@ -7,14 +7,17 @@ part of "core_patch.dart";
 // These Dart classes correspond to the VM internal implementation classes.
 
 abstract class _AbstractType implements Type {
+  @override
   @pragma("vm:external-name", "AbstractType_toString")
   external String toString();
 
+  @override
   @pragma("vm:recognized", "asm-intrinsic")
   @pragma("vm:exact-result-type", "dart:core#_Smi")
   @pragma("vm:external-name", "AbstractType_getHashCode")
   external int get hashCode;
 
+  @override
   @pragma("vm:recognized", "asm-intrinsic")
   @pragma("vm:exact-result-type", bool)
   @pragma("vm:external-name", "AbstractType_equality")
@@ -27,6 +30,7 @@ class _Type extends _AbstractType {
     throw "Unreachable";
   }
 
+  @override
   @pragma("vm:recognized", "asm-intrinsic")
   @pragma("vm:exact-result-type", bool)
   @pragma("vm:external-name", "Type_equality")

@@ -4,28 +4,28 @@
 
 part of dart._interceptors;
 
-/**
- * The interceptor class for [String]. The compiler recognizes this
- * class as an interceptor, and changes references to [:this:] to
- * actually use the receiver of the method, which is generated as an extra
- * argument added to each member.
- */
+/// The interceptor class for [String]. The compiler recognizes this
+/// class as an interceptor, and changes references to [:this:] to
+/// actually use the receiver of the method, which is generated as an extra
+/// argument added to each member.
 @JsPeerInterface(name: 'String')
 final class JSString extends Interceptor
     implements String, JSIndexable<String>, TrustedGetRuntimeType {
   const JSString();
 
+  @override
   @notNull
   int codeUnitAt(@nullCheck int index) {
     // Suppress 2nd null check on index and null check on length
     // (JS String.length cannot be null).
-    final len = this.length;
+    final len = length;
     if (index < 0 || index >= len) {
       throw IndexError.withLength(index, len, indexable: this, name: 'index');
     }
     return JS<int>('!', r'#.charCodeAt(#)', this, index);
   }
 
+  @override
   @notNull
   Iterable<Match> allMatches(@nullCheck String string,
       [@nullCheck int start = 0]) {
@@ -36,6 +36,7 @@ final class JSString extends Interceptor
     return allMatchesInStringUnchecked(this, string, start);
   }
 
+  @override
   Match? matchAsPrefix(@nullCheck String string, [@nullCheck int start = 0]) {
     int stringLength = JS('!', '#.length', string);
     if (start < 0 || start > stringLength) {
@@ -44,57 +45,65 @@ final class JSString extends Interceptor
     int thisLength = JS('!', '#.length', this);
     if (start + thisLength > stringLength) return null;
     for (int i = 0; i < thisLength; i++) {
-      if (string.codeUnitAt(start + i) != this.codeUnitAt(i)) {
+      if (string.codeUnitAt(start + i) != codeUnitAt(i)) {
         return null;
       }
     }
     return StringMatch(start, string, this);
   }
 
+  @override
   @notNull
   String operator +(@nullCheck String other) {
     return JS<String>('!', r'# + #', this, other);
   }
 
+  @override
   @notNull
   bool endsWith(@nullCheck String other) {
     var otherLength = other.length;
-    var thisLength = this.length;
+    var thisLength = length;
     if (otherLength > thisLength) return false;
     return other == substring(thisLength - otherLength);
   }
 
+  @override
   @notNull
   String replaceAll(Pattern from, @nullCheck String to) {
     return stringReplaceAllUnchecked(this, from, to);
   }
 
+  @override
   @notNull
   String replaceAllMapped(Pattern from, String Function(Match) convert) {
-    return this.splitMapJoin(from, onMatch: convert);
+    return splitMapJoin(from, onMatch: convert);
   }
 
+  @override
   @notNull
   String splitMapJoin(Pattern from,
       {String Function(Match)? onMatch, String Function(String)? onNonMatch}) {
     return stringReplaceAllFuncUnchecked(this, from, onMatch, onNonMatch);
   }
 
+  @override
   @notNull
   String replaceFirst(Pattern from, @nullCheck String to,
       [@nullCheck int startIndex = 0]) {
-    RangeError.checkValueInInterval(startIndex, 0, this.length, "startIndex");
+    RangeError.checkValueInInterval(startIndex, 0, length, "startIndex");
     return stringReplaceFirstUnchecked(this, from, to, startIndex);
   }
 
+  @override
   @notNull
   String replaceFirstMapped(
-      Pattern from, @nullCheck String replace(Match match),
+      Pattern from, String Function(Match match) replace,
       [@nullCheck int startIndex = 0]) {
-    RangeError.checkValueInInterval(startIndex, 0, this.length, "startIndex");
+    RangeError.checkValueInInterval(startIndex, 0, length, "startIndex");
     return stringReplaceFirstMappedUnchecked(this, from, replace, startIndex);
   }
 
+  @override
   @notNull
   List<String> split(@nullCheck Pattern pattern) {
     if (pattern is String) {
@@ -107,10 +116,11 @@ final class JSString extends Interceptor
     }
   }
 
+  @override
   @notNull
   String replaceRange(
       @nullCheck int start, int? end, @nullCheck String replacement) {
-    var e = RangeError.checkValidRange(start, end, this.length);
+    var e = RangeError.checkValidRange(start, end, length);
     return stringReplaceRangeUnchecked(this, start, e, replacement);
   }
 
@@ -134,17 +144,18 @@ final class JSString extends Interceptor
         continue;
       }
       int end = matchStart;
-      result.add(this.substring(start, end));
+      result.add(substring(start, end));
       start = matchEnd;
     }
     if (start < this.length || length > 0) {
       // An empty match at the end of the string does not cause a "" at the end.
       // A non-empty match ending at the end of the string does add a "".
-      result.add(this.substring(start));
+      result.add(substring(start));
     }
     return result;
   }
 
+  @override
   @notNull
   bool startsWith(Pattern pattern, [@nullCheck int index = 0]) {
     // Suppress null check on length and all but the first
@@ -164,17 +175,20 @@ final class JSString extends Interceptor
     return pattern.matchAsPrefix(this, index) != null;
   }
 
+  @override
   @notNull
   String substring(@nullCheck int start, [int? end]) {
-    end = RangeError.checkValidRange(start, end, this.length);
+    end = RangeError.checkValidRange(start, end, length);
     return JS<String>('!', r'#.substring(#, #)', this, start, end);
   }
 
+  @override
   @notNull
   String toLowerCase() {
     return JS<String>('!', r'#.toLowerCase()', this);
   }
 
+  @override
   @notNull
   String toUpperCase() {
     return JS<String>('!', r'#.toUpperCase()', this);
@@ -243,12 +257,12 @@ final class JSString extends Interceptor
   @notNull
   static int _skipLeadingWhitespace(String string, @nullCheck int index) {
     const int SPACE = 0x20;
-    const int CARRIAGE_RETURN = 0x0D;
+    const int carriageReturn = 0x0D;
     var stringLength = string.length;
     while (index < stringLength) {
       int codeUnit = string.codeUnitAt(index);
       if (codeUnit != SPACE &&
-          codeUnit != CARRIAGE_RETURN &&
+          codeUnit != carriageReturn &&
           !_isWhitespace(codeUnit)) {
         break;
       }
@@ -262,11 +276,11 @@ final class JSString extends Interceptor
   @notNull
   static int _skipTrailingWhitespace(String string, @nullCheck int index) {
     const int SPACE = 0x20;
-    const int CARRIAGE_RETURN = 0x0D;
+    const int carriageReturn = 0x0D;
     while (index > 0) {
       int codeUnit = string.codeUnitAt(index - 1);
       if (codeUnit != SPACE &&
-          codeUnit != CARRIAGE_RETURN &&
+          codeUnit != carriageReturn &&
           !_isWhitespace(codeUnit)) {
         break;
       }
@@ -278,6 +292,7 @@ final class JSString extends Interceptor
   // Dart2js can't use JavaScript trim directly,
   // because JavaScript does not trim
   // the NEXT LINE (NEL) character (0x85).
+  @override
   @notNull
   String trim() {
     const int NEL = 0x85;
@@ -308,6 +323,7 @@ final class JSString extends Interceptor
   // Dart2js can't use JavaScript trimLeft directly,
   // because it is not in ES5, so not every browser implements it,
   // and because those that do will not trim the NEXT LINE character (0x85).
+  @override
   @notNull
   String trimLeft() {
     const int NEL = 0x85;
@@ -318,7 +334,7 @@ final class JSString extends Interceptor
     int startIndex = 0;
     if (JS<bool>('!', 'typeof #.trimLeft != "undefined"', this)) {
       result = JS<String>('!', '#.trimLeft()', this);
-      if (result.length == 0) return result;
+      if (result.isEmpty) return result;
       int firstCode = result.codeUnitAt(0);
       if (firstCode == NEL) {
         startIndex = _skipLeadingWhitespace(result, 1);
@@ -335,6 +351,7 @@ final class JSString extends Interceptor
   // Dart2js can't use JavaScript trimRight directly,
   // because it is not in ES5 and because JavaScript does not trim
   // the NEXT LINE character (0x85).
+  @override
   @notNull
   String trimRight() {
     const int NEL = 0x85;
@@ -356,7 +373,7 @@ final class JSString extends Interceptor
       }
     } else {
       result = this;
-      endIndex = _skipTrailingWhitespace(this, this.length);
+      endIndex = _skipTrailingWhitespace(this, length);
     }
 
     if (endIndex == result.length) return result;
@@ -364,10 +381,11 @@ final class JSString extends Interceptor
     return JS<String>('!', r'#.substring(#, #)', result, 0, endIndex);
   }
 
+  @override
   @notNull
   String operator *(@nullCheck int times) {
     if (0 >= times) return '';
-    if (times == 1 || this.length == 0) return this;
+    if (times == 1 || length == 0) return this;
     if (times != JS<int>('!', '# >>> 0', times)) {
       // times >= 2^32. We can't create a string that big.
       throw const OutOfMemoryError();
@@ -383,26 +401,31 @@ final class JSString extends Interceptor
     return result;
   }
 
+  @override
   @notNull
   String padLeft(@nullCheck int width, [String padding = ' ']) {
-    int delta = width - this.length;
+    int delta = width - length;
     if (delta <= 0) return this;
     return padding * delta + this;
   }
 
+  @override
   @notNull
   String padRight(@nullCheck int width, [String padding = ' ']) {
-    int delta = width - this.length;
+    int delta = width - length;
     if (delta <= 0) return this;
     return this + padding * delta;
   }
 
+  @override
   @notNull
   List<int> get codeUnits => CodeUnits(this);
 
+  @override
   @notNull
   Runes get runes => Runes(this);
 
+  @override
   @notNull
   int indexOf(@nullCheck Pattern pattern, [@nullCheck int start = 0]) {
     if (start < 0 || start > this.length) {
@@ -423,10 +446,11 @@ final class JSString extends Interceptor
     return -1;
   }
 
+  @override
   @notNull
-  int lastIndexOf(@nullCheck Pattern pattern, [int? _start]) {
+  int lastIndexOf(@nullCheck Pattern pattern, [int? start]) {
     var length = this.length;
-    var start = _start ?? length;
+    var start = start ?? length;
     if (start < 0 || start > length) {
       throw RangeError.range(start, 0, length);
     }
@@ -443,20 +467,24 @@ final class JSString extends Interceptor
     return -1;
   }
 
+  @override
   @notNull
   bool contains(@nullCheck Pattern other, [@nullCheck int startIndex = 0]) {
-    if (startIndex < 0 || startIndex > this.length) {
-      throw RangeError.range(startIndex, 0, this.length);
+    if (startIndex < 0 || startIndex > length) {
+      throw RangeError.range(startIndex, 0, length);
     }
     return stringContainsUnchecked(this, other, startIndex);
   }
 
+  @override
   @notNull
   bool get isEmpty => JS<int>('!', '#.length', this) == 0;
 
+  @override
   @notNull
   bool get isNotEmpty => !isEmpty;
 
+  @override
   @notNull
   int compareTo(@nullCheck String other) {
     return this == other
@@ -467,15 +495,15 @@ final class JSString extends Interceptor
   }
 
   // Note: if you change this, also change the function [S].
+  @override
   @notNull
   String toString() => this;
 
-  /**
-   * This is the [Jenkins hash function][1] but using masking to keep
-   * values in SMI range.
-   *
-   * [1]: http://en.wikipedia.org/wiki/Jenkins_hash_function
-   */
+  /// This is the [Jenkins hash function][1] but using masking to keep
+  /// values in SMI range.
+  ///
+  /// [1]: http://en.wikipedia.org/wiki/Jenkins_hash_function
+  @override
   @notNull
   int get hashCode {
     // TODO(ahe): This method shouldn't have to use JS. Update when our
@@ -492,12 +520,15 @@ final class JSString extends Interceptor
     return 0x1fffffff & (hash + ((0x00003fff & hash) << 15));
   }
 
+  @override
   @notNull
   Type get runtimeType => String;
 
+  @override
   @notNull
   int get length native;
 
+  @override
   @notNull
   String operator [](@nullCheck int index) {
     // This form of the range check correctly rejects NaN.

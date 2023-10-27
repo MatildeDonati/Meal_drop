@@ -9,10 +9,14 @@ import "dart:_internal" show IterableElementError;
 class StringMatch implements Match {
   const StringMatch(this.start, this.input, this.pattern);
 
+  @override
   int get end => start + pattern.length;
+  @override
   String operator [](int g) => group(g);
+  @override
   int get groupCount => 0;
 
+  @override
   String group(int group) {
     if (group != 0) {
       throw RangeError.value(group);
@@ -20,6 +24,7 @@ class StringMatch implements Match {
     return pattern;
   }
 
+  @override
   List<String> groups(List<int> groups) {
     List<String> result = <String>[];
     for (int g in groups) {
@@ -28,8 +33,11 @@ class StringMatch implements Match {
     return result;
   }
 
+  @override
   final int start;
+  @override
   final String input;
+  @override
   final String pattern;
 }
 
@@ -40,9 +48,11 @@ class StringAllMatchesIterable extends Iterable<Match> {
 
   StringAllMatchesIterable(this._input, this._pattern, this._index);
 
+  @override
   Iterator<Match> get iterator =>
       StringAllMatchesIterator(_input, _pattern, _index);
 
+  @override
   Match get first {
     int index = _input.indexOf(_pattern, _index);
     if (index >= 0) {
@@ -60,6 +70,7 @@ class StringAllMatchesIterator implements Iterator<Match> {
 
   StringAllMatchesIterator(this._input, this._pattern, this._index);
 
+  @override
   bool moveNext() {
     if (_index + _pattern.length > _input.length) {
       _current = null;
@@ -79,11 +90,12 @@ class StringAllMatchesIterator implements Iterator<Match> {
     return true;
   }
 
+  @override
   Match get current => _current as Match;
 }
 
-int stringCombineHashes(int hash, int other_hash) {
-  hash += other_hash;
+int stringCombineHashes(int hash, int otherHash) {
+  hash += otherHash;
   hash += hash << 10;
   hash ^= (hash & 0xFFFFFFFF) >>> 6;
   return hash;

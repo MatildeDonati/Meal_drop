@@ -634,6 +634,7 @@ abstract interface class HeaderValue {
   /// ```plaintext
   /// value; parameter1=value1; parameter2=value2
   /// ```
+  @override
   String toString();
 }
 
@@ -651,7 +652,7 @@ abstract interface class HttpSession implements Map {
   /// Sets a callback that will be called when the session is timed out.
   ///
   /// Calling this again will overwrite the previous value.
-  void set onTimeout(void Function() callback);
+  set onTimeout(void Function() callback);
 
   /// Whether the session has not yet been sent to the client.
   bool get isNew;
@@ -835,6 +836,7 @@ abstract interface class Cookie {
   /// Returns the formatted string representation of the cookie. The
   /// string representation can be used for setting the Cookie or
   /// 'set-cookie' headers
+  @override
   String toString();
 }
 
@@ -1434,7 +1436,7 @@ abstract interface class HttpClient {
   /// set the `'authorization'` header on the request to avoid the overhead
   /// of a failed request, or issues due to missing request payload on retried
   /// request.
-  void set authenticate(
+  set authenticate(
       Future<bool> Function(Uri url, String scheme, String? realm)? f);
 
   /// Add credentials to be used for authorizing HTTP requests.
@@ -1475,7 +1477,7 @@ abstract interface class HttpClient {
   ///   client.close();
   /// }
   /// ```
-  void set connectionFactory(
+  set connectionFactory(
       Future<ConnectionTask<Socket>> Function(
               Uri url, String? proxyHost, int? proxyPort)?
           f);
@@ -1503,7 +1505,7 @@ abstract interface class HttpClient {
   /// The static function [findProxyFromEnvironment] on this class can
   /// be used to implement proxy server resolving based on environment
   /// variables.
-  void set findProxy(String Function(Uri url)? f);
+  set findProxy(String Function(Uri url)? f);
 
   /// Function for resolving the proxy server to be used for a HTTP
   /// connection from the proxy configuration specified through
@@ -1580,7 +1582,7 @@ abstract interface class HttpClient {
   /// If the [Future] completes with `true` the request will be retried
   /// using the updated credentials. Otherwise response processing will
   /// continue normally.
-  void set authenticateProxy(
+  set authenticateProxy(
       Future<bool> Function(
               String host, int port, String scheme, String? realm)?
           f);
@@ -1609,7 +1611,7 @@ abstract interface class HttpClient {
   /// the function that was the value of badCertificateCallback at the time
   /// the request is made, even if the value of badCertificateCallback
   /// has changed since then.
-  void set badCertificateCallback(
+  set badCertificateCallback(
       bool Function(X509Certificate cert, String host, int port)? callback);
 
   /// Sets a callback that will be called when new TLS keys are exchanged with
@@ -1625,7 +1627,7 @@ abstract interface class HttpClient {
   ///     final client = HttpClient();
   ///     client.keyLog = (line) => log.writeAsStringSync(line,
   ///         mode: FileMode.append);
-  void set keyLog(Function(String line)? callback);
+  set keyLog(Function(String line)? callback);
 
   /// Shuts down the HTTP client.
   ///
@@ -1771,9 +1773,11 @@ abstract interface class HttpClientRequest implements IOSink {
   ///
   /// If an error occurs before the response is available, this future will
   /// complete with an error.
+  @override
   Future<HttpClientResponse> get done;
 
   /// Close the request for input. Returns the value of [done].
+  @override
   Future<HttpClientResponse> close();
 
   /// Gets information about the client connection.
@@ -2008,6 +2012,7 @@ class HttpException implements IOException {
 
   const HttpException(this.message, {this.uri});
 
+  @override
   String toString() {
     var b = StringBuffer()
       ..write('HttpException: ')
@@ -2021,12 +2026,15 @@ class HttpException implements IOException {
 }
 
 class RedirectException implements HttpException {
+  @override
   final String message;
   final List<RedirectInfo> redirects;
 
   const RedirectException(this.message, this.redirects);
 
+  @override
   String toString() => "RedirectException: $message";
 
+  @override
   Uri? get uri => redirects.isEmpty ? null : redirects.last.location;
 }

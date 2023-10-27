@@ -9,17 +9,20 @@ part of dart._internal;
 class CastStream<S, T> extends Stream<T> {
   final Stream<S> _source;
   CastStream(this._source);
+  @override
   bool get isBroadcast => _source.isBroadcast;
 
+  @override
   StreamSubscription<T> listen(void Function(T data)? onData,
       {Function? onError, void Function()? onDone, bool? cancelOnError}) {
-    return new CastStreamSubscription<S, T>(
+    return CastStreamSubscription<S, T>(
         _source.listen(null, onDone: onDone, cancelOnError: cancelOnError))
       ..onData(onData)
       ..onError(onError);
   }
 
-  Stream<R> cast<R>() => new CastStream<S, R>(_source);
+  @override
+  Stream<R> cast<R>() => CastStream<S, R>(_source);
 }
 
 class CastStreamSubscription<S, T> implements StreamSubscription<T> {
@@ -38,14 +41,17 @@ class CastStreamSubscription<S, T> implements StreamSubscription<T> {
     _source.onData(_onData);
   }
 
+  @override
   Future cancel() => _source.cancel();
 
+  @override
   void onData(void Function(T data)? handleData) {
     _handleData = handleData == null
         ? null
         : _zone.registerUnaryCallback<dynamic, T>(handleData);
   }
 
+  @override
   void onError(Function? handleError) {
     _source.onError(handleError);
     if (handleError == null) {
@@ -61,7 +67,8 @@ class CastStreamSubscription<S, T> implements StreamSubscription<T> {
     }
   }
 
-  void onDone(void handleDone()?) {
+  @override
+  void onDone(void Function()? handleDone) {
     _source.onDone(handleDone);
   }
 
@@ -85,16 +92,20 @@ class CastStreamSubscription<S, T> implements StreamSubscription<T> {
     _zone.runUnaryGuarded(_handleData!, targetData);
   }
 
+  @override
   void pause([Future? resumeSignal]) {
     _source.pause(resumeSignal);
   }
 
+  @override
   void resume() {
     _source.resume();
   }
 
+  @override
   bool get isPaused => _source.isPaused;
 
+  @override
   Future<E> asFuture<E>([E? futureValue]) => _source.asFuture<E>(futureValue);
 }
 
@@ -103,8 +114,10 @@ class CastStreamTransformer<SS, ST, TS, TT>
   final StreamTransformer<SS, ST> _source;
   CastStreamTransformer(this._source);
 
+  @override
   StreamTransformer<RS, RT> cast<RS, RT>() =>
-      new CastStreamTransformer<SS, ST, RS, RT>(_source);
+      CastStreamTransformer<SS, ST, RS, RT>(_source);
+  @override
   Stream<TT> bind(Stream<TS> stream) =>
       _source.bind(stream.cast<SS>()).cast<TT>();
 }
@@ -113,13 +126,16 @@ class CastConverter<SS, ST, TS, TT> extends Converter<TS, TT> {
   final Converter<SS, ST> _source;
   CastConverter(this._source);
 
+  @override
   TT convert(TS input) => _source.convert(input as SS) as TT;
 
   // cast is inherited from Converter.
 
+  @override
   Stream<TT> bind(Stream<TS> stream) =>
       _source.bind(stream.cast<SS>()).cast<TT>();
 
+  @override
   Converter<RS, RT> cast<RS, RT>() =>
-      new CastConverter<SS, ST, RS, RT>(_source);
+      CastConverter<SS, ST, RS, RT>(_source);
 }

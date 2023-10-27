@@ -6,7 +6,7 @@ part of "internal_patch.dart";
 
 // A print-closure gets a String that should be printed. In general the
 // string is a line, but it may contain "\n" characters.
-typedef void _PrintClosure(String line);
+typedef _PrintClosure = void Function(String line);
 
 @patch
 void printToConsole(String line) {
@@ -14,7 +14,7 @@ void printToConsole(String line) {
 }
 
 void _unsupportedPrint(String line) {
-  throw new UnsupportedError("'print' is not supported");
+  throw UnsupportedError("'print' is not supported");
 }
 
 // _printClosure can be overwritten by the embedder to supply a different

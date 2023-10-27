@@ -30,6 +30,7 @@ part of _interceptors;
 final class JSNumber extends Interceptor implements double {
   const JSNumber();
 
+  @override
   int compareTo(num b) {
     if (b is! num) throw argumentErrorValue(b);
     if (this < b) {
@@ -54,34 +55,41 @@ final class JSNumber extends Interceptor implements double {
     }
   }
 
+  @override
   bool get isNegative => (this == 0) ? (1 / this) < 0 : this < 0;
 
+  @override
   bool get isNaN => JS(
       'returns:bool;effects:none;depends:none;throws:never;gvn:true',
       r'isNaN(#)',
       this);
 
+  @override
   bool get isInfinite {
     return JS('bool', r'# == (1/0)', this) || JS('bool', r'# == (-1/0)', this);
   }
 
+  @override
   bool get isFinite => JS(
       'returns:bool;effects:none;depends:none;throws:never;gvn:true',
       r'isFinite(#)',
       this);
 
+  @override
   JSNumber remainder(num b) {
     if (b is! num) throw argumentErrorValue(b);
     return JS('num', r'# % #', this, b);
   }
 
   // Use invoke_dynamic_specializer instead of inlining.
+  @override
   @pragma('dart2js:noInline')
   JSNumber abs() => JS(
       'returns:num;effects:none;depends:none;throws:never;gvn:true',
       r'Math.abs(#)',
       this);
 
+  @override
   JSNumber get sign => (this > 0
       ? 1
       : this < 0
@@ -91,6 +99,7 @@ final class JSNumber extends Interceptor implements double {
   static const int _MIN_INT32 = -0x80000000;
   static const int _MAX_INT32 = 0x7FFFFFFF;
 
+  @override
   int toInt() {
     if (this >= _MIN_INT32 && this <= _MAX_INT32) {
       // 0 and -0.0 handled here.
@@ -100,11 +109,13 @@ final class JSNumber extends Interceptor implements double {
       return JS('int', r'# + 0', truncateToDouble()); // Converts -0.0 to +0.0.
     }
     // [this] is either NaN, Infinity or -Infinity.
-    throw new UnsupportedError(JS('String', '"" + # + ".toInt()"', this));
+    throw UnsupportedError(JS('String', '"" + # + ".toInt()"', this));
   }
 
+  @override
   int truncate() => toInt();
 
+  @override
   int ceil() {
     if (this >= 0) {
       if (this <= _MAX_INT32) {
@@ -121,9 +132,10 @@ final class JSNumber extends Interceptor implements double {
       return JS('int', r'#', d);
     }
     // [this] is either NaN, Infinity or -Infinity.
-    throw new UnsupportedError(JS('String', '"" + # + ".ceil()"', this));
+    throw UnsupportedError(JS('String', '"" + # + ".ceil()"', this));
   }
 
+  @override
   int floor() {
     if (this >= 0) {
       if (this <= _MAX_INT32) {
@@ -140,9 +152,10 @@ final class JSNumber extends Interceptor implements double {
       return JS('int', r'#', d);
     }
     // [this] is either NaN, Infinity or -Infinity.
-    throw new UnsupportedError(JS('String', '"" + # + ".floor()"', this));
+    throw UnsupportedError(JS('String', '"" + # + ".floor()"', this));
   }
 
+  @override
   int round() {
     if (this > 0) {
       // This path excludes the special cases -0.0, NaN and -Infinity, leaving
@@ -159,13 +172,16 @@ final class JSNumber extends Interceptor implements double {
       return JS('int', r'0 - Math.round(0 - #)', this);
     }
     // [this] is either NaN, Infinity or -Infinity.
-    throw new UnsupportedError(JS('String', '"" + # + ".round()"', this));
+    throw UnsupportedError(JS('String', '"" + # + ".round()"', this));
   }
 
+  @override
   double ceilToDouble() => JS('num', r'Math.ceil(#)', this);
 
+  @override
   double floorToDouble() => JS('num', r'Math.floor(#)', this);
 
+  @override
   double roundToDouble() {
     if (this < 0) {
       return JS('num', r'-Math.round(-#)', this);
@@ -174,39 +190,44 @@ final class JSNumber extends Interceptor implements double {
     }
   }
 
+  @override
   double truncateToDouble() => this < 0 ? ceilToDouble() : floorToDouble();
 
+  @override
   num clamp(lowerLimit, upperLimit) {
     if (lowerLimit is! num) throw argumentErrorValue(lowerLimit);
     if (upperLimit is! num) throw argumentErrorValue(upperLimit);
     if (lowerLimit.compareTo(upperLimit) > 0) {
       throw argumentErrorValue(lowerLimit);
     }
-    if (this.compareTo(lowerLimit) < 0) return lowerLimit;
-    if (this.compareTo(upperLimit) > 0) return upperLimit;
+    if (compareTo(lowerLimit) < 0) return lowerLimit;
+    if (compareTo(upperLimit) > 0) return upperLimit;
     return this;
   }
 
   // The return type is intentionally omitted to avoid type checker warnings
   // from assigning JSNumber to double.
+  @override
   toDouble() => this;
 
+  @override
   String toStringAsFixed(int fractionDigits) {
     checkInt(fractionDigits);
     if (fractionDigits < 0 || fractionDigits > 20) {
-      throw new RangeError.range(fractionDigits, 0, 20, 'fractionDigits');
+      throw RangeError.range(fractionDigits, 0, 20, 'fractionDigits');
     }
     String result = JS('String', r'#.toFixed(#)', this, fractionDigits);
     if (this == 0 && isNegative) return '-$result';
     return result;
   }
 
+  @override
   String toStringAsExponential([int? fractionDigits]) {
     String result;
     if (fractionDigits != null) {
       checkInt(fractionDigits);
       if (fractionDigits < 0 || fractionDigits > 20) {
-        throw new RangeError.range(fractionDigits, 0, 20, 'fractionDigits');
+        throw RangeError.range(fractionDigits, 0, 20, 'fractionDigits');
       }
       result = JS('String', r'#.toExponential(#)', this, fractionDigits);
     } else {
@@ -216,10 +237,11 @@ final class JSNumber extends Interceptor implements double {
     return result;
   }
 
+  @override
   String toStringAsPrecision(int precision) {
     checkInt(precision);
     if (precision < 1 || precision > 21) {
-      throw new RangeError.range(precision, 1, 21, 'precision');
+      throw RangeError.range(precision, 1, 21, 'precision');
     }
     String result = JS('String', r'#.toPrecision(#)', this, precision);
     if (this == 0 && isNegative) return '-$result';
@@ -229,7 +251,7 @@ final class JSNumber extends Interceptor implements double {
   String toRadixString(int radix) {
     checkInt(radix);
     if (radix < 2 || radix > 36) {
-      throw new RangeError.range(radix, 2, 36, 'radix');
+      throw RangeError.range(radix, 2, 36, 'radix');
     }
     String result = JS('String', r'#.toString(#)', this, radix);
     const int rightParenCode = 0x29;
@@ -246,7 +268,7 @@ final class JSNumber extends Interceptor implements double {
         r'/^([\da-z]+)(?:\.([\da-z]+))?\(e\+(\d+)\)$/.exec(#)', result);
     if (match == null) {
       // Then we don't know how to handle it at all.
-      throw new UnsupportedError('Unexpected toString result: $result');
+      throw UnsupportedError('Unexpected toString result: $result');
     }
     result = JS('String', '#', match[1]);
     int exponent = JS('int', '+#', match[3]);
@@ -258,6 +280,7 @@ final class JSNumber extends Interceptor implements double {
   }
 
   // Note: if you change this, also change the function [S].
+  @override
   String toString() {
     if (this == 0 && JS('bool', '(1 / #) < 0', this)) {
       return '-0.0';
@@ -266,6 +289,7 @@ final class JSNumber extends Interceptor implements double {
     }
   }
 
+  @override
   int get hashCode {
     int intValue = JS('int', '# | 0', this);
     // Fast exit for integers in signed 32-bit range. Masking converts -0.0 to 0
@@ -301,28 +325,34 @@ final class JSNumber extends Interceptor implements double {
     return h;
   }
 
+  @override
   JSNumber operator -() => JS('num', r'-#', this);
 
+  @override
   JSNumber operator +(num other) {
     if (other is! num) throw argumentErrorValue(other);
     return JS('num', '# + #', this, other);
   }
 
+  @override
   JSNumber operator -(num other) {
     if (other is! num) throw argumentErrorValue(other);
     return JS('num', '# - #', this, other);
   }
 
+  @override
   double operator /(num other) {
     if (other is! num) throw argumentErrorValue(other);
     return JS('num', '# / #', this, other);
   }
 
+  @override
   JSNumber operator *(num other) {
     if (other is! num) throw argumentErrorValue(other);
     return JS('num', '# * #', this, other);
   }
 
+  @override
   JSNumber operator %(num other) {
     if (other is! num) throw argumentErrorValue(other);
     // Euclidean Modulo.
@@ -338,6 +368,7 @@ final class JSNumber extends Interceptor implements double {
 
   bool _isInt32(value) => JS('bool', '(# | 0) === #', value, value);
 
+  @override
   int operator ~/(num other) {
     if (other is! num) throw argumentErrorValue(other);
     if (JS_GET_FLAG('FALSE')) _tdivFast(other); // Ensure resolution.
@@ -374,7 +405,7 @@ final class JSNumber extends Interceptor implements double {
     }
 
     // [quotient] is either NaN, Infinity or -Infinity.
-    throw new UnsupportedError(
+    throw UnsupportedError(
         'Result of truncating division is $quotient: $this ~/ $other');
   }
 
@@ -457,27 +488,32 @@ final class JSNumber extends Interceptor implements double {
     return JS('JSUInt32', r'(# ^ #) >>> 0', this, other);
   }
 
+  @override
   bool operator <(num other) {
     if (other is! num) throw argumentErrorValue(other);
     return JS('bool', '# < #', this, other);
   }
 
+  @override
   bool operator >(num other) {
     if (other is! num) throw argumentErrorValue(other);
     return JS('bool', '# > #', this, other);
   }
 
+  @override
   bool operator <=(num other) {
     if (other is! num) throw argumentErrorValue(other);
     return JS('bool', '# <= #', this, other);
   }
 
+  @override
   bool operator >=(num other) {
     if (other is! num) throw argumentErrorValue(other);
     return JS('bool', '# >= #', this, other);
   }
 
   // Same as `=> num;`, but without a constant-pool object.
+  @override
   Type get runtimeType => createRuntimeType(TYPE_REF<num>());
 }
 
@@ -508,19 +544,24 @@ final class JSInt extends JSNumber implements int, TrustedGetRuntimeType {
   @override
   JSInt operator -() => JS('int', r'-#', this);
 
+  @override
   bool get isEven => (this & 1) == 0;
 
+  @override
   bool get isOdd => (this & 1) == 1;
 
+  @override
   int toUnsigned(int width) {
     return this & ((1 << width) - 1);
   }
 
+  @override
   int toSigned(int width) {
     int signMask = 1 << (width - 1);
     return (this & (signMask - 1)) - (this & signMask);
   }
 
+  @override
   int get bitLength {
     int nonneg = JS<int>('int', '#', this < 0 ? -this - 1 : this);
     int wordBits = 32;
@@ -536,6 +577,7 @@ final class JSInt extends JSNumber implements int, TrustedGetRuntimeType {
   }
 
   // Returns pow(this, e) % m.
+  @override
   int modPow(int e, int m) {
     if (e is! int) {
       throw ArgumentError.value(e, 'exponent', 'not an integer');
@@ -644,7 +686,7 @@ final class JSInt extends JSNumber implements int, TrustedGetRuntimeType {
       }
     } while (u != 0);
     if (!inv) return s * v;
-    if (v != 1) throw new Exception('Not coprime');
+    if (v != 1) throw Exception('Not coprime');
     if (d < 0) {
       d += x;
       if (d < 0) d += x;
@@ -656,27 +698,29 @@ final class JSInt extends JSNumber implements int, TrustedGetRuntimeType {
   }
 
   // Returns 1/this % m, with m > 0.
+  @override
   int modInverse(int m) {
     if (m is! int) {
-      throw new ArgumentError.value(m, 'modulus', 'not an integer');
+      throw ArgumentError.value(m, 'modulus', 'not an integer');
     }
-    if (m <= 0) throw new RangeError.range(m, 1, null, 'modulus');
+    if (m <= 0) throw RangeError.range(m, 1, null, 'modulus');
     if (m == 1) return 0;
     int t = this;
     if ((t < 0) || (t >= m)) t %= m;
     if (t == 1) return 1;
     if ((t == 0) || (t.isEven && m.isEven)) {
-      throw new Exception('Not coprime');
+      throw Exception('Not coprime');
     }
     return _binaryGcd(m, t, true);
   }
 
   // Returns gcd of abs(this) and abs(other).
+  @override
   int gcd(int other) {
     if (other is! int) {
-      throw new ArgumentError.value(other, 'other', 'not an integer');
+      throw ArgumentError.value(other, 'other', 'not an integer');
     }
-    int x = this.abs();
+    int x = abs();
     int y = other.abs();
     if (x == 0) return y;
     if (y == 0) return x;
@@ -685,8 +729,10 @@ final class JSInt extends JSNumber implements int, TrustedGetRuntimeType {
   }
 
   // Same as `=> int;`, but without a constant-pool object.
+  @override
   Type get runtimeType => createRuntimeType(TYPE_REF<int>());
 
+  @override
   int operator ~() => JS('JSUInt32', r'(~#) >>> 0', this);
 }
 
@@ -696,6 +742,7 @@ final class JSNumNotInt extends JSNumber
   const JSNumNotInt();
 
   // Same as `=> double;`, but without a constant-pool object.
+  @override
   Type get runtimeType => createRuntimeType(TYPE_REF<double>());
 }
 

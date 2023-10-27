@@ -17,6 +17,7 @@ class bool {
   @pragma("vm:external-name", "Bool_hasEnvironment")
   external const factory bool.hasEnvironment(String name);
 
+  @override
   @patch
   int get hashCode => this ? 1231 : 1237;
 

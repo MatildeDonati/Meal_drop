@@ -5,7 +5,6 @@ library dart.dom.web_audio;
 
 import 'dart:async';
 import 'dart:collection' hide LinkedList, LinkedListEntry;
-import 'dart:_internal' show FixedLengthListMixin;
 import 'dart:html';
 import 'dart:html_common';
 import 'dart:_native_typed_data';
@@ -33,7 +32,7 @@ import 'dart:_js_helper'
 class AnalyserNode extends AudioNode {
   // To suppress missing implicit constructor warnings.
   factory AnalyserNode._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory AnalyserNode(BaseAudioContext context, [Map? options]) {
@@ -82,7 +81,7 @@ class AnalyserNode extends AudioNode {
 class AudioBuffer extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory AudioBuffer._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory AudioBuffer(Map options) {
@@ -118,7 +117,7 @@ class AudioBuffer extends JavaScriptObject {
 class AudioBufferSourceNode extends AudioScheduledSourceNode {
   // To suppress missing implicit constructor warnings.
   factory AudioBufferSourceNode._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory AudioBufferSourceNode(BaseAudioContext context, [Map? options]) {
@@ -168,7 +167,7 @@ class AudioBufferSourceNode extends AudioScheduledSourceNode {
 class AudioContext extends BaseAudioContext {
   // To suppress missing implicit constructor warnings.
   factory AudioContext._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   /// Checks if this type is supported on the current platform.
@@ -191,6 +190,7 @@ class AudioContext extends BaseAudioContext {
   factory AudioContext() => JS('AudioContext',
       'new (window.AudioContext || window.webkitAudioContext)()');
 
+  @override
   GainNode createGain() {
     if (JS('bool', '#.createGain !== undefined', this)) {
       return JS('GainNode', '#.createGain()', this);
@@ -199,6 +199,7 @@ class AudioContext extends BaseAudioContext {
     }
   }
 
+  @override
   ScriptProcessorNode createScriptProcessor(
       [int? bufferSize,
       int? numberOfInputChannels,
@@ -223,6 +224,7 @@ class AudioContext extends BaseAudioContext {
     }
   }
 
+  @override
   Future<AudioBuffer> decodeAudioData(ByteBuffer audioData,
       [DecodeSuccessCallback? successCallback,
       DecodeErrorCallback? errorCallback]) {
@@ -242,7 +244,7 @@ class AudioContext extends BaseAudioContext {
       successCallback!.call(decodedData);
     }
 
-    final nullErrorString =
+    const nullErrorString =
         '[AudioContext.decodeAudioData] completed with a null error.';
 
     void error(DomException? error) {
@@ -316,7 +318,7 @@ class AudioContext extends BaseAudioContext {
 class AudioDestinationNode extends AudioNode {
   // To suppress missing implicit constructor warnings.
   factory AudioDestinationNode._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   int? get maxChannelCount native;
@@ -329,7 +331,7 @@ class AudioDestinationNode extends AudioNode {
 class AudioListener extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory AudioListener._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   AudioParam? get forwardX native;
@@ -362,7 +364,7 @@ class AudioListener extends JavaScriptObject {
 class AudioNode extends EventTarget {
   // To suppress missing implicit constructor warnings.
   factory AudioNode._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   int? get channelCount native;
@@ -386,7 +388,7 @@ class AudioNode extends EventTarget {
   @JSName('connect')
   AudioNode? _connect(destination, [int? output, int? input]) native;
 
-  void disconnect([destination_OR_output, int? output, int? input]) native;
+  void disconnect([destinationOrOutput, int? output, int? input]) native;
 
   void connectNode(AudioNode destination, [int output = 0, int input = 0]) {
     _connect(destination, output, input);
@@ -404,7 +406,7 @@ class AudioNode extends EventTarget {
 class AudioParam extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory AudioParam._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   num? get defaultValue native;
@@ -440,23 +442,28 @@ class AudioParam extends JavaScriptObject {
 class AudioParamMap extends JavaScriptObject with MapMixin<String, dynamic> {
   // To suppress missing implicit constructor warnings.
   factory AudioParamMap._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   Map? _getItem(String key) =>
       convertNativeToDart_Dictionary(JS('', '#.get(#)', this, key));
 
+  @override
   void addAll(Map<String, dynamic> other) {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
+  @override
   bool containsValue(dynamic value) => values.any((e) => e == value);
 
+  @override
   bool containsKey(dynamic key) => _getItem(key) != null;
 
+  @override
   Map? operator [](dynamic key) => _getItem(key);
 
-  void forEach(void f(String key, dynamic value)) {
+  @override
+  void forEach(void Function(String key, dynamic value) f) {
     var entries = JS('', '#.entries()', this);
     while (true) {
       var entry = JS('', '#.next()', entries);
@@ -466,38 +473,47 @@ class AudioParamMap extends JavaScriptObject with MapMixin<String, dynamic> {
     }
   }
 
+  @override
   Iterable<String> get keys {
     final keys = <String>[];
     forEach((k, v) => keys.add(k));
     return keys;
   }
 
+  @override
   Iterable<Map> get values {
     final values = <Map>[];
     forEach((k, v) => values.add(v));
     return values;
   }
 
+  @override
   int get length => JS('int', '#.size', this);
 
+  @override
   bool get isEmpty => length == 0;
 
+  @override
   bool get isNotEmpty => !isEmpty;
 
+  @override
   void operator []=(String key, dynamic value) {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
-  dynamic putIfAbsent(String key, dynamic ifAbsent()) {
-    throw new UnsupportedError("Not supported");
+  @override
+  dynamic putIfAbsent(String key, dynamic Function() ifAbsent) {
+    throw UnsupportedError("Not supported");
   }
 
+  @override
   String remove(dynamic key) {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
+  @override
   void clear() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 }
 // Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
@@ -508,7 +524,7 @@ class AudioParamMap extends JavaScriptObject with MapMixin<String, dynamic> {
 class AudioProcessingEvent extends Event {
   // To suppress missing implicit constructor warnings.
   factory AudioProcessingEvent._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory AudioProcessingEvent(String type, Map eventInitDict) {
@@ -535,11 +551,11 @@ class AudioProcessingEvent extends Event {
 class AudioScheduledSourceNode extends AudioNode {
   // To suppress missing implicit constructor warnings.
   factory AudioScheduledSourceNode._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   static const EventStreamProvider<Event> endedEvent =
-      const EventStreamProvider<Event>('ended');
+      EventStreamProvider<Event>('ended');
 
   @JSName('start')
   void start2([num? when]) native;
@@ -556,7 +572,7 @@ class AudioScheduledSourceNode extends AudioNode {
 class AudioTrack extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory AudioTrack._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   bool? get enabled native;
@@ -581,11 +597,11 @@ class AudioTrack extends JavaScriptObject {
 class AudioTrackList extends EventTarget {
   // To suppress missing implicit constructor warnings.
   factory AudioTrackList._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   static const EventStreamProvider<Event> changeEvent =
-      const EventStreamProvider<Event>('change');
+      EventStreamProvider<Event>('change');
 
   int? get length native;
 
@@ -603,7 +619,7 @@ class AudioTrackList extends EventTarget {
 class AudioWorkletGlobalScope extends WorkletGlobalScope {
   // To suppress missing implicit constructor warnings.
   factory AudioWorkletGlobalScope._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   num? get currentTime native;
@@ -620,7 +636,7 @@ class AudioWorkletGlobalScope extends WorkletGlobalScope {
 class AudioWorkletNode extends AudioNode {
   // To suppress missing implicit constructor warnings.
   factory AudioWorkletNode._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory AudioWorkletNode(BaseAudioContext context, String name,
@@ -650,7 +666,7 @@ class AudioWorkletNode extends AudioNode {
 class AudioWorkletProcessor extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory AudioWorkletProcessor._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 }
 // Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
@@ -661,7 +677,7 @@ class AudioWorkletProcessor extends JavaScriptObject {
 class BaseAudioContext extends EventTarget {
   // To suppress missing implicit constructor warnings.
   factory BaseAudioContext._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   num? get currentTime native;
@@ -758,7 +774,7 @@ class BaseAudioContext extends EventTarget {
 class BiquadFilterNode extends AudioNode {
   // To suppress missing implicit constructor warnings.
   factory BiquadFilterNode._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory BiquadFilterNode(BaseAudioContext context, [Map? options]) {
@@ -796,7 +812,7 @@ class BiquadFilterNode extends AudioNode {
 class ChannelMergerNode extends AudioNode {
   // To suppress missing implicit constructor warnings.
   factory ChannelMergerNode._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory ChannelMergerNode(BaseAudioContext context, [Map? options]) {
@@ -819,7 +835,7 @@ class ChannelMergerNode extends AudioNode {
 class ChannelSplitterNode extends AudioNode {
   // To suppress missing implicit constructor warnings.
   factory ChannelSplitterNode._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory ChannelSplitterNode(BaseAudioContext context, [Map? options]) {
@@ -842,7 +858,7 @@ class ChannelSplitterNode extends AudioNode {
 class ConstantSourceNode extends AudioScheduledSourceNode {
   // To suppress missing implicit constructor warnings.
   factory ConstantSourceNode._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory ConstantSourceNode(BaseAudioContext context, [Map? options]) {
@@ -867,7 +883,7 @@ class ConstantSourceNode extends AudioScheduledSourceNode {
 class ConvolverNode extends AudioNode {
   // To suppress missing implicit constructor warnings.
   factory ConvolverNode._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory ConvolverNode(BaseAudioContext context, [Map? options]) {
@@ -898,7 +914,7 @@ class ConvolverNode extends AudioNode {
 class DelayNode extends AudioNode {
   // To suppress missing implicit constructor warnings.
   factory DelayNode._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory DelayNode(BaseAudioContext context, [Map? options]) {
@@ -923,7 +939,7 @@ class DelayNode extends AudioNode {
 class DynamicsCompressorNode extends AudioNode {
   // To suppress missing implicit constructor warnings.
   factory DynamicsCompressorNode._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory DynamicsCompressorNode(BaseAudioContext context, [Map? options]) {
@@ -961,7 +977,7 @@ class DynamicsCompressorNode extends AudioNode {
 class GainNode extends AudioNode {
   // To suppress missing implicit constructor warnings.
   factory GainNode._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory GainNode(BaseAudioContext context, [Map? options]) {
@@ -986,7 +1002,7 @@ class GainNode extends AudioNode {
 class IirFilterNode extends AudioNode {
   // To suppress missing implicit constructor warnings.
   factory IirFilterNode._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory IirFilterNode(BaseAudioContext context, Map options) {
@@ -1007,7 +1023,7 @@ class IirFilterNode extends AudioNode {
 class MediaElementAudioSourceNode extends AudioNode {
   // To suppress missing implicit constructor warnings.
   factory MediaElementAudioSourceNode._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory MediaElementAudioSourceNode(BaseAudioContext context, Map options) {
@@ -1030,7 +1046,7 @@ class MediaElementAudioSourceNode extends AudioNode {
 class MediaStreamAudioDestinationNode extends AudioNode {
   // To suppress missing implicit constructor warnings.
   factory MediaStreamAudioDestinationNode._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory MediaStreamAudioDestinationNode(BaseAudioContext context,
@@ -1061,7 +1077,7 @@ class MediaStreamAudioDestinationNode extends AudioNode {
 class MediaStreamAudioSourceNode extends AudioNode {
   // To suppress missing implicit constructor warnings.
   factory MediaStreamAudioSourceNode._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory MediaStreamAudioSourceNode(BaseAudioContext context, Map options) {
@@ -1084,7 +1100,7 @@ class MediaStreamAudioSourceNode extends AudioNode {
 class OfflineAudioCompletionEvent extends Event {
   // To suppress missing implicit constructor warnings.
   factory OfflineAudioCompletionEvent._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory OfflineAudioCompletionEvent(String type, Map eventInitDict) {
@@ -1107,7 +1123,7 @@ class OfflineAudioCompletionEvent extends Event {
 class OfflineAudioContext extends BaseAudioContext {
   // To suppress missing implicit constructor warnings.
   factory OfflineAudioContext._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory OfflineAudioContext(numberOfChannels_OR_options,
@@ -1125,16 +1141,16 @@ class OfflineAudioContext extends BaseAudioContext {
           convertDartToNative_Dictionary(numberOfChannels_OR_options);
       return OfflineAudioContext._create_2(options_1);
     }
-    throw new ArgumentError("Incorrect number or type of arguments");
+    throw ArgumentError("Incorrect number or type of arguments");
   }
   static OfflineAudioContext _create_1(
-          numberOfChannels_OR_options, numberOfFrames, sampleRate) =>
+          numberofchannelsOrOptions, numberOfFrames, sampleRate) =>
       JS('OfflineAudioContext', 'new OfflineAudioContext(#,#,#)',
-          numberOfChannels_OR_options, numberOfFrames, sampleRate);
-  static OfflineAudioContext _create_2(numberOfChannels_OR_options) => JS(
+          numberofchannelsOrOptions, numberOfFrames, sampleRate);
+  static OfflineAudioContext _create_2(numberofchannelsOrOptions) => JS(
       'OfflineAudioContext',
       'new OfflineAudioContext(#)',
-      numberOfChannels_OR_options);
+      numberofchannelsOrOptions);
 
   int? get length native;
 
@@ -1153,7 +1169,7 @@ class OfflineAudioContext extends BaseAudioContext {
 class OscillatorNode extends AudioScheduledSourceNode {
   // To suppress missing implicit constructor warnings.
   factory OscillatorNode._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory OscillatorNode(BaseAudioContext context, [Map? options]) {
@@ -1186,7 +1202,7 @@ class OscillatorNode extends AudioScheduledSourceNode {
 class PannerNode extends AudioNode {
   // To suppress missing implicit constructor warnings.
   factory PannerNode._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory PannerNode(BaseAudioContext context, [Map? options]) {
@@ -1257,7 +1273,7 @@ class PannerNode extends AudioNode {
 class PeriodicWave extends JavaScriptObject {
   // To suppress missing implicit constructor warnings.
   factory PeriodicWave._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory PeriodicWave(BaseAudioContext context, [Map? options]) {
@@ -1280,30 +1296,26 @@ class PeriodicWave extends JavaScriptObject {
 class ScriptProcessorNode extends AudioNode {
   // To suppress missing implicit constructor warnings.
   factory ScriptProcessorNode._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
-  /**
-   * Static factory designed to expose `audioprocess` events to event
-   * handlers that are not necessarily instances of [ScriptProcessorNode].
-   *
-   * See [EventStreamProvider] for usage information.
-   */
+  /// Static factory designed to expose `audioprocess` events to event
+  /// handlers that are not necessarily instances of [ScriptProcessorNode].
+  ///
+  /// See [EventStreamProvider] for usage information.
   static const EventStreamProvider<AudioProcessingEvent> audioProcessEvent =
-      const EventStreamProvider<AudioProcessingEvent>('audioprocess');
+      EventStreamProvider<AudioProcessingEvent>('audioprocess');
 
   int? get bufferSize native;
 
   void setEventListener(EventListener eventListener) native;
 
   /// Stream of `audioprocess` events handled by this [ScriptProcessorNode].
-/**
-   * Get a Stream that fires events when AudioProcessingEvents occur.
-   * This particular stream is special in that it only allows one listener to a
-   * given stream. Converting the returned [Stream.asBroadcastStream] will
-   * likely ruin the soft-real-time properties which these events are
-   * fired and can be processed.
-   */
+/// Get a Stream that fires events when AudioProcessingEvents occur.
+/// This particular stream is special in that it only allows one listener to a
+/// given stream. Converting the returned [Stream.asBroadcastStream] will
+/// likely ruin the soft-real-time properties which these events are
+/// fired and can be processed.
   Stream<AudioProcessingEvent> get onAudioProcess =>
       audioProcessEvent.forTarget(this);
 }
@@ -1315,7 +1327,7 @@ class ScriptProcessorNode extends AudioNode {
 class StereoPannerNode extends AudioNode {
   // To suppress missing implicit constructor warnings.
   factory StereoPannerNode._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory StereoPannerNode(BaseAudioContext context, [Map? options]) {
@@ -1340,7 +1352,7 @@ class StereoPannerNode extends AudioNode {
 class WaveShaperNode extends AudioNode {
   // To suppress missing implicit constructor warnings.
   factory WaveShaperNode._() {
-    throw new UnsupportedError("Not supported");
+    throw UnsupportedError("Not supported");
   }
 
   factory WaveShaperNode(BaseAudioContext context, [Map? options]) {

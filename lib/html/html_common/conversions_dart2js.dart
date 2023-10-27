@@ -45,9 +45,9 @@ _convertDartToNative_Value(Object? value) {
   if (value is Map) return convertDartToNative_Dictionary(value);
   if (value is List) {
     var array = JS('var', '[]');
-    value.forEach((element) {
+    for (var element in value) {
       JS('void', '#.push(#)', array, _convertDartToNative_Value(element));
-    });
+    }
     value = array;
   }
   return value;
@@ -58,7 +58,7 @@ _convertDartToNative_Value(Object? value) {
 ///
 /// This method requires that the values within the map are either maps
 /// themselves, lists, or do not need a conversion.
-convertDartToNative_Dictionary(Map? dict, [void postCreate(Object? f)?]) {
+convertDartToNative_Dictionary(Map? dict, [void Function(Object? f)? postCreate]) {
   if (dict == null) return null;
   var object = JS('var', '{}');
   if (postCreate != null) {
@@ -70,11 +70,9 @@ convertDartToNative_Dictionary(Map? dict, [void postCreate(Object? f)?]) {
   return object;
 }
 
-/**
- * Ensures that the input is a JavaScript Array.
- *
- * Creates a new JavaScript array if necessary, otherwise returns the original.
- */
+/// Ensures that the input is a JavaScript Array.
+///
+/// Creates a new JavaScript array if necessary, otherwise returns the original.
 List convertDartToNative_StringArray(List<String> input) {
   // TODO(sra).  Implement this.
   return input;
@@ -82,7 +80,7 @@ List convertDartToNative_StringArray(List<String> input) {
 
 DateTime convertNativeToDart_DateTime(date) {
   int millisSinceEpoch = JS('int', '#.getTime()', date);
-  return new DateTime.fromMillisecondsSinceEpoch(millisSinceEpoch, isUtc: true);
+  return DateTime.fromMillisecondsSinceEpoch(millisSinceEpoch, isUtc: true);
 }
 
 convertDartToNative_DateTime(DateTime date) {
@@ -90,16 +88,18 @@ convertDartToNative_DateTime(DateTime date) {
 }
 
 convertDartToNative_PrepareForStructuredClone(value) =>
-    new _StructuredCloneDart2Js()
+    _StructuredCloneDart2Js()
         .convertDartToNative_PrepareForStructuredClone(value);
 
 convertNativeToDart_AcceptStructuredClone(object, {mustCopy = false}) =>
-    new _AcceptStructuredCloneDart2Js()
+    _AcceptStructuredCloneDart2Js()
         .convertNativeToDart_AcceptStructuredClone(object, mustCopy: mustCopy);
 
 class _StructuredCloneDart2Js extends _StructuredClone {
+  @override
   JSObject newJsObject() => JS('JSObject', '{}');
 
+  @override
   void forEachObjectKey(object, action(key, value)) {
     for (final key
         in JS('returns:JSExtendableArray;new:true', 'Object.keys(#)', object)) {
@@ -107,12 +107,17 @@ class _StructuredCloneDart2Js extends _StructuredClone {
     }
   }
 
+  @override
   void putIntoObject(object, key, value) =>
       JS('void', '#[#] = #', object, key, value);
 
+  @override
   newJsMap() => JS('var', '{}');
+  @override
   putIntoMap(map, key, value) => JS('void', '#[#] = #', map, key, value);
+  @override
   newJsList(length) => JS('JSExtendableArray', 'new Array(#)', length);
+  @override
   cloneNotRequired(e) => (e is NativeByteBuffer ||
       e is NativeTypedData ||
       e is MessagePort ||
@@ -121,9 +126,12 @@ class _StructuredCloneDart2Js extends _StructuredClone {
 
 class _AcceptStructuredCloneDart2Js extends _AcceptStructuredClone {
   List newJsList(length) => JS('JSExtendableArray', 'new Array(#)', length);
+  @override
   List newDartList(length) => newJsList(length);
+  @override
   bool identicalInJs(a, b) => identical(a, b);
 
+  @override
   void forEachJsField(object, action(key, value)) {
     for (final key in JS('JSExtendableArray', 'Object.keys(#)', object)) {
       action(key, JS('var', '#[#]', object, key));
@@ -151,6 +159,6 @@ const String _serializedScriptValue = 'num|String|bool|'
     // TODO(sra): Add Date, RegExp.
     ;
 const annotation_Creates_SerializedScriptValue =
-    const Creates(_serializedScriptValue);
+    Creates(_serializedScriptValue);
 const annotation_Returns_SerializedScriptValue =
-    const Returns(_serializedScriptValue);
+    Returns(_serializedScriptValue);

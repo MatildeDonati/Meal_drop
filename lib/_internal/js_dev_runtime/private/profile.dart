@@ -53,7 +53,7 @@ List<List<Object>> getDynamicStats() {
   // performance hit is clear to users.
 
   var callMethodStats = <String, _MethodStats>{};
-  if (_callMethodRecords.length > 0) {
+  if (_callMethodRecords.isNotEmpty) {
     // Ratio between total record count and sampled records count.
     var recordRatio = _totalCallRecords / _callMethodRecords.length;
     for (var record in _callMethodRecords) {

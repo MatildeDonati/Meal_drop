@@ -2,10 +2,6 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import "dart:_internal" show patch;
-import 'dart:typed_data';
-import 'dart:isolate';
-import 'dart:typed_data';
 
 // NativeType is not private, because it is used in type arguments.
 // NativeType is abstract because it not used with const constructors in

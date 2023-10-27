@@ -4,8 +4,7 @@
 
 // Patch file for dart:core classes.
 import 'dart:_internal' hide Symbol, LinkedList, LinkedListEntry;
-import 'dart:_internal' as _symbol_dev;
-import 'dart:_interceptors';
+import 'dart:_internal' as symbol_dev;
 import 'dart:_js_helper'
     show
         assertUnreachable,
@@ -38,11 +37,11 @@ import 'dart:typed_data' show Endian, Uint8List, Uint16List;
 part 'bigint_patch.dart';
 
 String _symbolToString(Symbol symbol) =>
-    _symbol_dev.Symbol.getName(symbol as _symbol_dev.Symbol);
+    symbol_dev.Symbol.getName(symbol as symbol_dev.Symbol);
 
 Map<String, dynamic>? _symbolMapToStringMap(Map<Symbol, dynamic>? map) {
   if (map == null) return null;
-  var result = new Map<String, dynamic>();
+  var result = Map<String, dynamic>();
   map.forEach((Symbol key, value) {
     result[_symbolToString(key)] = value;
   });
@@ -55,26 +54,32 @@ int identityHashCode(Object? object) => objectHashCode(object);
 // Patch for Object implementation.
 @patch
 class Object {
+  @override
   @patch
   bool operator ==(Object other) => identical(this, other);
 
+  @override
   @patch
   int get hashCode => Primitives.objectHashCode(this);
 
+  @override
   @patch
   String toString() => Primitives.objectToHumanReadableString(this);
 
+  @override
   @patch
   dynamic noSuchMethod(Invocation invocation) {
-    throw new NoSuchMethodError.withInvocation(this, invocation);
+    throw NoSuchMethodError.withInvocation(this, invocation);
   }
 
+  @override
   @patch
   Type get runtimeType => getRuntimeTypeOfDartObject(this);
 }
 
 @patch
 class Null {
+  @override
   @patch
   int get hashCode => super.hashCode;
 }
@@ -187,11 +192,11 @@ class _FinalizationRegistryWrapper<T> implements Finalizer<T> {
 class int {
   @patch
   static int parse(String source,
-      {int? radix, @deprecated int onError(String source)?}) {
+      {int? radix, int Function(String source)? onError}) {
     int? value = tryParse(source, radix: radix);
     if (value != null) return value;
     if (onError != null) return onError(source);
-    throw new FormatException(source);
+    throw FormatException(source);
   }
 
   @patch
@@ -204,11 +209,11 @@ class int {
 class double {
   @patch
   static double parse(String source,
-      [@deprecated double onError(String source)?]) {
+      [double Function(String source)? onError]) {
     double? value = tryParse(source);
     if (value != null) return value;
     if (onError != null) return onError(source);
-    throw new FormatException('Invalid double', source);
+    throw FormatException('Invalid double', source);
   }
 
   @patch
@@ -262,9 +267,9 @@ class DateTime {
       int second, int millisecond, int microsecond, bool isUtc)
       // checkBool is manually inlined here because dart2js doesn't inline it
       // and [isUtc] is usually a constant.
-      : this.isUtc = isUtc is bool
+      : isUtc = isUtc is bool
             ? isUtc
-            : throw new ArgumentError.value(isUtc, 'isUtc'),
+            : throw ArgumentError.value(isUtc, 'isUtc'),
         _value = checkInt(Primitives.valueFromDecomposedDate(
             year,
             month,
@@ -314,25 +319,25 @@ class DateTime {
 
   @patch
   Duration get timeZoneOffset {
-    if (isUtc) return new Duration();
-    return new Duration(minutes: Primitives.getTimeZoneOffsetInMinutes(this));
+    if (isUtc) return const Duration();
+    return Duration(minutes: Primitives.getTimeZoneOffsetInMinutes(this));
   }
 
   @patch
   DateTime add(Duration duration) {
-    return new DateTime._withValue(_value + duration.inMilliseconds,
+    return DateTime._withValue(_value + duration.inMilliseconds,
         isUtc: isUtc);
   }
 
   @patch
   DateTime subtract(Duration duration) {
-    return new DateTime._withValue(_value - duration.inMilliseconds,
+    return DateTime._withValue(_value - duration.inMilliseconds,
         isUtc: isUtc);
   }
 
   @patch
   Duration difference(DateTime other) {
-    return new Duration(milliseconds: _value - other.millisecondsSinceEpoch);
+    return Duration(milliseconds: _value - other.millisecondsSinceEpoch);
   }
 
   @patch
@@ -368,6 +373,7 @@ class DateTime {
   @patch
   int get weekday => Primitives.getWeekday(this);
 
+  @override
   @patch
   bool operator ==(Object other) =>
       other is DateTime &&
@@ -424,8 +430,8 @@ class List<E> {
   @patch
   factory List.filled(int length, E fill, {bool growable = false}) {
     var result = growable
-        ? new JSArray<E>.growable(length)
-        : new JSArray<E>.fixed(length);
+        ? JSArray<E>.growable(length)
+        : JSArray<E>.fixed(length);
     if (length != 0 && fill != null) {
       // TODO(sra): Consider using `Array.fill`.
       for (int i = 0; i < result.length; i++) {
@@ -439,7 +445,7 @@ class List<E> {
 
   @patch
   factory List.empty({bool growable = false}) {
-    return growable ? new JSArray<E>.growable(0) : new JSArray<E>.fixed(0);
+    return growable ? JSArray<E>.growable(0) : JSArray<E>.fixed(0);
   }
 
   @patch
@@ -484,11 +490,11 @@ class List<E> {
   }
 
   @patch
-  factory List.generate(int length, E generator(int index),
+  factory List.generate(int length, E Function(int index) generator,
       {bool growable = true}) {
     final result = growable
-        ? new JSArray<E>.growable(length)
-        : new JSArray<E>.fixed(length);
+        ? JSArray<E>.growable(length)
+        : JSArray<E>.fixed(length);
     for (int i = 0; i < length; i++) {
       result[i] = generator(i);
     }
@@ -552,23 +558,25 @@ class String {
 
   static String _stringFromIterable(
       Iterable<int> charCodes, int start, int? end) {
-    if (start < 0) throw new RangeError.range(start, 0, charCodes.length);
+    if (start < 0) throw RangeError.range(start, 0, charCodes.length);
     if (end != null && end < start) {
-      throw new RangeError.range(end, start, charCodes.length);
+      throw RangeError.range(end, start, charCodes.length);
     }
     var it = charCodes.iterator;
     for (int i = 0; i < start; i++) {
       if (!it.moveNext()) {
-        throw new RangeError.range(start, 0, i);
+        throw RangeError.range(start, 0, i);
       }
     }
     var list = [];
     if (end == null) {
-      while (it.moveNext()) list.add(it.current);
+      while (it.moveNext()) {
+        list.add(it.current);
+      }
     } else {
       for (int i = start; i < end; i++) {
         if (!it.moveNext()) {
-          throw new RangeError.range(end, start, i);
+          throw RangeError.range(end, start, i);
         }
         list.add(it.current);
       }
@@ -579,6 +587,7 @@ class String {
 
 @patch
 class bool {
+  @override
   @patch
   int get hashCode => super.hashCode;
 
@@ -602,7 +611,7 @@ class RegExp {
           bool caseSensitive = true,
           bool unicode = false,
           bool dotAll = false}) =>
-      new JSSyntaxRegExp(source,
+      JSSyntaxRegExp(source,
           multiLine: multiLine,
           caseSensitive: caseSensitive,
           unicode: unicode,
@@ -637,7 +646,7 @@ class StringBuffer {
 
   @patch
   void writeCharCode(int charCode) {
-    _writeString(new String.fromCharCode(charCode));
+    _writeString(String.fromCharCode(charCode));
   }
 
   @patch
@@ -655,6 +664,7 @@ class StringBuffer {
     _contents = "";
   }
 
+  @override
   @patch
   String toString() => Primitives.flattenString(_contents);
 
@@ -700,19 +710,20 @@ class NoSuchMethodError {
 
   NoSuchMethodError(Object? receiver, Symbol memberName,
       List? positionalArguments, Map<Symbol, dynamic>? namedArguments,
-      [List? existingArgumentNames = null])
+      [List? existingArgumentNames])
       : this._(receiver, memberName, positionalArguments, namedArguments,
             existingArgumentNames);
 
   NoSuchMethodError._(Object? receiver, Symbol memberName,
       List? positionalArguments, Map<Symbol, dynamic>? namedArguments,
-      [List? existingArgumentNames = null])
+      [List? existingArgumentNames])
       : _receiver = receiver,
         _memberName = memberName,
         _arguments = positionalArguments,
         _namedArguments = namedArguments,
         _existingArgumentNames = existingArgumentNames;
 
+  @override
   @patch
   String toString() {
     StringBuffer sb = StringBuffer('');
@@ -741,13 +752,13 @@ class NoSuchMethodError {
     var existingArgumentNames = _existingArgumentNames;
     if (existingArgumentNames == null) {
       return "NoSuchMethodError: method not found: '$memberName'\n"
-          "Receiver: ${receiverText}\n"
+          "Receiver: $receiverText\n"
           "Arguments: [$actualParameters]";
     } else {
       String formalParameters = existingArgumentNames.join(', ');
       return "NoSuchMethodError: incorrect number of arguments passed to "
           "method named '$memberName'\n"
-          "Receiver: ${receiverText}\n"
+          "Receiver: $receiverText\n"
           "Tried calling: $memberName($actualParameters)\n"
           "Found: $memberName($formalParameters)";
     }
@@ -758,6 +769,7 @@ class _CompileTimeError extends Error {
   final String _errorMsg;
   // TODO(sigmund): consider calling `JS('', 'debugger')`.
   _CompileTimeError(this._errorMsg);
+  @override
   String toString() => _errorMsg;
 }
 
@@ -794,7 +806,7 @@ class _Uri {
   // Matches a String that _uriEncodes to itself regardless of the kind of
   // component.  This corresponds to [_unreservedTable], i.e. characters that
   // are not encoded by any encoding table.
-  static final RegExp _needsNoEncoding = new RegExp(r'^[\-\.0-9A-Z_a-z~]*$');
+  static final RegExp _needsNoEncoding = RegExp(r'^[\-\.0-9A-Z_a-z~]*$');
 
   /// This is the internal implementation of JavaScript's encodeURI function.
   /// It encodes all characters in the string [text] except for those
@@ -808,7 +820,7 @@ class _Uri {
 
     // Encode the string into bytes then generate an ASCII only string
     // by percent encoding selected bytes.
-    StringBuffer result = new StringBuffer('');
+    StringBuffer result = StringBuffer('');
     var bytes = encoding.encode(text);
     for (int i = 0; i < bytes.length; i++) {
       int byte = bytes[i];
@@ -858,6 +870,7 @@ class _DuplicatedFieldInitializerError extends Error {
 
   _DuplicatedFieldInitializerError(this._name);
 
+  @override
   toString() => "Error: field '$_name' is already initialized.";
 }
 

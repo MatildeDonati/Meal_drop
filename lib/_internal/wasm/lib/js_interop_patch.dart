@@ -2,7 +2,6 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'dart:_internal' show patch;
 import 'dart:_js_helper' hide JS;
 import 'dart:_js_helper' as js_helper;
 import 'dart:_js_types' as js_types;

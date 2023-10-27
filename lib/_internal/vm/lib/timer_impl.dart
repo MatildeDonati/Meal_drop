@@ -131,7 +131,7 @@ class _Timer implements Timer {
 
   // Timers are ordered by wakeup time. Timers with a timeout value of > 0 do
   // end up on the TimerHeap. Timers with a timeout of 0 are queued in a list.
-  static final _heap = new _TimerHeap();
+  static final _heap = _TimerHeap();
   static _Timer? _firstZeroTimer;
   static _Timer _lastZeroTimer = _sentinelTimer;
 
@@ -178,7 +178,7 @@ class _Timer implements Timer {
       : _id = _nextId();
 
   static _Timer _createTimer(
-      void callback(Timer timer), int milliSeconds, bool repeating) {
+      void Function(Timer timer) callback, int milliSeconds, bool repeating) {
     // Negative timeouts are treated as if 0 timeout.
     if (milliSeconds < 0) {
       milliSeconds = 0;
@@ -191,18 +191,18 @@ class _Timer implements Timer {
     int wakeupTime = (milliSeconds == 0) ? now : (now + 1 + milliSeconds);
 
     _Timer timer =
-        new _Timer._internal(callback, wakeupTime, milliSeconds, repeating);
+        _Timer._internal(callback, wakeupTime, milliSeconds, repeating);
     // Enqueue this newly created timer in the appropriate structure and
     // notify if necessary.
     timer._enqueue();
     return timer;
   }
 
-  factory _Timer(int milliSeconds, void callback(Timer timer)) {
+  factory _Timer(int milliSeconds, void Function(Timer timer) callback) {
     return _createTimer(callback, milliSeconds, false);
   }
 
-  factory _Timer.periodic(int milliSeconds, void callback(Timer timer)) {
+  factory _Timer.periodic(int milliSeconds, void Function(Timer timer) callback) {
     return _createTimer(callback, milliSeconds, true);
   }
 
@@ -214,13 +214,16 @@ class _Timer implements Timer {
     return _id - other._id;
   }
 
+  @override
   bool get isActive => _callback != null;
 
+  @override
   int get tick => _tick;
 
   // Cancels a set timer. The timer is removed from the timer heap if it is a
   // non-zero timer. Zero timers are kept in the list as they need to consume
   // the corresponding pending message.
+  @override
   void cancel() {
     _callback = null;
     // Only heap timers are really removed. Zero timers need to consume their
@@ -360,7 +363,7 @@ class _Timer implements Timer {
     }
 
     // Fast exit if no pending timers.
-    if (pendingTimers.length == 0) {
+    if (pendingTimers.isEmpty) {
       return;
     }
 
@@ -420,7 +423,7 @@ class _Timer implements Timer {
     List<_Timer> pendingTimers;
     if (msg == _ZERO_EVENT) {
       pendingTimers = _queueFromZeroEvent();
-      assert(pendingTimers.length > 0);
+      assert(pendingTimers.isNotEmpty);
     } else {
       assert(msg == _TIMEOUT_EVENT);
       _scheduledWakeupTime = 0; // Consumed the last scheduled wakeup now.
@@ -474,11 +477,11 @@ class _Timer implements Timer {
 
   // The Timer factory registered with the dart:async library by the embedder.
   static Timer _factory(
-      int milliSeconds, void callback(Timer timer), bool repeating) {
+      int milliSeconds, void Function(Timer timer) callback, bool repeating) {
     if (repeating) {
-      return new _Timer.periodic(milliSeconds, callback);
+      return _Timer.periodic(milliSeconds, callback);
     }
-    return new _Timer(milliSeconds, callback);
+    return _Timer(milliSeconds, callback);
   }
 }
 

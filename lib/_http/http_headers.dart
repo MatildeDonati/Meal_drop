@@ -42,8 +42,10 @@ class _HttpHeaders implements HttpHeaders {
     }
   }
 
+  @override
   List<String>? operator [](String name) => _headers[_validateField(name)];
 
+  @override
   String? value(String name) {
     name = _validateField(name);
     List<String>? values = _headers[name];
@@ -55,6 +57,7 @@ class _HttpHeaders implements HttpHeaders {
     return values[0];
   }
 
+  @override
   void add(String name, value, {bool preserveHeaderCase = false}) {
     _checkMutable();
     String lowercaseName = _validateField(name);
@@ -77,6 +80,7 @@ class _HttpHeaders implements HttpHeaders {
     }
   }
 
+  @override
   void set(String name, Object value, {bool preserveHeaderCase = false}) {
     _checkMutable();
     String lowercaseName = _validateField(name);
@@ -94,6 +98,7 @@ class _HttpHeaders implements HttpHeaders {
     _addAll(lowercaseName, value);
   }
 
+  @override
   void remove(String name, Object value) {
     _checkMutable();
     name = _validateField(name);
@@ -111,6 +116,7 @@ class _HttpHeaders implements HttpHeaders {
     }
   }
 
+  @override
   void removeAll(String name) {
     _checkMutable();
     name = _validateField(name);
@@ -118,6 +124,7 @@ class _HttpHeaders implements HttpHeaders {
     _originalHeaderNames?.remove(name);
   }
 
+  @override
   void forEach(void Function(String name, List<String> values) action) {
     _headers.forEach((String name, List<String> values) {
       String originalName = _originalHeaderName(name);
@@ -125,14 +132,17 @@ class _HttpHeaders implements HttpHeaders {
     });
   }
 
+  @override
   void noFolding(String name) {
     name = _validateField(name);
     (_noFoldingHeaders ??= <String>[]).add(name);
   }
 
+  @override
   bool get persistentConnection => _persistentConnection;
 
-  void set persistentConnection(bool persistentConnection) {
+  @override
+  set persistentConnection(bool persistentConnection) {
     _checkMutable();
     if (persistentConnection == _persistentConnection) return;
     final originalName = _originalHeaderName(HttpHeaders.connectionHeader);
@@ -141,7 +151,7 @@ class _HttpHeaders implements HttpHeaders {
         remove(HttpHeaders.connectionHeader, "close");
       } else {
         if (_contentLength < 0) {
-          throw HttpException(
+          throw const HttpException(
               "Trying to set 'Connection: Keep-Alive' on HTTP 1.0 headers with "
               "no ContentLength");
         }
@@ -157,14 +167,16 @@ class _HttpHeaders implements HttpHeaders {
     _persistentConnection = persistentConnection;
   }
 
+  @override
   int get contentLength => _contentLength;
 
-  void set contentLength(int contentLength) {
+  @override
+  set contentLength(int contentLength) {
     _checkMutable();
     if (protocolVersion == "1.0" &&
         persistentConnection &&
         contentLength == -1) {
-      throw HttpException(
+      throw const HttpException(
           "Trying to clear ContentLength on HTTP 1.0 headers with "
           "'Connection: Keep-Alive' set");
     }
@@ -181,12 +193,14 @@ class _HttpHeaders implements HttpHeaders {
     }
   }
 
+  @override
   bool get chunkedTransferEncoding => _chunkedTransferEncoding;
 
-  void set chunkedTransferEncoding(bool chunkedTransferEncoding) {
+  @override
+  set chunkedTransferEncoding(bool chunkedTransferEncoding) {
     _checkMutable();
     if (chunkedTransferEncoding && protocolVersion == "1.0") {
-      throw HttpException(
+      throw const HttpException(
           "Trying to set 'Transfer-Encoding: Chunked' on HTTP 1.0 headers");
     }
     if (chunkedTransferEncoding == _chunkedTransferEncoding) return;
@@ -204,22 +218,27 @@ class _HttpHeaders implements HttpHeaders {
     _chunkedTransferEncoding = chunkedTransferEncoding;
   }
 
+  @override
   String? get host => _host;
 
-  void set host(String? host) {
+  @override
+  set host(String? host) {
     _checkMutable();
     _host = host;
     _updateHostHeader();
   }
 
+  @override
   int? get port => _port;
 
-  void set port(int? port) {
+  @override
+  set port(int? port) {
     _checkMutable();
     _port = port;
     _updateHostHeader();
   }
 
+  @override
   DateTime? get ifModifiedSince {
     List<String>? values = _headers[HttpHeaders.ifModifiedSinceHeader];
     if (values != null) {
@@ -233,7 +252,8 @@ class _HttpHeaders implements HttpHeaders {
     return null;
   }
 
-  void set ifModifiedSince(DateTime? ifModifiedSince) {
+  @override
+  set ifModifiedSince(DateTime? ifModifiedSince) {
     _checkMutable();
     if (ifModifiedSince == null) {
       _headers.remove(HttpHeaders.ifModifiedSinceHeader);
@@ -244,6 +264,7 @@ class _HttpHeaders implements HttpHeaders {
     }
   }
 
+  @override
   DateTime? get date {
     List<String>? values = _headers[HttpHeaders.dateHeader];
     if (values != null) {
@@ -257,7 +278,8 @@ class _HttpHeaders implements HttpHeaders {
     return null;
   }
 
-  void set date(DateTime? date) {
+  @override
+  set date(DateTime? date) {
     _checkMutable();
     if (date == null) {
       _headers.remove(HttpHeaders.dateHeader);
@@ -268,6 +290,7 @@ class _HttpHeaders implements HttpHeaders {
     }
   }
 
+  @override
   DateTime? get expires {
     List<String>? values = _headers[HttpHeaders.expiresHeader];
     if (values != null) {
@@ -281,7 +304,8 @@ class _HttpHeaders implements HttpHeaders {
     return null;
   }
 
-  void set expires(DateTime? expires) {
+  @override
+  set expires(DateTime? expires) {
     _checkMutable();
     if (expires == null) {
       _headers.remove(HttpHeaders.expiresHeader);
@@ -292,6 +316,7 @@ class _HttpHeaders implements HttpHeaders {
     }
   }
 
+  @override
   ContentType? get contentType {
     var values = _headers[HttpHeaders.contentTypeHeader];
     if (values != null) {
@@ -301,7 +326,8 @@ class _HttpHeaders implements HttpHeaders {
     }
   }
 
-  void set contentType(ContentType? contentType) {
+  @override
+  set contentType(ContentType? contentType) {
     _checkMutable();
     if (contentType == null) {
       _headers.remove(HttpHeaders.contentTypeHeader);
@@ -310,6 +336,7 @@ class _HttpHeaders implements HttpHeaders {
     }
   }
 
+  @override
   void clear() {
     _checkMutable();
     _headers.clear();
@@ -376,11 +403,11 @@ class _HttpHeaders implements HttpHeaders {
   void _addContentLength(String name, value) {
     if (value is int) {
       if (value < 0) {
-        throw HttpException("Content-Length must contain only digits");
+        throw const HttpException("Content-Length must contain only digits");
       }
     } else if (value is String) {
       if (!_digitsValidator.hasMatch(value)) {
-        throw HttpException("Content-Length must contain only digits");
+        throw const HttpException("Content-Length must contain only digits");
       }
       value = int.parse(value);
     } else {
@@ -495,7 +522,7 @@ class _HttpHeaders implements HttpHeaders {
   }
 
   void _checkMutable() {
-    if (!_mutable) throw HttpException("HTTP headers are not mutable");
+    if (!_mutable) throw const HttpException("HTTP headers are not mutable");
   }
 
   void _updateHostHeader() {
@@ -555,6 +582,7 @@ class _HttpHeaders implements HttpHeaders {
     });
   }
 
+  @override
   String toString() {
     StringBuffer sb = StringBuffer();
     _headers.forEach((String name, List<String> values) {
@@ -689,7 +717,7 @@ class _HeaderValue implements HeaderValue {
   _HeaderValue([this._value = "", Map<String, String?> parameters = const {}]) {
     // TODO(40614): Remove once non-nullability is sound.
     Map<String, String?>? nullableParameters = parameters;
-    if (nullableParameters != null && nullableParameters.isNotEmpty) {
+    if (nullableParameters.isNotEmpty) {
       _parameters = HashMap<String, String?>.from(nullableParameters);
     }
   }
@@ -704,11 +732,13 @@ class _HeaderValue implements HeaderValue {
     return result;
   }
 
+  @override
   String get value => _value;
 
   Map<String, String?> _ensureParameters() =>
       _parameters ??= <String, String?>{};
 
+  @override
   Map<String, String?> get parameters =>
       _unmodifiableParameters ??= UnmodifiableMapView(_ensureParameters());
 
@@ -716,7 +746,7 @@ class _HeaderValue implements HeaderValue {
     if (token.isEmpty) {
       return false;
     }
-    final delimiters = "\"(),/:;<=>?@[]{}";
+    const delimiters = "\"(),/:;<=>?@[]{}";
     for (int i = 0; i < token.length; i++) {
       int codeUnit = token.codeUnitAt(i);
       if (codeUnit <= 32 || codeUnit >= 127 || delimiters.contains(token[i])) {
@@ -726,6 +756,7 @@ class _HeaderValue implements HeaderValue {
     return true;
   }
 
+  @override
   String toString() {
     StringBuffer sb = StringBuffer();
     sb.write(_value);
@@ -790,7 +821,7 @@ class _HeaderValue implements HeaderValue {
 
     void expect(String expected) {
       if (done() || s[index] != expected) {
-        throw HttpException("Failed to parse header value");
+        throw const HttpException("Failed to parse header value");
       }
       index++;
     }
@@ -829,7 +860,7 @@ class _HeaderValue implements HeaderValue {
             var char = s[index];
             if (char == "\\") {
               if (index + 1 == s.length) {
-                throw HttpException("Failed to parse header value");
+                throw const HttpException("Failed to parse header value");
               }
               if (preserveBackslash && s[index + 1] != "\"") {
                 sb.write(char);
@@ -843,7 +874,7 @@ class _HeaderValue implements HeaderValue {
             sb.write(char);
             index++;
           }
-          throw HttpException("Failed to parse header value");
+          throw const HttpException("Failed to parse header value");
         } else {
           // Parse non-quoted value.
           return parseValue();
@@ -900,17 +931,15 @@ class _ContentType extends _HeaderValue implements ContentType {
     _value = "$_primaryType/$_subType";
     // TODO(40614): Remove once non-nullability is sound.
     Map<String, String?>? nullableParameters = parameters;
-    if (nullableParameters != null) {
-      var parameterMap = _ensureParameters();
-      nullableParameters.forEach((String key, String? value) {
-        String lowerCaseKey = key.toLowerCase();
-        if (lowerCaseKey == "charset") {
-          value = value?.toLowerCase();
-        }
-        parameterMap[lowerCaseKey] = value;
-      });
-    }
-    if (charset != null) {
+    var parameterMap = _ensureParameters();
+    nullableParameters.forEach((String key, String? value) {
+      String lowerCaseKey = key.toLowerCase();
+      if (lowerCaseKey == "charset") {
+        value = value?.toLowerCase();
+      }
+      parameterMap[lowerCaseKey] = value;
+    });
+      if (charset != null) {
       _ensureParameters()["charset"] = charset.toLowerCase();
     }
   }
@@ -931,24 +960,34 @@ class _ContentType extends _HeaderValue implements ContentType {
     return result;
   }
 
+  @override
   String get mimeType => '$primaryType/$subType';
 
+  @override
   String get primaryType => _primaryType;
 
+  @override
   String get subType => _subType;
 
+  @override
   String? get charset => parameters["charset"];
 }
 
 class _Cookie implements Cookie {
   String _name;
   String _value;
+  @override
   DateTime? expires;
+  @override
   int? maxAge;
+  @override
   String? domain;
   String? _path;
+  @override
   bool httpOnly = false;
+  @override
   bool secure = false;
+  @override
   SameSite? sameSite;
 
   _Cookie(String name, String value)
@@ -956,21 +995,27 @@ class _Cookie implements Cookie {
         _value = _validateValue(value),
         httpOnly = true;
 
+  @override
   String get name => _name;
+  @override
   String get value => _value;
 
+  @override
   String? get path => _path;
 
+  @override
   set path(String? newPath) {
     _validatePath(newPath);
     _path = newPath;
   }
 
+  @override
   set name(String newName) {
     _validateName(newName);
     _name = newName;
   }
 
+  @override
   set value(String newValue) {
     _validateValue(newValue);
     _value = newValue;
@@ -1050,7 +1095,7 @@ class _Cookie implements Cookie {
             "lax" => SameSite.lax,
             "none" => SameSite.none,
             "strict" => SameSite.strict,
-            _ => throw HttpException(
+            _ => throw const HttpException(
                 'SameSite value should be one of Lax, Strict or None.')
           };
         }
@@ -1069,6 +1114,7 @@ class _Cookie implements Cookie {
     parseAttributes();
   }
 
+  @override
   String toString() {
     StringBuffer sb = StringBuffer();
     sb

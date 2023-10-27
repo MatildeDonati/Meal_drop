@@ -48,20 +48,25 @@ abstract class _HashFieldBase implements _HashAbstractBase {
   // least one unoccupied entry.
   // NOTE: When maps are deserialized, their _index and _hashMask is regenerated
   // eagerly by _regenerateIndex.
+  @override
   Uint32List _index = _uninitializedIndex;
 
   // Cached in-place mask for the hash pattern component.
+  @override
   int _hashMask = _HashBase._UNINITIALIZED_HASH_MASK;
 
   // Fixed-length list of keys (set) or key/value at even/odd indices (map).
   //
   // Can be either a mutable or immutable list.
+  @override
   List<Object?> _data = _uninitializedData;
 
   // Length of _data that is used (i.e., keys + values for a map).
+  @override
   int _usedData = 0;
 
   // Number of deleted keys.
+  @override
   int _deletedKeys = 0;
 
   // Note: All fields are initialized in a single constructor so that the VM
@@ -72,61 +77,72 @@ abstract class _HashFieldBase implements _HashAbstractBase {
 
 // Base class for VM-internal classes; keep in sync with _HashFieldBase.
 abstract class _HashVMBase implements _HashAbstractBase {
+  @override
   @pragma("vm:recognized", "other")
   @pragma("vm:exact-result-type", "dart:typed_data#_Uint32List")
   @pragma("vm:prefer-inline")
   @pragma("vm:external-name", "LinkedHashBase_getIndex")
   external Uint32List get _index;
+  @override
   @pragma("vm:recognized", "other")
   @pragma("vm:prefer-inline")
   @pragma("vm:external-name", "LinkedHashBase_setIndex")
-  external void set _index(Uint32List value);
+  external set _index(Uint32List value);
 
+  @override
   @pragma("vm:recognized", "other")
   @pragma("vm:exact-result-type", "dart:core#_Smi")
   @pragma("vm:prefer-inline")
   @pragma("vm:external-name", "LinkedHashBase_getHashMask")
   external int get _hashMask;
+  @override
   @pragma("vm:recognized", "other")
   @pragma("vm:prefer-inline")
   @pragma("vm:external-name", "LinkedHashBase_setHashMask")
-  external void set _hashMask(int value);
+  external set _hashMask(int value);
 
+  @override
   @pragma("vm:recognized", "other")
   @pragma("vm:exact-result-type", "dart:core#_List")
   @pragma("vm:prefer-inline")
   @pragma("vm:external-name", "LinkedHashBase_getData")
   external List<Object?> get _data;
+  @override
   @pragma("vm:recognized", "other")
   @pragma("vm:prefer-inline")
   @pragma("vm:external-name", "LinkedHashBase_setData")
-  external void set _data(List<Object?> value);
+  external set _data(List<Object?> value);
 
+  @override
   @pragma("vm:recognized", "other")
   @pragma("vm:exact-result-type", "dart:core#_Smi")
   @pragma("vm:prefer-inline")
   @pragma("vm:external-name", "LinkedHashBase_getUsedData")
   external int get _usedData;
+  @override
   @pragma("vm:recognized", "other")
   @pragma("vm:prefer-inline")
   @pragma("vm:external-name", "LinkedHashBase_setUsedData")
-  external void set _usedData(int value);
+  external set _usedData(int value);
 
+  @override
   @pragma("vm:recognized", "other")
   @pragma("vm:exact-result-type", "dart:core#_Smi")
   @pragma("vm:prefer-inline")
   @pragma("vm:external-name", "LinkedHashBase_getDeletedKeys")
   external int get _deletedKeys;
+  @override
   @pragma("vm:recognized", "other")
   @pragma("vm:prefer-inline")
   @pragma("vm:external-name", "LinkedHashBase_setDeletedKeys")
-  external void set _deletedKeys(int value);
+  external set _deletedKeys(int value);
 }
 
 // Base class for immutable VM-internal classes.
 abstract class _HashVMImmutableBase extends _HashVMBase
     implements _HashAbstractImmutableBase {
   // The data is an immutable list rather than a mutable list.
+  @override
   @pragma("vm:recognized", "other")
   @pragma("vm:exact-result-type", "dart:core#_ImmutableList")
   @pragma("vm:prefer-inline")
@@ -134,17 +150,20 @@ abstract class _HashVMImmutableBase extends _HashVMBase
   external List<Object?> get _data;
 
   // The index is nullable rather than not nullable.
+  @override
   @pragma("vm:recognized", "other")
   @pragma("vm:prefer-inline")
   @pragma("vm:external-name", "ImmutableLinkedHashBase_getIndex")
   external Uint32List? get _indexNullable;
+  @override
   Uint32List get _index => _indexNullable!;
 
   // Uses store-release atomic.
+  @override
   @pragma("vm:recognized", "other")
   @pragma("vm:prefer-inline")
   @pragma("vm:external-name", "ImmutableLinkedHashBase_setIndexStoreRelease")
-  external void set _index(Uint32List value);
+  external set _index(Uint32List value);
 }
 
 // This mixin can be applied to _HashFieldBase or _HashVMBase (for
@@ -243,18 +262,23 @@ abstract class _EqualsAndHashCode {
 }
 
 mixin _OperatorEqualsAndHashCode implements _EqualsAndHashCode {
+  @override
   int _hashCode(Object? e) => e.hashCode;
+  @override
   bool _equals(Object? e1, Object? e2) => e1 == e2;
 }
 
 mixin _IdenticalAndIdentityHashCode implements _EqualsAndHashCode {
+  @override
   int _hashCode(Object? e) => identityHashCode(e);
+  @override
   bool _equals(Object? e1, Object? e2) => identical(e1, e2);
 }
 
 mixin _OperatorEqualsAndCanonicalHashCode implements _EqualsAndHashCode {
   static final int cidSymbol = ClassID.getID(#a);
 
+  @override
   int _hashCode(Object? e) {
     final int cid = ClassID.getID(e);
     if (cid < ClassID.numPredefinedCids || cid == cidSymbol) {
@@ -263,6 +287,7 @@ mixin _OperatorEqualsAndCanonicalHashCode implements _EqualsAndHashCode {
     return identityHashCode(e);
   }
 
+  @override
   bool _equals(Object? e1, Object? e2) => e1 == e2;
 }
 
@@ -272,15 +297,17 @@ mixin _CustomEqualsAndHashCode<K> implements _EqualsAndHashCode {
 
   // For backwards compatibility, we must allow any key here that is accepted
   // dynamically by the [_hasher] and [_equality] functions.
-  int _hashCode(Object? e) => (_hasher as Function)(e);
-  bool _equals(Object? e1, Object? e2) => (_equality as Function)(e1, e2);
+  @override
+  int _hashCode(Object? e) => (_hasher)(e);
+  @override
+  bool _equals(Object? e1, Object? e2) => (_equality)(e1, e2);
 }
 
-final _uninitializedIndex = new Uint32List(_HashBase._UNINITIALIZED_INDEX_SIZE);
+final _uninitializedIndex = Uint32List(_HashBase._UNINITIALIZED_INDEX_SIZE);
 // Note: not const. Const arrays are made immutable by having a different class
 // than regular arrays that throws on element assignment. We want the data field
 // in maps and sets to be monomorphic.
-final _uninitializedData = new List.filled(0, null);
+final _uninitializedData = List.filled(0, null);
 
 // VM-internalized implementation of a default-constructed LinkedHashMap. Map
 // literals also create instances of this class.
@@ -325,12 +352,13 @@ base class _ConstMap<K, V> extends _HashVMImmutableBase
         _ImmutableLinkedHashMapMixin<K, V>
     implements LinkedHashMap<K, V> {
   factory _ConstMap._uninstantiable() {
-    throw new UnsupportedError("_ConstMap can only be allocated by the VM");
+    throw UnsupportedError("_ConstMap can only be allocated by the VM");
   }
 }
 
 mixin _ImmutableLinkedHashMapMixin<K, V>
     on _LinkedHashMapMixin<K, V>, _HashAbstractImmutableBase {
+  @override
   bool containsKey(Object? key) {
     if (_indexNullable == null) {
       _createIndex();
@@ -338,6 +366,7 @@ mixin _ImmutableLinkedHashMapMixin<K, V>
     return super.containsKey(key);
   }
 
+  @override
   V? operator [](Object? key) {
     if (_indexNullable == null) {
       _createIndex();
@@ -348,7 +377,7 @@ mixin _ImmutableLinkedHashMapMixin<K, V>
   void _createIndex() {
     final size =
         _roundUpToPowerOfTwo(max(_data.length, _HashBase._INITIAL_INDEX_SIZE));
-    final newIndex = new Uint32List(size);
+    final newIndex = Uint32List(size);
     final hashMask = _HashBase._indexSizeToHashMask(size);
     assert(_hashMask == hashMask);
 
@@ -374,8 +403,10 @@ mixin _ImmutableLinkedHashMapMixin<K, V>
     _index = newIndex;
   }
 
+  @override
   Iterable<K> get keys =>
       _CompactIterableImmutable<K>(this, _data, _usedData, -2, 2);
+  @override
   Iterable<V> get values =>
       _CompactIterableImmutable<V>(this, _data, _usedData, -1, 2);
 }
@@ -394,6 +425,7 @@ int _roundUpToPowerOfTwo(int x) {
 }
 
 mixin _LinkedHashMapMixin<K, V> on _HashBase, _EqualsAndHashCode {
+  @override
   int get length => (_usedData >> 1) - _deletedKeys;
   bool get isEmpty => length == 0;
   bool get isNotEmpty => !isEmpty;
@@ -427,9 +459,9 @@ mixin _LinkedHashMapMixin<K, V> on _HashBase, _EqualsAndHashCode {
     }
     assert(size & (size - 1) == 0);
     assert(_HashBase._UNUSED_PAIR == 0);
-    _index = new Uint32List(size);
+    _index = Uint32List(size);
     _hashMask = hashMask;
-    _data = new List.filled(size, null);
+    _data = List.filled(size, null);
     _usedData = 0;
     _deletedKeys = 0;
     if (oldData != null) {
@@ -443,9 +475,10 @@ mixin _LinkedHashMapMixin<K, V> on _HashBase, _EqualsAndHashCode {
     }
   }
 
+  @override
   void _regenerateIndex() {
     _index =
-        _data.length == 0 ? _uninitializedIndex : new Uint32List(_data.length);
+        _data.isEmpty ? _uninitializedIndex : Uint32List(_data.length);
     assert(_hashMask == _HashBase._UNINITIALIZED_HASH_MASK);
     _hashMask = _HashBase._indexSizeToHashMask(_index.length);
     final int tmpUsed = _usedData;
@@ -520,7 +553,7 @@ mixin _LinkedHashMapMixin<K, V> on _HashBase, _EqualsAndHashCode {
     }
   }
 
-  V putIfAbsent(K key, V ifAbsent()) {
+  V putIfAbsent(K key, V Function() ifAbsent) {
     final int size = _index.length;
     final int fullHash = _hashCode(key);
     final int hashPattern = _HashBase._hashPattern(fullHash, _hashMask, size);
@@ -613,7 +646,7 @@ mixin _LinkedHashMapMixin<K, V> on _HashBase, _EqualsAndHashCode {
     return false;
   }
 
-  void forEach(void action(K key, V value)) {
+  void forEach(void Function(K key, V value) action) {
     final data = _data;
     final checkSum = _checkSum;
     final len = _usedData;
@@ -658,12 +691,17 @@ base class _CompactLinkedCustomHashMap<K, V> extends _HashFieldBase
         _CustomEqualsAndHashCode<K>,
         _LinkedHashMapMixin<K, V>
     implements LinkedHashMap<K, V> {
+  @override
   final bool Function(K, K) _equality;
+  @override
   final int Function(K) _hasher;
   final bool Function(Object?) _validKey;
 
+  @override
   bool containsKey(Object? o) => _validKey(o) ? super.containsKey(o) : false;
+  @override
   V? operator [](Object? o) => _validKey(o) ? super[o] : null;
+  @override
   V? remove(Object? o) => _validKey(o) ? super.remove(o) : null;
 
   _CompactLinkedCustomHashMap(
@@ -684,11 +722,15 @@ class _CompactIterable<E> extends Iterable<E> {
   _CompactIterable(
       this._table, this._data, this._len, this._offset, this._step);
 
+  @override
   Iterator<E> get iterator =>
       _CompactIterator<E>(_table, _data, _len, _offset, _step);
 
+  @override
   int get length => _table.length;
+  @override
   bool get isEmpty => length == 0;
+  @override
   bool get isNotEmpty => !isEmpty;
 }
 
@@ -705,9 +747,10 @@ class _CompactIterator<E> implements Iterator<E> {
   _CompactIterator(this._table, this._data, this._len, this._offset, this._step)
       : _checkSum = _table._checkSum;
 
+  @override
   bool moveNext() {
     if (_table._isModifiedSince(_data, _checkSum)) {
-      throw new ConcurrentModificationError(_table);
+      throw ConcurrentModificationError(_table);
     }
     do {
       _offset += _step;
@@ -721,6 +764,7 @@ class _CompactIterator<E> implements Iterator<E> {
     }
   }
 
+  @override
   E get current => _current as E;
 }
 
@@ -740,11 +784,15 @@ class _CompactIterableImmutable<E> extends Iterable<E> {
   _CompactIterableImmutable(
       this._table, this._data, this._len, this._offset, this._step);
 
+  @override
   Iterator<E> get iterator =>
       _CompactIteratorImmutable<E>(_table, _data, _len, _offset, _step);
 
+  @override
   int get length => _table.length;
+  @override
   bool get isEmpty => length == 0;
+  @override
   bool get isNotEmpty => !isEmpty;
 }
 
@@ -761,6 +809,7 @@ class _CompactIteratorImmutable<E> implements Iterator<E> {
   _CompactIteratorImmutable(
       this._table, this._data, this._len, this._offset, this._step);
 
+  @override
   bool moveNext() {
     _offset += _step;
     if (_offset < _len) {
@@ -772,12 +821,14 @@ class _CompactIteratorImmutable<E> implements Iterator<E> {
     }
   }
 
+  @override
   E get current => _current as E;
 }
 
 mixin _LinkedHashSetMixin<E> on _HashBase, _EqualsAndHashCode {
   bool get isEmpty => length == 0;
   bool get isNotEmpty => !isEmpty;
+  @override
   int get length => _usedData - _deletedKeys;
 
   E get first {
@@ -823,9 +874,9 @@ mixin _LinkedHashSetMixin<E> on _HashBase, _EqualsAndHashCode {
       size = _HashBase._INITIAL_INDEX_SIZE;
       hashMask = _HashBase._indexSizeToHashMask(size);
     }
-    _index = new Uint32List(size);
+    _index = Uint32List(size);
     _hashMask = hashMask;
-    _data = new List.filled(size >> 1, null);
+    _data = List.filled(size >> 1, null);
     _usedData = 0;
     _deletedKeys = 0;
     if (oldData != null) {
@@ -934,10 +985,11 @@ mixin _LinkedHashSetMixin<E> on _HashBase, _EqualsAndHashCode {
   Iterator<E> get iterator =>
       _CompactIterator<E>(this, _data, _usedData, -1, 1);
 
+  @override
   void _regenerateIndex() {
     final size =
         _roundUpToPowerOfTwo(max(_data.length, _HashBase._INITIAL_INDEX_SIZE));
-    _index = _data.length == 0 ? _uninitializedIndex : new Uint32List(size);
+    _index = _data.isEmpty ? _uninitializedIndex : Uint32List(size);
     assert(_hashMask == _HashBase._UNINITIALIZED_HASH_MASK);
     _hashMask = _HashBase._indexSizeToHashMask(_index.length);
     _rehash();
@@ -993,19 +1045,22 @@ base class _ConstSet<E> extends _HashVMImmutableBase
         _ImmutableLinkedHashSetMixin<E>
     implements LinkedHashSet<E> {
   factory _ConstSet._uninstantiable() {
-    throw new UnsupportedError("_ConstSet can only be allocated by the VM");
+    throw UnsupportedError("_ConstSet can only be allocated by the VM");
   }
 
+  @override
   Set<R> cast<R>() => Set.castFrom<E, R>(this, newSet: _newEmpty);
 
   static Set<R> _newEmpty<R>() => _Set<R>();
 
   // Returns a mutable set.
+  @override
   Set<E> toSet() => _Set<E>()..addAll(this);
 }
 
 mixin _ImmutableLinkedHashSetMixin<E>
     on Set<E>, _LinkedHashSetMixin<E>, _HashAbstractImmutableBase {
+  @override
   E? lookup(Object? key) {
     if (_indexNullable == null) {
       _createIndex();
@@ -1013,6 +1068,7 @@ mixin _ImmutableLinkedHashSetMixin<E>
     return super.lookup(key);
   }
 
+  @override
   bool contains(Object? key) {
     if (_indexNullable == null) {
       _createIndex();
@@ -1023,7 +1079,7 @@ mixin _ImmutableLinkedHashSetMixin<E>
   void _createIndex() {
     final size = _roundUpToPowerOfTwo(
         max(_data.length * 2, _HashBase._INITIAL_INDEX_SIZE));
-    final index = new Uint32List(size);
+    final index = Uint32List(size);
     final hashMask = _HashBase._indexSizeToHashMask(size);
     assert(_hashMask == hashMask);
 
@@ -1061,6 +1117,7 @@ mixin _ImmutableLinkedHashSetMixin<E>
     _index = index;
   }
 
+  @override
   Iterator<E> get iterator =>
       _CompactIteratorImmutable<E>(this, _data, _usedData, -1, 1);
 }
@@ -1095,12 +1152,17 @@ base class _CompactLinkedCustomHashSet<E> extends _HashFieldBase
         _CustomEqualsAndHashCode<E>,
         _LinkedHashSetMixin<E>
     implements LinkedHashSet<E> {
+  @override
   final bool Function(E, E) _equality;
+  @override
   final int Function(E) _hasher;
   final bool Function(Object?) _validKey;
 
+  @override
   bool contains(Object? o) => _validKey(o) ? super.contains(o) : false;
+  @override
   E? lookup(Object? o) => _validKey(o) ? super.lookup(o) : null;
+  @override
   bool remove(Object? o) => _validKey(o) ? super.remove(o) : false;
 
   _CompactLinkedCustomHashSet(

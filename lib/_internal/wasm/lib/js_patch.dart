@@ -6,10 +6,8 @@
 
 library dart.js;
 
-import 'dart:_internal' show patch;
 import 'dart:_js_helper';
 import 'dart:_wasm';
-import 'dart:collection' show ListMixin;
 
 @patch
 JsObject get context => throw UnimplementedError();
@@ -39,6 +37,7 @@ class JsObject {
   void operator []=(Object property, Object? value) =>
       throw UnimplementedError();
 
+  @override
   @patch
   bool operator ==(Object other) => throw UnimplementedError();
 
@@ -51,6 +50,7 @@ class JsObject {
   @patch
   bool instanceof(JsFunction type) => throw UnimplementedError();
 
+  @override
   @patch
   String toString() => throw UnimplementedError();
 
@@ -86,7 +86,7 @@ class JsArray<E> /*extends JsObject with ListMixin<E>*/ {
   int get length => throw UnimplementedError();
 
   @patch
-  void set length(int length) => throw UnimplementedError();
+  set length(int length) => throw UnimplementedError();
 
   @patch
   void add(E value) => throw UnimplementedError();
@@ -112,5 +112,5 @@ class JsArray<E> /*extends JsObject with ListMixin<E>*/ {
       throw UnimplementedError();
 
   @patch
-  void sort([int compare(E a, E b)?]) => throw UnimplementedError();
+  void sort([int Function(E a, E b)? compare]) => throw UnimplementedError();
 }

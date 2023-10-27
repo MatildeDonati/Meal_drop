@@ -51,20 +51,22 @@ extension JSNativeRegExpExtension on JSNativeRegExp {
 }
 
 class JSSyntaxRegExp implements RegExp {
+  @override
   final String pattern;
   final JSNativeRegExp _nativeRegExp;
   JSNativeRegExp? _nativeGlobalRegExp;
   JSNativeRegExp? _nativeAnchoredRegExp;
 
-  String toString() => 'RegExp/$pattern/' + _nativeRegExp.flags.toDart;
+  @override
+  String toString() => 'RegExp/$pattern/${_nativeRegExp.flags.toDart}';
 
   JSSyntaxRegExp(String source,
       {bool multiLine = false,
       bool caseSensitive = true,
       bool unicode = false,
       bool dotAll = false})
-      : this.pattern = source,
-        this._nativeRegExp = makeNative(
+      : pattern = source,
+        _nativeRegExp = makeNative(
             source, multiLine, caseSensitive, unicode, dotAll, false);
 
   JSNativeRegExp get _nativeGlobalVersion {
@@ -84,9 +86,13 @@ class JSSyntaxRegExp implements RegExp {
         '$pattern|()', isMultiLine, isCaseSensitive, isUnicode, isDotAll, true);
   }
 
+  @override
   bool get isMultiLine => _nativeRegExp.multiline.toDart;
+  @override
   bool get isCaseSensitive => !_nativeRegExp.ignoreCase.toDart;
+  @override
   bool get isUnicode => _nativeRegExp.unicode.toDart;
+  @override
   bool get isDotAll => _nativeRegExp.dotAll.toDart;
 
   static JSNativeRegExp makeNative(String source, bool multiLine,
@@ -110,28 +116,32 @@ class JSSyntaxRegExp implements RegExp {
     // The returned value is the stringified JavaScript exception. Turn it into
     // a Dart exception.
     String errorMessage = jsStringToDartString(result);
-    throw new FormatException('Illegal RegExp pattern ($errorMessage)', source);
+    throw FormatException('Illegal RegExp pattern ($errorMessage)', source);
   }
 
+  @override
   RegExpMatch? firstMatch(String string) {
     JSNativeMatch? m = _nativeRegExp.exec(string.toJS);
     if (m.isUndefinedOrNull) return null;
-    return new _MatchImplementation(this, m!);
+    return _MatchImplementation(this, m!);
   }
 
+  @override
   bool hasMatch(String string) {
     return _nativeRegExp.test(string.toJS).toDart;
   }
 
+  @override
   String? stringMatch(String string) {
     var match = firstMatch(string);
     if (match != null) return match.group(0);
     return null;
   }
 
+  @override
   Iterable<RegExpMatch> allMatches(String string, [int start = 0]) {
     if (start < 0 || start > string.length) {
-      throw new RangeError.range(start, 0, string.length);
+      throw RangeError.range(start, 0, string.length);
     }
     return _AllMatchesIterable(this, string, start);
   }
@@ -141,7 +151,7 @@ class JSSyntaxRegExp implements RegExp {
     regexp.lastIndex = start.toJS;
     JSNativeMatch? match = regexp.exec(string.toJS);
     if (match.isUndefinedOrNull) return null;
-    return new _MatchImplementation(this, match!);
+    return _MatchImplementation(this, match!);
   }
 
   RegExpMatch? _execAnchored(String string, int start) {
@@ -152,18 +162,20 @@ class JSSyntaxRegExp implements RegExp {
     // If the last capture group participated, the original regexp did not
     // match at the start position.
     if (match!.pop() != null) return null;
-    return new _MatchImplementation(this, match);
+    return _MatchImplementation(this, match);
   }
 
+  @override
   RegExpMatch? matchAsPrefix(String string, [int start = 0]) {
     if (start < 0 || start > string.length) {
-      throw new RangeError.range(start, 0, string.length);
+      throw RangeError.range(start, 0, string.length);
     }
     return _execAnchored(string, start);
   }
 }
 
 class _MatchImplementation implements RegExpMatch {
+  @override
   final RegExp pattern;
   // Contains a JS RegExp match object.
   // It is an Array of String values with extra 'index' and 'input' properties.
@@ -174,12 +186,16 @@ class _MatchImplementation implements RegExpMatch {
 
   _MatchImplementation(this.pattern, this._match);
 
+  @override
   String get input => _match.input.toDart;
 
+  @override
   int get start => _match.index.toDart.toInt();
 
+  @override
   int get end => (start + (_match[0.toJS].toString()).length);
 
+  @override
   String? group(int index) {
     if (index < 0 || index >= _match.length.toDart.toInt()) {
       throw RangeError("Index $index is out of range ${_match.length}");
@@ -187,10 +203,13 @@ class _MatchImplementation implements RegExpMatch {
     return _match[index.toJS]?.toString();
   }
 
+  @override
   String? operator [](int index) => group(index);
 
+  @override
   int get groupCount => _match.length.toDart.toInt() - 1;
 
+  @override
   List<String?> groups(List<int> groups) {
     List<String?> out = [];
     for (int i in groups) {
@@ -199,6 +218,7 @@ class _MatchImplementation implements RegExpMatch {
     return out;
   }
 
+  @override
   String? namedGroup(String name) {
     JSObject? groups = _match.groups;
     if (groups.isDefinedAndNotNull) {
@@ -211,12 +231,13 @@ class _MatchImplementation implements RegExpMatch {
     throw ArgumentError.value(name, "name", "Not a capture group name");
   }
 
+  @override
   Iterable<String> get groupNames {
     JSObject? groups = _match.groups;
     if (groups.isDefinedAndNotNull) {
       return JSArrayIterableAdapter<String>(objectKeys(groups!));
     }
-    return Iterable.empty();
+    return const Iterable.empty();
   }
 }
 
@@ -227,8 +248,9 @@ class _AllMatchesIterable extends Iterable<RegExpMatch> {
 
   _AllMatchesIterable(this._re, this._string, this._start);
 
+  @override
   Iterator<RegExpMatch> get iterator =>
-      new _AllMatchesIterator(_re, _string, _start);
+      _AllMatchesIterator(_re, _string, _start);
 }
 
 class _AllMatchesIterator implements Iterator<RegExpMatch> {
@@ -239,6 +261,7 @@ class _AllMatchesIterator implements Iterator<RegExpMatch> {
 
   _AllMatchesIterator(this._regExp, this._string, this._nextIndex);
 
+  @override
   RegExpMatch get current => _current as RegExpMatch;
 
   static bool _isLeadSurrogate(int c) {
@@ -249,6 +272,7 @@ class _AllMatchesIterator implements Iterator<RegExpMatch> {
     return c >= 0xdc00 && c <= 0xdfff;
   }
 
+  @override
   bool moveNext() {
     var string = _string;
     if (string == null) return false;
