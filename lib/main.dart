@@ -5,10 +5,24 @@ void main() => runApp(MaterialApp(
     appBar: AppBar( // Upper bar in the home screen
       title: const Text('Home'), // Text in the upper bar
       centerTitle: true, // Tool to centre the title
+      backgroundColor: Colors.deepOrange, // Change the appBar color
     ),
     body: const Center(
-      child: Text('Welcome!'), // Text in the centre of the home screen
+      child: Text(
+          'Welcome!',
+        style: TextStyle(
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+          letterSpacing: 2,
+          color: Colors.deepOrange,
+          fontFamily: 'OpenSans',
+        ),
+      ), // Text in the centre of the home screen
     ),
-    backgroundColor: Colors.deepOrange[400], // Change the background color
+    floatingActionButton: FloatingActionButton(
+      onPressed: () {  },
+      backgroundColor: Colors.deepOrange,
+      child: const Text('Click me!'),
+    )
   ),
 ));
