@@ -19,10 +19,30 @@ class Screen2 extends StatefulWidget {
   @override
   Screen2State createState() => Screen2State();
 }
-// F3ood list
+// Food list
 class Screen2State extends State<Screen2> {
+  String filter = '';
+  List<Food> filteredFoods = [];
+
   @override
   Widget build(BuildContext context) {
+
+    filteredFoods = foods
+        .where((food) => food.name.toLowerCase().contains(filter.toLowerCase()))
+        .toList();
+    filteredFoods.sort((a, b) {
+      final containsA = a.name.toLowerCase() == filter.trim().toLowerCase();
+      final containsB = b.name.toLowerCase() == filter.trim().toLowerCase();
+      if (containsA && !containsB) {
+        return -1;
+      } else if (!containsA && containsB) {
+        return 1;
+      } else {
+        return 0;
+      }
+    });
+
+
     final TextEditingController searchController = TextEditingController();
     return ScrollbarTheme(
       data: ScrollbarThemeData(
@@ -59,7 +79,9 @@ class Screen2State extends State<Screen2> {
                   prefixIcon: Icon(Icons.search, color: Colors.black),
                 ),
                 onChanged: (value) {
-                  // Aggiungi la logica di ricerca qui
+                  setState(() {
+                    filter = value;
+                  });
                 },
               ),
             ),
@@ -68,17 +90,17 @@ class Screen2State extends State<Screen2> {
                 controller: _scrollController,
                 thumbVisibility: true,
                 child: ListView.builder(
-                  itemCount: foods.length,
+                  itemCount: filteredFoods.length,
                   itemBuilder: (context, index) {
-                    if (index == 0 || foods[index].category != foods[index - 1].category) {
-                      // Add a Text widget when a new category begins
+                    final food = filteredFoods[index];
+                    if (index == 0 || food.category != filteredFoods[index - 1].category) {
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Text(
-                              foods[index].category,
+                              food.category,
                               style: const TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
@@ -87,24 +109,23 @@ class Screen2State extends State<Screen2> {
                             ),
                           ),
                           CheckboxListTile(
-                            title: Text(foods[index].name),
-                            value: foods[index].isSelected,
+                            title: Text(food.name),
+                            value: food.isSelected,
                             onChanged: (bool? value) {
                               setState(() {
-                                foods[index].isSelected = value ?? false;
+                                food.isSelected = value ?? false;
                               });
                             },
                           ),
                         ],
                       );
                     } else {
-                      // Continua con CheckboxListTile per la stessa categoria
                       return CheckboxListTile(
-                        title: Text(foods[index].name),
-                        value: foods[index].isSelected,
+                        title: Text(food.name),
+                        value: food.isSelected,
                         onChanged: (bool? value) {
                           setState(() {
-                            foods[index].isSelected = value ?? false;
+                            food.isSelected = value ?? false;
                           });
                         },
                       );
@@ -130,7 +151,8 @@ class Screen2State extends State<Screen2> {
         ),
       ),
     );
-  }
+  } // Build.context
+
   List<Food> foods = [
     Food('Abiu', false, 'Fruit'),
     Food('Açaí', false, 'Fruit'),
@@ -138,5 +160,14 @@ class Screen2State extends State<Screen2> {
     Food('Ackee', false, 'Fruit'),
     Food('African Cherry Orange', false, 'Fruit'),
     Food('American Mayapple', false, 'Fruit'),
+    Food('Orange', false, 'Fruit'),
+    Food('Papaya', false, 'Fruit'),
+    Food('Passionfruit', false, 'Fruit'),
+    Food('Pawpaw', false, 'Fruit'),
+    Food('Peach', false, 'Fruit'),
+    Food('Pear', false, 'Fruit'),
+    Food('Persimmon', false, 'Fruit'),
+    Food('Plantain', false, 'Fruit'),
+    Food('Plum', false, 'Fruit'),
   ];
 }
