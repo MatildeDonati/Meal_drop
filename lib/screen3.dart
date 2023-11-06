@@ -15,7 +15,17 @@ class Screen3 extends StatelessWidget {
         backgroundColor: Colors.deepOrange,
         elevation: 0.0,
       ),
-      // Add your widget tree for Screen3 here
+      body: ListView.builder(
+        itemCount: foods.length,
+        itemBuilder: (context, index) {
+          final food = foods[index];
+          return ListTile(
+            title: Text(food.name),
+            // Qui puoi fare qualcosa con gli elementi selezionati
+          );
+        },
+      ),
     );
   }
 }
+

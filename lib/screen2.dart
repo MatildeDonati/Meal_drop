@@ -23,6 +23,9 @@ class Screen2 extends StatefulWidget {
 class Screen2State extends State<Screen2> {
   String filter = '';
   List<Food> filteredFoods = [];
+  List<Food> selectedFoods = [];
+
+  final TextEditingController searchController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -42,8 +45,6 @@ class Screen2State extends State<Screen2> {
       }
     });
 
-
-    final TextEditingController searchController = TextEditingController();
     return ScrollbarTheme(
       data: ScrollbarThemeData(
         thumbColor: MaterialStateProperty.all(Colors.deepOrange),
@@ -134,19 +135,22 @@ class Screen2State extends State<Screen2> {
                 ),
               ),
             ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => Screen3(foods: foods),
-                  ),
-                );
-              },
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all<Color>(Colors.deepOrange),
-              ),
-              child: const Text('Discover the recipes!'),
+          ElevatedButton(
+            onPressed: () {
+            final selectedItems = filteredFoods.where((food) => food.isSelected).toList();
+            Navigator.of(context).push(
+            MaterialPageRoute(
+            builder: (context) => Screen3(
+            foods: selectedItems,
             ),
+            ),
+            );
+            },
+          style: ButtonStyle(
+          backgroundColor: MaterialStateProperty.all<Color>(Colors.deepOrange),
+          ),
+            child: const Text('Discover the recipes!'),
+          ),
           ],
         ),
       ),
