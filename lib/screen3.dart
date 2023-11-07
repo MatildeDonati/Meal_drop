@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'screen2.dart';
+import 'foodlist.dart';
 
 // Screen3: recipes
 class Screen3 extends StatelessWidget {
