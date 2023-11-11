@@ -1097,7 +1097,7 @@ class _Cookie implements Cookie {
             "strict" => SameSite.strict,
             _ => throw const HttpException(
                 'SameSite value should be one of Lax, Strict or None.')
-          };
+          }
         }
         if (!done()) index++; // Skip the ; character
       }

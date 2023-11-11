@@ -21,21 +21,11 @@ class Screen2State extends State<Screen2> {
 
   @override
   Widget build(BuildContext context) {
-
     filteredFoods = foods
         .where((food) => food.name.toLowerCase().contains(filter.toLowerCase()))
         .toList();
-    filteredFoods.sort((a, b) {
-      final containsA = a.name.toLowerCase() == filter.trim().toLowerCase();
-      final containsB = b.name.toLowerCase() == filter.trim().toLowerCase();
-      if (containsA && !containsB) {
-        return -1;
-      } else if (!containsA && containsB) {
-        return 1;
-      } else {
-        return 0;
-      }
-    });
+
+    Map<String, List<Food>> categorizedFoods = _categorizeFoods(filteredFoods);
 
     return ScrollbarTheme(
       data: ScrollbarThemeData(
@@ -83,24 +73,26 @@ class Screen2State extends State<Screen2> {
                 controller: _scrollController,
                 thumbVisibility: true,
                 child: ListView.builder(
-                  itemCount: filteredFoods.length,
+                  itemCount: categorizedFoods.length,
                   itemBuilder: (context, index) {
-                    final food = filteredFoods[index];
-                    if (index == 0 || food.category != filteredFoods[index - 1].category) {
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              food.category,
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.deepOrange,
-                              ),
+                    final category = categorizedFoods.keys.elementAt(index);
+                    final categoryFoods = categorizedFoods[category]!;
+
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            category,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.deepOrange,
                             ),
                           ),
+                        ),
+                        for (var food in categoryFoods)
                           CheckboxListTile(
                             title: Text(food.name),
                             value: food.isSelected,
@@ -110,43 +102,43 @@ class Screen2State extends State<Screen2> {
                               });
                             },
                           ),
-                        ],
-                      );
-                    } else {
-                      return CheckboxListTile(
-                        title: Text(food.name),
-                        value: food.isSelected,
-                        onChanged: (bool? value) {
-                          setState(() {
-                            food.isSelected = value ?? false;
-                          });
-                        },
-                      );
-                    }
+                      ],
+                    );
                   },
                 ),
               ),
             ),
-          ElevatedButton(
-            onPressed: () {
-            final selectedItems = filteredFoods.where((food) => food.isSelected).toList();
-            Navigator.of(context).push(
-            MaterialPageRoute(
-            builder: (context) => Screen3(
-            foods: selectedItems,
+            ElevatedButton(
+              onPressed: () {
+                final selectedItems =
+                categorizedFoods.values.expand((foods) => foods).where((food) => food.isSelected).toList();
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => Screen3(
+                      foods: selectedItems,
+                    ),
+                  ),
+                );
+              },
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all<Color>(Colors.deepOrange),
+              ),
+              child: const Text('Discover the recipes!'),
             ),
-            ),
-            );
-            },
-          style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.all<Color>(Colors.deepOrange),
-          ),
-            child: const Text('Discover the recipes!'),
-          ),
           ],
         ),
       ),
     );
-  } // Build.context
+  }
 
+  Map<String, List<Food>> _categorizeFoods(List<Food> foods) {
+    Map<String, List<Food>> categorized = {};
+    for (var food in foods) {
+      if (!categorized.containsKey(food.category)) {
+        categorized[food.category] = [];
+      }
+      categorized[food.category]!.add(food);
+    }
+    return categorized;
+  }
 }

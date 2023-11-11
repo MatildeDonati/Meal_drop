@@ -17,6 +17,12 @@ import 'dart:_foreign_helper'
     show JS, JS_GET_FLAG, JS_RAW_EXCEPTION, RAW_DART_FUNCTION_REF;
 
 import 'dart:_async_status_codes' as async_status_codes;
+import 'dart:async';
+import 'dart:js/js_wasm.dart';
+
+import '../../../internal/internal.dart';
+import '../../js_dev_runtime/private/js_helper.dart';
+import 'js_helper.dart';
 
 @patch
 class _AsyncRun {
@@ -31,14 +37,14 @@ class _AsyncRun {
 
   static Function _initializeScheduleImmediate() {
     requiresPreamble();
-    if (JS('', 'self.scheduleImmediate') != null) {
+    if (const JS('', 'self.scheduleImmediate') != null) {
       return _scheduleImmediateJsOverride;
     }
-    if (JS('', 'self.MutationObserver') != null &&
-        JS('', 'self.document') != null) {
+    if (const JS('', 'self.MutationObserver') != null &&
+        const JS('', 'self.document') != null) {
       // Use mutationObservers.
-      var div = JS('', 'self.document.createElement("div")');
-      var span = JS('', 'self.document.createElement("span")');
+      var div = const JS('', 'self.document.createElement("div")');
+      var span = const JS('', 'self.document.createElement("span")');
       void Function()? storedCallback;
 
       internalCallback(_) {
@@ -47,7 +53,7 @@ class _AsyncRun {
         f!();
       }
 
-      var observer = JS('', 'new self.MutationObserver(#)',
+      var observer = JS('', "new self.MutationObserver(#)",
           convertDartClosureToJS(internalCallback, 1));
       JS('', '#.observe(#, { childList: true })', observer, div);
 
@@ -59,7 +65,7 @@ class _AsyncRun {
         JS('', '#.firstChild ? #.removeChild(#): #.appendChild(#)', div, div,
             span, div, span);
       };
-    } else if (JS('', 'self.setImmediate') != null) {
+    } else if (const JS('', 'self.setImmediate') != null) {
       return _scheduleImmediateWithSetImmediate;
     }
     // TODO(20055): We should use DOM promises when available.
@@ -121,7 +127,7 @@ class _TimerImpl implements Timer {
       }
 
       _handle = JS('int', 'self.setTimeout(#, #)',
-          convertDartClosureToJS(internalCallback, 0), milliseconds);
+          convertDartClosureToJS(internalCallback, 0), milliseconds) as int?;
     } else {
       throw UnsupportedError('`setTimeout()` not found.');
     }
@@ -130,14 +136,14 @@ class _TimerImpl implements Timer {
   _TimerImpl.periodic(int milliseconds, void Function(Timer timer) callback)
       : _once = false {
     if (_hasTimer()) {
-      int start = JS('int', 'Date.now()');
+      int start = const JS('int', 'Date.now()') as int;
       _handle = JS(
           'int',
           'self.setInterval(#, #)',
           convertDartClosureToJS(() {
             int tick = _tick + 1;
             if (milliseconds > 0) {
-              int end = JS('int', 'Date.now()');
+              int end = const JS('int', 'Date.now()') as int;
               int duration = end - start;
               if (duration > (tick + 1) * milliseconds) {
                 tick = duration ~/ milliseconds;
@@ -146,7 +152,7 @@ class _TimerImpl implements Timer {
             _tick = tick;
             callback(this);
           }, 0),
-          milliseconds);
+          milliseconds) as int?;
     } else {
       throw UnsupportedError('Periodic timer.');
     }
@@ -176,7 +182,7 @@ class _TimerImpl implements Timer {
 
 bool _hasTimer() {
   requiresPreamble();
-  return JS('', 'self.setTimeout') != null;
+  return const JS('', 'self.setTimeout') != null;
 }
 
 class _AsyncAwaitCompleter<T> implements Completer<T> {
@@ -213,6 +219,12 @@ class _AsyncAwaitCompleter<T> implements Completer<T> {
 
   Future<T> get future => _future;
   bool get isCompleted => !_future._mayComplete;
+}
+
+class _asyncComplete {
+}
+
+class _Future {
 }
 
 /// Creates a Completer for an `async` function.
@@ -305,7 +317,7 @@ typedef _WrappedAsyncBody = void Function(int errorCode, dynamic result);
 _WrappedAsyncBody _wrapJsFunctionForAsync(dynamic /* js function */ function) {
   var protected = JS(
       '',
-      """
+      '''
         (function (fn, ERROR) {
           // Invokes [function] with [errorCode] and [result].
           //
@@ -322,7 +334,7 @@ _WrappedAsyncBody _wrapJsFunctionForAsync(dynamic /* js function */ function) {
               }
             }
           }
-        })(#, #)""",
+        })(#, #)''',
       function,
       async_status_codes.ERROR);
 
@@ -681,7 +693,7 @@ class _SyncStarIterator<T> implements Iterator<T> {
   int _yieldStar(Iterable<T> iterable) {
     if (iterable is _SyncStarIterable) {
       // Promotion fails, so we need this zero-cost 'cast'.
-      _SyncStarIterable<T> syncStarIterable = JS('', '#', iterable);
+      _SyncStarIterable<T> syncStarIterable = JS('', '#', iterable) as _SyncStarIterable<T>;
       _SyncStarIterator inner = syncStarIterable.iterator;
       // Suspend the current state machine and start acting on behalf of
       // the nested state machine.
