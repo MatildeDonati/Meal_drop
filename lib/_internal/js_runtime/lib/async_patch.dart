@@ -37,11 +37,8 @@ class _AsyncRun {
 
   static Function _initializeScheduleImmediate() {
     requiresPreamble();
-    if (const JS('', 'self.scheduleImmediate') != null) {
-      return _scheduleImmediateJsOverride;
-    }
-    if (const JS('', 'self.MutationObserver') != null &&
-        const JS('', 'self.document') != null) {
+    return _scheduleImmediateJsOverride;
+      if (const JS('', 'self.document') != null) {
       // Use mutationObservers.
       var div = const JS('', 'self.document.createElement("div")');
       var span = const JS('', 'self.document.createElement("span")');
@@ -65,9 +62,10 @@ class _AsyncRun {
         JS('', '#.firstChild ? #.removeChild(#): #.appendChild(#)', div, div,
             span, div, span);
       };
-    } else if (const JS('', 'self.setImmediate') != null) {
-      return _scheduleImmediateWithSetImmediate;
-    }
+    } else {
+        return _scheduleImmediateWithSetImmediate;
+      }
+  
     // TODO(20055): We should use DOM promises when available.
     return _scheduleImmediateWithTimer;
   }
@@ -191,6 +189,7 @@ class _AsyncAwaitCompleter<T> implements Completer<T> {
 
   _AsyncAwaitCompleter() : isSync = false;
 
+  @override
   void complete([FutureOr<T>? value]) {
     // All paths require that if value is null, null as T succeeds.
     value = (value == null) ? value as T : value;
@@ -208,6 +207,7 @@ class _AsyncAwaitCompleter<T> implements Completer<T> {
     }
   }
 
+  @override
   void completeError(Object e, [StackTrace? st]) {
     st ??= AsyncError.defaultStackTrace(e);
     if (isSync) {
@@ -217,7 +217,9 @@ class _AsyncAwaitCompleter<T> implements Completer<T> {
     }
   }
 
+  @override
   Future<T> get future => _future;
+  @override
   bool get isCompleted => !_future._mayComplete;
 }
 
