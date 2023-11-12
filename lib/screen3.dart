@@ -5,7 +5,7 @@ import 'foodlist.dart';
 class Screen3 extends StatelessWidget {
   final List<Food> foods;
 
-  const Screen3({required this.foods, Key? key}) : super(key: key);
+  const Screen3({required this.foods, super.key});
 
   @override
   Widget build(BuildContext context) {

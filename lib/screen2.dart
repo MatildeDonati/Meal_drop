@@ -3,11 +3,11 @@ import 'screen3.dart';
 import 'foodlist.dart';
 
 // Define a controller
-ScrollController _scrollController = ScrollController();
+final ScrollController _scrollController = ScrollController();
 
 // Screen2: checklist
 class Screen2 extends StatefulWidget {
-  const Screen2({Key? key}) : super(key: key);
+  const Screen2({super.key});
   @override
   Screen2State createState() => Screen2State();
 }
@@ -30,6 +30,8 @@ class Screen2State extends State<Screen2> {
     return ScrollbarTheme(
       data: ScrollbarThemeData(
         thumbColor: MaterialStateProperty.all(Colors.deepOrange),
+          thickness: MaterialStateProperty.all(8.0),
+          radius: const Radius.circular(50),
       ),
       child: Scaffold(
         backgroundColor: Colors.deepOrange[50],
@@ -141,4 +143,11 @@ class Screen2State extends State<Screen2> {
     }
     return categorized;
   }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
 }
