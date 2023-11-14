@@ -282,7 +282,7 @@ abstract class _ObjectMirror extends Mirror implements ObjectMirror {
 }
 
 class _InstanceMirror extends _ObjectMirror implements InstanceMirror {
-  _InstanceMirror._(reflectee) : super._(reflectee);
+  _InstanceMirror._(super.reflectee) : super._();
 
   ClassMirror? _type;
   ClassMirror get type {
@@ -365,7 +365,7 @@ class _InstanceMirror extends _ObjectMirror implements InstanceMirror {
 }
 
 class _ClosureMirror extends _InstanceMirror implements ClosureMirror {
-  _ClosureMirror._(reflectee) : super._(reflectee);
+  _ClosureMirror._(super.reflectee) : super._();
 
   MethodMirror? _function;
   MethodMirror get function {
@@ -408,7 +408,7 @@ class _ClassMirror extends _ObjectMirror implements ClassMirror, _TypeMirror {
   Type _instantiator;
 
   _ClassMirror._(
-      reflectee,
+      super.reflectee,
       reflectedType,
       String? simpleName,
       this._owner,
@@ -420,7 +420,7 @@ class _ClassMirror extends _ObjectMirror implements ClassMirror, _TypeMirror {
       : _simpleName = _sOpt(simpleName),
         _reflectedType = reflectedType,
         _instantiator = reflectedType,
-        super._(reflectee);
+        super._();
 
   bool get hasReflectedType => !_isGenericDeclaration;
   Type get reflectedType {
@@ -971,10 +971,10 @@ class _LibraryMirror extends _ObjectMirror implements LibraryMirror {
   final Symbol simpleName;
   final Uri uri;
 
-  _LibraryMirror._(reflectee, String simpleName, String url)
+  _LibraryMirror._(super.reflectee, String simpleName, String url)
       : simpleName = _s(simpleName),
         uri = Uri.parse(url),
-        super._(reflectee);
+        super._();
 
   // The simple name and the qualified name are the same for a library.
   Symbol get qualifiedName => simpleName;

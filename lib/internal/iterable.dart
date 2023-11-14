@@ -403,8 +403,8 @@ class MappedIterable<S, T> extends Iterable<T> {
 
 class EfficientLengthMappedIterable<S, T> extends MappedIterable<S, T>
     implements EfficientLengthIterable<T> {
-  EfficientLengthMappedIterable(Iterable<S> iterable, T Function(S value) function)
-      : super._(iterable, function);
+  EfficientLengthMappedIterable(super.iterable, super.function)
+      : super._();
 }
 
 class MappedIterator<S, T> implements Iterator<T> {
@@ -548,8 +548,8 @@ class TakeIterable<E> extends Iterable<E> {
 
 class EfficientLengthTakeIterable<E> extends TakeIterable<E>
     implements EfficientLengthIterable<E> {
-  EfficientLengthTakeIterable(Iterable<E> iterable, int takeCount)
-      : super._(iterable, takeCount);
+  EfficientLengthTakeIterable(super.iterable, super.takeCount)
+      : super._();
 
   @override
   int get length {
@@ -654,8 +654,8 @@ class EfficientLengthSkipIterable<E> extends SkipIterable<E>
     return EfficientLengthSkipIterable<E>._(iterable, _checkCount(count));
   }
 
-  EfficientLengthSkipIterable._(Iterable<E> iterable, int count)
-      : super._(iterable, count);
+  EfficientLengthSkipIterable._(super.iterable, super.count)
+      : super._();
 
   @override
   int get length {
@@ -905,8 +905,7 @@ class FollowedByIterable<E> extends Iterable<E> {
 class EfficientLengthFollowedByIterable<E> extends FollowedByIterable<E>
     implements EfficientLengthIterable<E> {
   EfficientLengthFollowedByIterable(
-      EfficientLengthIterable<E> first, EfficientLengthIterable<E> second)
-      : super(first, second);
+      EfficientLengthIterable<E> super.first, EfficientLengthIterable<E> super.second);
 
   @override
   E elementAt(int index) {

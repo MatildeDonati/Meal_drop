@@ -747,9 +747,8 @@ class AssertionErrorImpl extends AssertionError {
   final int? _column;
   final String? _conditionSource;
 
-  AssertionErrorImpl(Object? message,
-      [this._fileUri, this._line, this._column, this._conditionSource])
-      : super(message);
+  AssertionErrorImpl(super.message,
+      [this._fileUri, this._line, this._column, this._conditionSource]);
 
   @override
   String toString() {

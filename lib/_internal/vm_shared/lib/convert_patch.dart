@@ -1322,7 +1322,7 @@ class _JsonStringParser extends _ChunkedJsonParser<String> {
   @override
   int chunkEnd = 0;
 
-  _JsonStringParser(_JsonListener listener) : super(listener);
+  _JsonStringParser(super.listener);
 
   @override
   int getChar(int position) => chunk.codeUnitAt(position);
@@ -1428,9 +1428,8 @@ class _JsonUtf8Parser extends _ChunkedJsonParser<List<int>> {
   @override
   int chunkEnd = 0;
 
-  _JsonUtf8Parser(_JsonListener listener, bool allowMalformed)
-      : decoder = _Utf8Decoder(allowMalformed),
-        super(listener) {
+  _JsonUtf8Parser(super.listener, bool allowMalformed)
+      : decoder = _Utf8Decoder(allowMalformed) {
     // Starts out checking for an optional BOM (KWD_BOM, count = 0).
     partialState =
         _ChunkedJsonParser.PARTIAL_KEYWORD | _ChunkedJsonParser.KWD_BOM;

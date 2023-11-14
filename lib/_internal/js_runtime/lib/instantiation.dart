@@ -46,92 +46,92 @@ abstract final class Instantiation extends Closure {
 /// Instantiation classes are subclasses of [Instantiation]. For now we have a
 /// fixed number of subclasses. Later we might generate the classes on demand.
 final class Instantiation1<T1> extends Instantiation {
-  Instantiation1(Closure f) : super(f);
+  Instantiation1(super.f);
   @override
   List get _types => [T1];
 }
 
 final class Instantiation2<T1, T2> extends Instantiation {
-  Instantiation2(Closure f) : super(f);
+  Instantiation2(super.f);
   @override
   List get _types => [T1, T2];
 }
 
 final class Instantiation3<T1, T2, T3> extends Instantiation {
-  Instantiation3(Closure f) : super(f);
+  Instantiation3(super.f);
   @override
   List get _types => [T1, T2, T3];
 }
 
 final class Instantiation4<T1, T2, T3, T4> extends Instantiation {
-  Instantiation4(Closure f) : super(f);
+  Instantiation4(super.f);
   @override
   List get _types => [T1, T2, T3, T4];
 }
 
 final class Instantiation5<T1, T2, T3, T4, T5> extends Instantiation {
-  Instantiation5(Closure f) : super(f);
+  Instantiation5(super.f);
   @override
   List get _types => [T1, T2, T3, T4, T5];
 }
 
 final class Instantiation6<T1, T2, T3, T4, T5, T6> extends Instantiation {
-  Instantiation6(Closure f) : super(f);
+  Instantiation6(super.f);
   @override
   List get _types => [T1, T2, T3, T4, T5, T6];
 }
 
 final class Instantiation7<T1, T2, T3, T4, T5, T6, T7> extends Instantiation {
-  Instantiation7(Closure f) : super(f);
+  Instantiation7(super.f);
   @override
   List get _types => [T1, T2, T3, T4, T5, T6, T7];
 }
 
 final class Instantiation8<T1, T2, T3, T4, T5, T6, T7, T8>
     extends Instantiation {
-  Instantiation8(Closure f) : super(f);
+  Instantiation8(super.f);
   @override
   List get _types => [T1, T2, T3, T4, T5, T6, T7, T8];
 }
 
 final class Instantiation9<T1, T2, T3, T4, T5, T6, T7, T8, T9>
     extends Instantiation {
-  Instantiation9(Closure f) : super(f);
+  Instantiation9(super.f);
   @override
   List get _types => [T1, T2, T3, T4, T5, T6, T7, T8, T9];
 }
 
 final class Instantiation10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>
     extends Instantiation {
-  Instantiation10(Closure f) : super(f);
+  Instantiation10(super.f);
   @override
   List get _types => [T1, T2, T3, T4, T5, T6, T7, T8, T9, T10];
 }
 
 final class Instantiation11<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>
     extends Instantiation {
-  Instantiation11(Closure f) : super(f);
+  Instantiation11(super.f);
   @override
   List get _types => [T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11];
 }
 
 final class Instantiation12<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>
     extends Instantiation {
-  Instantiation12(Closure f) : super(f);
+  Instantiation12(super.f);
   @override
   List get _types => [T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12];
 }
 
 final class Instantiation13<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12,
     T13> extends Instantiation {
-  Instantiation13(Closure f) : super(f);
+  Instantiation13(super.f);
   @override
   List get _types => [T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13];
 }
 
 final class Instantiation14<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12,
     T13, T14> extends Instantiation {
-  Instantiation14(Closure f) : super(f);
+  Instantiation14(super.f);
   @override
   List get _types =>
       [T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14];
@@ -139,7 +139,7 @@ final class Instantiation14<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12,
 
 final class Instantiation15<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12,
     T13, T14, T15> extends Instantiation {
-  Instantiation15(Closure f) : super(f);
+  Instantiation15(super.f);
   @override
   List get _types =>
       [T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15];
@@ -147,7 +147,7 @@ final class Instantiation15<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12,
 
 final class Instantiation16<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12,
     T13, T14, T15, T16> extends Instantiation {
-  Instantiation16(Closure f) : super(f);
+  Instantiation16(super.f);
   @override
   List get _types =>
       [T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16];
@@ -155,7 +155,7 @@ final class Instantiation16<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12,
 
 final class Instantiation17<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12,
     T13, T14, T15, T16, T17> extends Instantiation {
-  Instantiation17(Closure f) : super(f);
+  Instantiation17(super.f);
   @override
   List get _types => [
         T1,
@@ -180,7 +180,7 @@ final class Instantiation17<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12,
 
 final class Instantiation18<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12,
     T13, T14, T15, T16, T17, T18> extends Instantiation {
-  Instantiation18(Closure f) : super(f);
+  Instantiation18(super.f);
   @override
   List get _types => [
         T1,
@@ -206,7 +206,7 @@ final class Instantiation18<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12,
 
 final class Instantiation19<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12,
     T13, T14, T15, T16, T17, T18, T19> extends Instantiation {
-  Instantiation19(Closure f) : super(f);
+  Instantiation19(super.f);
   @override
   List get _types => [
         T1,
@@ -233,7 +233,7 @@ final class Instantiation19<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12,
 
 final class Instantiation20<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12,
     T13, T14, T15, T16, T17, T18, T19, T20> extends Instantiation {
-  Instantiation20(Closure f) : super(f);
+  Instantiation20(super.f);
   @override
   List get _types => [
         T1,

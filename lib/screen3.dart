@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
-import 'foodlist.dart';
+import 'package:meal_drop/recipes.dart';
+import 'recipesdetail.dart';
 
 // Screen3: recipes
 class Screen3 extends StatelessWidget {
-  final List<Food> foods;
+  final List<Recipe> recipes;
+  final Set<String> selectedTags;
 
-  const Screen3({required this.foods, super.key});
+  const Screen3({super.key, required this.recipes, required this.selectedTags});
 
   @override
   Widget build(BuildContext context) {
+
+    final filteredRecipes = recipes.where((recipe) => recipe.tags.any((tag) => selectedTags.contains(tag))).toList();
+
     return Scaffold(
       backgroundColor: Colors.deepOrange[50],
       appBar: AppBar(
@@ -16,16 +21,35 @@ class Screen3 extends StatelessWidget {
         elevation: 0.0,
       ),
       body: ListView.builder(
-        itemCount: foods.length,
+        itemCount: filteredRecipes.length,
         itemBuilder: (context, index) {
-          final food = foods[index];
+          final recipe = filteredRecipes[index];
           return ListTile(
-            title: Text(food.name),
-            // Qui puoi fare qualcosa con gli elementi selezionati
+            title: Text(recipe.name),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Prep Time: ${recipe.preptime} min | '
+                      'Wait Time: ${recipe.waittime} min | '
+                      'Cook Time: ${recipe.cooktime} min',
+                ),
+                Wrap(
+                  spacing: 8.0,
+                  children: recipe.tags.map((tag) => Chip(label: Text(tag))).toList(),
+                ),
+              ], // children
+            ),
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => RecipeDetailPage(recipe: recipe),
+                ),
+              );
+            }, // onTap
           );
-        },
+        }, // Item builder
       ),
     );
   }
 }
-

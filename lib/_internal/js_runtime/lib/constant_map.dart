@@ -6,7 +6,7 @@ part of _js_helper;
 
 class ConstantMapView<K, V> extends UnmodifiableMapView<K, V>
     implements ConstantMap<K, V> {
-  ConstantMapView(Map<K, V> base) : super(base);
+  ConstantMapView(super.base);
 }
 
 abstract class ConstantMap<K, V> implements Map<K, V> {

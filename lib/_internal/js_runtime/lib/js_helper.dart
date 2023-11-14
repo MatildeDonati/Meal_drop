@@ -3215,7 +3215,7 @@ List<String> convertMainArgumentList(Object? args) {
 }
 
 class _AssertionError extends AssertionError {
-  _AssertionError(Object message) : super(message);
+  _AssertionError(Object super.message);
 
   @override
   String toString() => "Assertion failed: ${Error.safeToString(message)}";

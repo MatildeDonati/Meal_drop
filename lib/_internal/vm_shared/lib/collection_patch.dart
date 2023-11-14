@@ -500,7 +500,7 @@ abstract class _HashMapIterable<K, V, E>
 }
 
 class _HashMapKeyIterable<K, V> extends _HashMapIterable<K, V, K> {
-  _HashMapKeyIterable(_HashMap<K, V> map) : super(map);
+  _HashMapKeyIterable(super.map);
   @override
   Iterator<K> get iterator => _HashMapKeyIterator<K, V>(_map);
   @override
@@ -517,7 +517,7 @@ class _HashMapKeyIterable<K, V> extends _HashMapIterable<K, V, K> {
 }
 
 class _HashMapValueIterable<K, V> extends _HashMapIterable<K, V, V> {
-  _HashMapValueIterable(_HashMap<K, V> map) : super(map);
+  _HashMapValueIterable(super.map);
   @override
   Iterator<V> get iterator => _HashMapValueIterator<K, V>(_map);
   @override
@@ -569,13 +569,13 @@ abstract class _HashMapIterator<K, V, E> implements Iterator<E> {
 }
 
 class _HashMapKeyIterator<K, V> extends _HashMapIterator<K, V, K> {
-  _HashMapKeyIterator(_HashMap<K, V> map) : super(map);
+  _HashMapKeyIterator(super.map);
   @override
   K get current => _entry!.key;
 }
 
 class _HashMapValueIterator<K, V> extends _HashMapIterator<K, V, V> {
-  _HashMapValueIterator(_HashMap<K, V> map) : super(map);
+  _HashMapValueIterator(super.map);
   @override
   V get current => _entry!.value;
 }

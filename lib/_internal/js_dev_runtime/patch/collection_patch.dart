@@ -396,8 +396,7 @@ base class _IdentityHashSet<E> extends _InternalSet<E>
 
 base class _CustomKeyHashSet<E> extends _CustomHashSet<E> {
   final _Predicate<Object?> _validKey;
-  _CustomKeyHashSet(_Equality<E> equals, _Hasher<E> hashCode, this._validKey)
-      : super(equals, hashCode);
+  _CustomKeyHashSet(super.equals, super.hashCode, this._validKey);
 
   @override
   Set<E> _newSet() => _CustomKeyHashSet<E>(_equals, _hashCode, _validKey);

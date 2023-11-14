@@ -231,7 +231,7 @@ class JsFunction extends JsObject {
     return JsFunction._fromJs(jsFunc);
   }
 
-  JsFunction._fromJs(Object jsObject) : super._fromJs(jsObject);
+  JsFunction._fromJs(super.jsObject) : super._fromJs();
 
   @patch
   dynamic apply(List args, {thisArg}) => _convertToDart(JS(

@@ -54,6 +54,6 @@ abstract base class Union extends _Compound {
   /// unions.
   Union() : super._();
 
-  Union._fromTypedDataBase(Object typedDataBase)
-      : super._fromTypedDataBase(typedDataBase);
+  Union._fromTypedDataBase(super.typedDataBase)
+      : super._fromTypedDataBase();
 }

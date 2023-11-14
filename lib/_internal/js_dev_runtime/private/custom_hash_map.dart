@@ -6,8 +6,7 @@ part of dart._js_helper;
 
 base class CustomKeyHashMap<K, V> extends CustomHashMap<K, V> {
   final _Predicate<Object?> _validKey;
-  CustomKeyHashMap(_Equality<K> equals, _Hasher<K> hashCode, this._validKey)
-      : super(equals, hashCode);
+  CustomKeyHashMap(super.equals, super.hashCode, this._validKey);
 
   @override
   @notNull

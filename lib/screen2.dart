@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:meal_drop/recipes.dart';
 import 'screen3.dart';
 import 'foodlist.dart';
-
-// Define a controller
-final ScrollController _scrollController = ScrollController();
 
 // Screen2: checklist
 class Screen2 extends StatefulWidget {
@@ -11,11 +9,13 @@ class Screen2 extends StatefulWidget {
   @override
   Screen2State createState() => Screen2State();
 }
+
 // Food list
 class Screen2State extends State<Screen2> {
   String filter = '';
   List<Food> filteredFoods = [];
   List<Food> selectedFoods = [];
+  Set<String> selectedTags = {};
 
   final TextEditingController searchController = TextEditingController();
 
@@ -30,8 +30,8 @@ class Screen2State extends State<Screen2> {
     return ScrollbarTheme(
       data: ScrollbarThemeData(
         thumbColor: MaterialStateProperty.all(Colors.deepOrange),
-          thickness: MaterialStateProperty.all(8.0),
-          radius: const Radius.circular(50),
+        thickness: MaterialStateProperty.all(8.0),
+        radius: const Radius.circular(50),
       ),
       child: Scaffold(
         backgroundColor: Colors.deepOrange[50],
@@ -72,7 +72,6 @@ class Screen2State extends State<Screen2> {
             ),
             Expanded(
               child: Scrollbar(
-                controller: _scrollController,
                 thumbVisibility: true,
                 child: ListView.builder(
                   itemCount: categorizedFoods.length,
@@ -112,12 +111,39 @@ class Screen2State extends State<Screen2> {
             ),
             ElevatedButton(
               onPressed: () {
-                final selectedItems =
-                categorizedFoods.values.expand((foods) => foods).where((food) => food.isSelected).toList();
+                final selectedItems = categorizedFoods.values
+                    .expand((foods) => foods)
+                    .where((food) => food.isSelected)
+                    .toList();
+
+                selectedTags = Set.from(selectedItems.map((food) => food.name));
+
+                final selectedRecipes = selectedItems.map((food) => Recipe(
+                  id: '',
+                  name: food.name,
+                  source: '',
+                  preptime: 0,
+                  waittime: 0,
+                  cooktime: 0,
+                  servings: 0,
+                  comments: '',
+                  calories: 0,
+                  fat: 0,
+                  satfat: 0,
+                  carbs: 0,
+                  fiber: 0,
+                  sugar: 0,
+                  protein: 0,
+                  instructions: '',
+                  ingredients: [],
+                  tags: [food.name],
+                )).toList();
+
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => Screen3(
-                      foods: selectedItems,
+                      recipes: selectedRecipes,
+                      selectedTags: selectedTags,
                     ),
                   ),
                 );
@@ -143,11 +169,4 @@ class Screen2State extends State<Screen2> {
     }
     return categorized;
   }
-
-  @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
-  }
-
 }

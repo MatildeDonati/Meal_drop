@@ -15938,7 +15938,7 @@ class ElementEvents extends Events {
     'speechchange': 'webkitSpeechChange'
   };
 
-  ElementEvents(Element ptr) : super(ptr);
+  ElementEvents(Element super.ptr);
 
   @override
   Stream<Event> operator [](String type) {
@@ -35667,7 +35667,7 @@ abstract class _AttributeMap extends MapBase<String, String> {
 
 /// Wrapper to expose [Element.attributes] as a typed map.
 class _ElementAttributeMap extends _AttributeMap {
-  _ElementAttributeMap(Element element) : super(element);
+  _ElementAttributeMap(super.element);
 
   @override
   bool containsKey(Object? key) {
@@ -35717,7 +35717,7 @@ class _ElementAttributeMap extends _AttributeMap {
 class _NamespacedAttributeMap extends _AttributeMap {
   final String? _namespace;
 
-  _NamespacedAttributeMap(Element element, this._namespace) : super(element);
+  _NamespacedAttributeMap(super.element, this._namespace);
 
   @override
   bool containsKey(Object? key) {
@@ -36172,7 +36172,7 @@ abstract class CssClassSet implements Set<String> {
 /// A rectangle representing all the content of the element in the
 /// [box model](http://www.w3.org/TR/CSS2/box.html).
 class _ContentCssRect extends CssRect {
-  _ContentCssRect(Element element) : super(element);
+  _ContentCssRect(super.element);
 
   @override
   num get height =>
@@ -37220,7 +37220,7 @@ class _CustomEventStreamImpl<T extends Event> extends Stream<T>
 
 class _CustomKeyEventStreamImpl extends _CustomEventStreamImpl<KeyEvent>
     implements CustomStream<KeyEvent> {
-  _CustomKeyEventStreamImpl(String type) : super(type);
+  _CustomKeyEventStreamImpl(super.type);
 
   @override
   void add(KeyEvent event) {
@@ -39341,7 +39341,7 @@ class _CustomElementNodeValidator extends _SimpleNodeValidator {
   final bool allowCustomTag;
 
   _CustomElementNodeValidator(
-      UriPolicy uriPolicy,
+      UriPolicy super.uriPolicy,
       Iterable<String> allowedElements,
       Iterable<String>? allowedAttributes,
       Iterable<String>? allowedUriAttributes,
@@ -39349,8 +39349,7 @@ class _CustomElementNodeValidator extends _SimpleNodeValidator {
       bool allowCustomTag)
       : allowTypeExtension = allowTypeExtension == true,
         allowCustomTag = allowCustomTag == true,
-        super(uriPolicy,
-            allowedElements: allowedElements,
+        super(allowedElements: allowedElements,
             allowedAttributes: allowedAttributes,
             allowedUriAttributes: allowedUriAttributes);
 

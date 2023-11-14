@@ -96,8 +96,8 @@ class CastIterable<S, T> extends _CastIterableBase<S, T> {
 
 class _EfficientLengthCastIterable<S, T> extends CastIterable<S, T>
     implements EfficientLengthIterable<T> {
-  _EfficientLengthCastIterable(EfficientLengthIterable<S> source)
-      : super._(source);
+  _EfficientLengthCastIterable(EfficientLengthIterable<S> super.source)
+      : super._();
 }
 
 abstract class _CastListBase<S, T> extends _CastIterableBase<S, T>

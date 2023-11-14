@@ -82,7 +82,7 @@ abstract class _Timer implements Timer {
 class _OneShotTimer extends _Timer {
   final void Function() _callback;
 
-  _OneShotTimer(Duration duration, this._callback) : super(duration);
+  _OneShotTimer(super.duration, this._callback);
 
   @override
   void _schedule() {
@@ -106,7 +106,7 @@ class _OneShotTimer extends _Timer {
 class _PeriodicTimer extends _Timer {
   final void Function(Timer) _callback;
 
-  _PeriodicTimer(Duration duration, this._callback) : super(duration);
+  _PeriodicTimer(super.duration, this._callback);
 
   @override
   void _schedule() {

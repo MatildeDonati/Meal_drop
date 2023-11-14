@@ -273,7 +273,7 @@ K putLinkedMapKey<K>(@notNull K key, keyMap) {
 }
 
 base class ImmutableMap<K, V> extends LinkedMap<K, V> {
-  ImmutableMap.from(JSArray entries) : super.from(entries);
+  ImmutableMap.from(super.entries) : super.from();
 
   @override
   void operator []=(K key, V value) {

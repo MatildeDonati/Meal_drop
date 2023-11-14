@@ -69,8 +69,8 @@ abstract base class Struct extends _Compound {
   /// structs.
   Struct() : super._();
 
-  Struct._fromTypedDataBase(Object typedDataBase)
-      : super._fromTypedDataBase(typedDataBase);
+  Struct._fromTypedDataBase(super.typedDataBase)
+      : super._fromTypedDataBase();
 }
 
 /// Annotation to specify on `Struct` subtypes to indicate that its members

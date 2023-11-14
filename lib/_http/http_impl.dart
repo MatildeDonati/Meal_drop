@@ -1074,8 +1074,7 @@ class _IOSinkImpl extends _StreamSinkImpl<List<int>> implements IOSink {
 
   final _HttpProfileData? _profileData;
   _IOSinkImpl(
-      StreamConsumer<List<int>> target, this._encoding, this._profileData)
-      : super(target);
+      super.target, this._encoding, this._profileData);
 
   @override
   Encoding get encoding => _encoding;
