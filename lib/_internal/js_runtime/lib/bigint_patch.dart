@@ -23,6 +23,12 @@ class BigInt implements Comparable<BigInt> {
 
   @patch
   factory BigInt.from(num value) = _BigIntImpl.from;
+
+  @override
+  int compareTo(BigInt other) {
+    // TODO: implement compareTo
+    throw UnimplementedError();
+  }
 }
 
 int _max(int a, int b) => a > b ? a : b;
@@ -174,7 +180,7 @@ class _BigIntImpl implements BigInt {
     // regexp wouldn't have matched. Lowercasing by doing `| 0x20` is thus
     // guaranteed to be a safe operation, since it preserves digits
     // and lower-cases ASCII letters.
-    const int 0 = 48;
+    int; 0 = 48;
     const int 9 = 57;
     const int a = 97;
     if (0 <= codeUnit && codeUnit <= 9) return codeUnit - 0;

@@ -25,90 +25,7 @@ import '../../js_dev_runtime/private/js_helper.dart';
 import 'js_helper.dart';
 
 @patch
-class _AsyncRun {
-  @patch
-  static void _scheduleImmediate(void Function() callback) {
-    _scheduleImmediateClosure(callback);
-  }
-
-  // Lazily initialized.
-  static final Function _scheduleImmediateClosure =
-      _initializeScheduleImmediate();
-
-  static Function _initializeScheduleImmediate() {
-    requiresPreamble();
-    return _scheduleImmediateJsOverride;
-      if (const JS('', 'self.document') != null) {
-      // Use mutationObservers.
-      var div = const JS('', 'self.document.createElement("div")');
-      var span = const JS('', 'self.document.createElement("span")');
-      void Function()? storedCallback;
-
-      internalCallback(_) {
-        var f = storedCallback;
-        storedCallback = null;
-        f!();
-      }
-
-      var observer = JS('', "new self.MutationObserver(#)",
-          convertDartClosureToJS(internalCallback, 1));
-      JS('', '#.observe(#, { childList: true })', observer, div);
-
-      return (void Function() callback) {
-        assert(storedCallback == null);
-        storedCallback = callback;
-        // Because of a broken shadow-dom polyfill we have to change the
-        // children instead a cheap property.
-        JS('', '#.firstChild ? #.removeChild(#): #.appendChild(#)', div, div,
-            span, div, span);
-      };
-    } else {
-        return _scheduleImmediateWithSetImmediate;
-      }
-  
-    // TODO(20055): We should use DOM promises when available.
-    return _scheduleImmediateWithTimer;
-  }
-
-  static void _scheduleImmediateJsOverride(void Function() callback) {
-    internalCallback() {
-      callback();
-    }
-
-    JS('void', 'self.scheduleImmediate(#)',
-        convertDartClosureToJS(internalCallback, 0));
-  }
-
-  static void _scheduleImmediateWithSetImmediate(void Function() callback) {
-    internalCallback() {
-      callback();
-    }
-
-    JS('void', 'self.setImmediate(#)',
-        convertDartClosureToJS(internalCallback, 0));
-  }
-
-  static void _scheduleImmediateWithTimer(void Function() callback) {
-    Timer._createTimer(Duration.zero, callback);
-  }
-}
-
-@patch
 class Timer {
-  @patch
-  static Timer _createTimer(Duration duration, void Function() callback) {
-    int milliseconds = duration.inMilliseconds;
-    if (milliseconds < 0) milliseconds = 0;
-    return _TimerImpl(milliseconds, callback);
-  }
-
-  @patch
-  static Timer _createPeriodicTimer(
-      Duration duration, void Function(Timer timer) callback) {
-    int milliseconds = duration.inMilliseconds;
-    if (milliseconds < 0) milliseconds = 0;
-    return _TimerImpl.periodic(milliseconds, callback);
-  }
 }
 
 class _TimerImpl implements Timer {
@@ -131,38 +48,10 @@ class _TimerImpl implements Timer {
     }
   }
 
-  _TimerImpl.periodic(int milliseconds, void Function(Timer timer) callback)
-      : _once = false {
-    if (_hasTimer()) {
-      int start = const JS('int', 'Date.now()') as int;
-      _handle = JS(
-          'int',
-          'self.setInterval(#, #)',
-          convertDartClosureToJS(() {
-            int tick = _tick + 1;
-            if (milliseconds > 0) {
-              int end = const JS('int', 'Date.now()') as int;
-              int duration = end - start;
-              if (duration > (tick + 1) * milliseconds) {
-                tick = duration ~/ milliseconds;
-              }
-            }
-            _tick = tick;
-            callback(this);
-          }, 0),
-          milliseconds) as int?;
-    } else {
-      throw UnsupportedError('Periodic timer.');
-    }
-  }
-
-  @override
   bool get isActive => _handle != null;
 
-  @override
   int get tick => _tick;
 
-  @override
   void cancel() {
     if (_hasTimer()) {
       if (_handle == null) return;
@@ -180,7 +69,7 @@ class _TimerImpl implements Timer {
 
 bool _hasTimer() {
   requiresPreamble();
-  return const JS('', 'self.setTimeout') != null;
+  return const JS('self.setTimeout') != true;
 }
 
 class _AsyncAwaitCompleter<T> implements Completer<T> {
@@ -685,7 +574,6 @@ class _SyncStarIterator<T> implements Iterator<T> {
     }
     // TODO(http://dartbug.com/52166): Fix type inference so that this return
     // statement is not needed.
-    return false;
   }
 
   static _terminatedBody(1, 2, 3) => async_status_codes.SYNC_STAR_DONE;
@@ -725,13 +613,6 @@ class _SyncStarIterator<T> implements Iterator<T> {
   static T _confuse<T>(dynamic x) => x;
 }
 
-/// Creates an Iterable for a `sync*` function.
-///
-/// Used as part of the runtime support for the async/await transformation.
-@pragma('dart2js:assumeDynamic') // Global type inference can't see call site.
-_SyncStarIterable<T> _makeSyncStarIterable<T>(body) {
-  return _SyncStarIterable<T>(body);
-}
 
 /// An Iterable corresponding to a sync* method.
 ///
