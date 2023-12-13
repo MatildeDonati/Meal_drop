@@ -1,54 +1,29 @@
 import 'package:flutter/material.dart';
-import 'package:meal_drop/recipes.dart';
-import 'recipesdetail.dart';
+import 'recipes.dart';
 
-// Screen3: recipes
 class Screen3 extends StatelessWidget {
   final List<Recipe> recipes;
-  final Set<String> selectedTags;
+  final List<String> filteredIngredients;
 
-  const Screen3({super.key, required this.recipes, required this.selectedTags});
+  const Screen3({super.key, required this.recipes, required this.filteredIngredients});
 
   @override
   Widget build(BuildContext context) {
-
-    final filteredRecipes = recipes.where((recipe) => recipe.tags.any((tag) => selectedTags.contains(tag))).toList();
-
     return Scaffold(
       backgroundColor: Colors.deepOrange[50],
       appBar: AppBar(
         backgroundColor: Colors.deepOrange,
         elevation: 0.0,
       ),
+      // Usa la lista di ricette come necessario nella tua UI
       body: ListView.builder(
-        itemCount: filteredRecipes.length,
+        itemCount: recipes.length,
         itemBuilder: (context, index) {
-          final recipe = filteredRecipes[index];
           return ListTile(
-            title: Text(recipe.name),
-            subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Prep Time: ${recipe.preptime} min | '
-                      'Wait Time: ${recipe.waittime} min | '
-                      'Cook Time: ${recipe.cooktime} min',
-                ),
-                Wrap(
-                  spacing: 8.0,
-                  children: recipe.tags.map((tag) => Chip(label: Text(tag))).toList(),
-                ),
-              ], // children
-            ),
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => RecipeDetailPage(recipe: recipe),
-                ),
-              );
-            }, // onTap
+            title: Text(recipes[index].name),
+            // Altri dettagli della ricetta...
           );
-        }, // Item builder
+        },
       ),
     );
   }

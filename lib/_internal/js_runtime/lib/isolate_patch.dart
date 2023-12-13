@@ -5,7 +5,6 @@
 // Patch file for the dart:isolate library.
 
 import "dart:async";
-import 'dart:_foreign_helper' show JS;
 import "dart:typed_data" show TypedData;
 
 @patch

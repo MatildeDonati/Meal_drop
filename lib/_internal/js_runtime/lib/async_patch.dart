@@ -4,14 +4,6 @@
 
 // Patch file for the dart:async library.
 
-import 'dart:_js_helper'
-    show
-        ExceptionAndStackTrace,
-        convertDartClosureToJS,
-        getTraceFromException,
-        requiresPreamble,
-        wrapException,
-        unwrapException;
 
 import 'dart:_foreign_helper'
     show JS, JS_GET_FLAG, JS_RAW_EXCEPTION, RAW_DART_FUNCTION_REF;
