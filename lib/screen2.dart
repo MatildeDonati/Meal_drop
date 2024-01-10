@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'screen3.dart';
 import 'foodlistDEMO.dart';
-import 'recipes.dart';
 
 
 class Screen2 extends StatefulWidget {
@@ -21,8 +20,6 @@ class Screen2State extends State<Screen2> {
 
   // Lista filtrata degli elementi in base alla ricerca
   List<String> filteredIngredients = [];
-
-  List<Recipe> recipes = [];
 
   @override
   void initState() {
@@ -88,7 +85,7 @@ class Screen2State extends State<Screen2> {
                   // Cambia il colore del testo
                   labelStyle: TextStyle(
                     color: Colors.black,
-                    fontSize: 20, // Imposta la dimensione del carattere desiderata
+                    fontSize: 19, // Imposta la dimensione del carattere desiderata
                   ),
                   // Cambia il colore del bordo
                   enabledBorder: UnderlineInputBorder(
@@ -118,16 +115,13 @@ class Screen2State extends State<Screen2> {
                 },
               ),
             ),
-            // Aggiungi il bottone per navigare a Screen3
+
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: ElevatedButton(
                 onPressed: () {
                   Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Screen3(recipes: recipes, filteredIngredients: filteredIngredients),
-                    ),
+                    context, MaterialPageRoute(builder: (context) => const Screen3()),
                   );
                 },
                 style: ButtonStyle(

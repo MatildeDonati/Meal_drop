@@ -1,4 +1,4 @@
-#Wed Dec 13 18:18:15 CET 2023
+#Wed Jan 10 20:10:59 CET 2024
 base.0=C\:\\Users\\matil\\Meal_drop\\build\\app\\intermediates\\dex\\debug\\mergeDexDebug\\classes.dex
 path.0=classes.dex
 renamed.0=classes.dex
