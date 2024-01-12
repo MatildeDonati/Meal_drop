@@ -1,0 +1,1 @@
+ C:\\Users\\matil\\Meal_drop\\.dart_tool\\flutter_build\\7e620463f64718982e3309f581e3565f\\native_assets.yaml: 
