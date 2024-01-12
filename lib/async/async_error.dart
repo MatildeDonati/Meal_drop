@@ -2,7 +2,7 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-part of dart.async;
+part of 'async.dart';
 
 /// An error and a stack trace.
 ///
@@ -10,6 +10,7 @@ part of dart.async;
 /// value, for example when returned by [Zone.errorCallback].
 final class AsyncError implements Error {
   final Object error;
+  @override
   final StackTrace stackTrace;
 
   AsyncError(Object error, StackTrace? stackTrace)
@@ -29,5 +30,6 @@ final class AsyncError implements Error {
     return StackTrace.empty;
   }
 
+  @override
   String toString() => '$error';
 }
