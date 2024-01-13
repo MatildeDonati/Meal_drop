@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'screen3.dart';
-import 'foodlistDEMO.dart';
-
+import 'dart:io';
+import 'package:http/http.dart' as http;
 
 class Screen2 extends StatefulWidget {
-  const Screen2({super.key});
+  const Screen2({Key? key}) : super(key: key);
 
   @override
   Screen2State createState() => Screen2State();
@@ -12,128 +11,108 @@ class Screen2 extends StatefulWidget {
 
 class Screen2State extends State<Screen2> {
 
-  final List<bool> checkedItems = List.generate(14, (index) => false);
-  final TextEditingController searchController = TextEditingController();
+  TextEditingController textEditingController = TextEditingController();
 
-  List<String> filteredIngredients = [];
-
-  @override
-  void initState() {
-    super.initState();
-    filteredIngredients.addAll(ingredients);
-    searchController.addListener(filterIngredients);
-  }
-
-  void filterIngredients() {
-    setState(() {
-      filteredIngredients = ingredients
-          .where((ingredient) => ingredient.contains(searchController.text))
-          .toList();
-    });
-  }
-
-  Widget buildSearchBar() {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: TextField(
-        controller: searchController,
-        decoration: const InputDecoration(
-          labelText: 'Search for ingredients:',
-          labelStyle: TextStyle(
-            color: Colors.black,
-            fontSize: 19,
-          ),
-          enabledBorder: UnderlineInputBorder(
-            borderSide: BorderSide(color: Colors.black),
-          ),
-          focusedBorder: UnderlineInputBorder(
-            borderSide: BorderSide(color: Colors.black),
-          ),
-        ),
-        cursorColor: Colors.black,
-      ),
-    );
-  }
-
-  Widget buildIngredientsList() {
-    return Expanded(
-      child: Scrollbar(
-        thumbVisibility: true,
-        thickness: 8.0,
-        radius: const Radius.circular(5.0),
-        child: ListView.builder(
-          itemCount: filteredIngredients.length,
-          itemBuilder: (context, index) {
-            return CheckboxListTile(
-              title: Text(filteredIngredients[index]),
-              value: checkedItems[ingredients.indexOf(filteredIngredients[index])],
-              onChanged: (value) {
-                setState(() {
-                  checkedItems[ingredients.indexOf(filteredIngredients[index])] = value!;
-                });
-              },
-            );
-          },
-        ),
-      ),
-    );
-  }
-
-  Widget buildDiscoverButton() {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: ElevatedButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const Screen3()),
-          );
-        },
-        style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.all<Color>(Colors.deepOrange),
-        ),
-        child: const Text(
-          'Discover the recipes!',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            letterSpacing: 1.5,
-            color: Colors.white,
-          ),
-        ),
-      ),
-    );
-  }
+  String applicationId = "85721d4c";
+  String applicationKey = "162c22da2f6dc5bc2f4e1caa61c652aa";
 
   @override
-  Widget build(BuildContext context) {
+    Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.deepOrange[50],
-      appBar: AppBar(
-        backgroundColor: Colors.deepOrange,
-        elevation: 0.0,
-      ),
-      body: Column(
+      body: Stack(
         children: <Widget>[
-          const Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Center(
-              child: Text(
-                'Check what you have',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 2,
-                  color: Colors.deepOrange,
+          Container(
+            height: MediaQuery.of(context).size.height,
+            width: MediaQuery.of(context).size.width,
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Color(0xFFFBE9E7),
+                  Color(0xFFFFCCBC)
+                ]
+              )
+            )
+          ),
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 30),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                const Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text("Meal", style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                    ),
+                    Text("Drop", style: TextStyle(
+                      color: Colors.deepOrange,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                    ),
+                    )
+                  ],
                 ),
-              ),
+                const SizedBox(height: 30,),
+                const Text("What will you cook today?", style: TextStyle(
+                  fontSize: 20,
+                  color: Colors.deepOrange,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1,
+                ),
+                ),
+                const SizedBox(height: 8,),
+                const Text("Just enter the ingredient you don't want to waste and we will show the best recipe for you!",
+                      style: TextStyle(
+                      fontSize: 15,
+                      color: Colors.deepOrange,
+                ),
+                ),
+                SizedBox(height:30,),
+                Container(
+                  width: MediaQuery.of(context).size.width,
+                  child: Row(
+                    children: <Widget>[
+                        Expanded(
+                         child: TextField(
+                           controller: textEditingController,
+                           decoration: InputDecoration(
+                              hintText: "Enter Ingredients",
+                              hintStyle: TextStyle(
+                                  fontSize: 15,
+                                  color: Colors.black,
+                                  letterSpacing: 1,
+                            ),
+                          ),
+                           style: TextStyle(
+                             fontSize:18
+                           ),
+                        ),
+                       ),
+                       SizedBox(width: 16,),
+                      InkWell(
+                        onTap: () {
+                          if(textEditingController.text.isNotEmpty) {
+
+                          }else{
+
+                          }
+                        },
+                        child: Container(
+                          child: const Icon(Icons.search, color: Colors.black,),
+                      ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
-          buildSearchBar(),
-          buildIngredientsList(),
-          buildDiscoverButton(),
         ],
       ),
     );
+
   }
 }
