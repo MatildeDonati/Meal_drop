@@ -11,8 +11,10 @@ class Screen2 extends StatefulWidget {
 }
 
 class Screen2State extends State<Screen2> {
+
   final List<bool> checkedItems = List.generate(14, (index) => false);
   final TextEditingController searchController = TextEditingController();
+
   List<String> filteredIngredients = [];
 
   @override
