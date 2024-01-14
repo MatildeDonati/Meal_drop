@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'screen1.dart';
+import 'screen2.dart';
 
 void main() => runApp(const MaterialApp(
   home: Home(),
@@ -10,38 +10,73 @@ class Home extends StatelessWidget {
   const Home({super.key});
   @override
   Widget build(BuildContext context) {
-    return Scaffold( // In this section you can add properties
-      backgroundColor: Colors.deepOrange[50],
-      appBar: AppBar( // Upper bar in the home screen
-        title: const Text('Home'), // Text in the upper bar
-        centerTitle: true, // Tool to centre the title
-        backgroundColor: Colors.deepOrange, // Change the appBar color
-        elevation: 0.0,
-      ),
-      body: const Center(
-        child: Text(
-          'Welcome!',
-          style: TextStyle(
-            fontSize: 30,
-            fontWeight: FontWeight.bold,
-            letterSpacing: 2,
-            color: Colors.deepOrange,
-          ),
+    return Scaffold(
+        body: Stack(
+            children: <Widget>[
+          Container(
+            height: MediaQuery.of(context).size.height,
+            width: MediaQuery.of(context).size.width,
+            decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                    colors: [
+                      Color(0xFFFBE9E7),
+                      Color(0xFFFFCCBC)
+                    ]
+                )
+            )
         ),
-      ),
+              Container(
+                padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 30),
+                child: const Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                  Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Text("Meal", style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                      ),
+                      Text("Drop", style: TextStyle(
+                        color: Colors.deepOrange,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      )
+                    ],
+                  ),
+                  SizedBox(height: 80),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Text("Welcome!", style: TextStyle(
+                    fontSize: 50,
+                    color: Colors.deepOrange,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 1,
+                ),
+                ),
+                      ],
+                  ),
+                ],
+              ),
+              ),
+      ],
+    ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const Screen1()),
+            MaterialPageRoute(builder: (context) => Screen2()),
           );
         },
         backgroundColor: Colors.deepOrange,
-        child: const Text('Click!'),
+        child: const Text('Click!', style: TextStyle(color: Colors.black),),
       ),
+
     );
+
   }
 }
-
-// The home widget allows you to create a Home screen that I can reuse
-// wherever I want just by writing the name of the class I created
