@@ -8,7 +8,7 @@ import 'package:webview_flutter/webview_flutter.dart';
 class Recipeview extends StatefulWidget {
 
   final String postUrl;
-  Recipeview({required this.postUrl});
+  const Recipeview({super.key, required this.postUrl});
 
   @override
   RecipeviewState createState() => RecipeviewState();
@@ -37,59 +37,57 @@ class RecipeviewState extends State<Recipeview> {
     @override
     Widget build(BuildContext context) {
       return Scaffold(
-        body: Container(
-          child: Column(
-            children: <Widget>[
-              Container(
-                padding: EdgeInsets.only(top: Platform.isIOS? 60: 30, right: 24,left: 24,bottom: 16),
-                width: MediaQuery.of(context).size.width,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      Color(0xFFFBE9E7),
-                      Color(0xFFFFCCBC)
-                    ],
-                    begin: FractionalOffset.topRight,
-                    end: FractionalOffset.bottomLeft,
-                  ),
-                ),
-                child:  Row(
-                  mainAxisAlignment: kIsWeb
-                      ? MainAxisAlignment.start
-                      : MainAxisAlignment.center,
-                  children: <Widget>[
-                    Text(
-                      "Meal",
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.black,
-                      ),
-                    ),
-                    Text(
-                      "Drop",
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.deepOrange,
-                      ),
-                    )
+        body: Column(
+          children: <Widget>[
+            Container(
+              padding: EdgeInsets.only(top: Platform.isIOS? 60: 30, right: 24,left: 24,bottom: 16),
+              width: MediaQuery.of(context).size.width,
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    Color(0xFFFBE9E7),
+                    Color(0xFFFFCCBC)
                   ],
+                  begin: FractionalOffset.topRight,
+                  end: FractionalOffset.bottomLeft,
                 ),
               ),
-              Container(
-                height: MediaQuery.of(context).size.height - 100,
-                width: MediaQuery.of(context).size.width,
-                child: WebView(
-                        initialUrl: widget.postUrl,
-                        javascriptMode: JavaScriptMode.unrestricted,
-                        onWebViewCreated: (WebViewController webViewController){
-                          setState(() {
-                          controller.complete(webViewController);
-                          });
-                        }
-                ),
+              child:  const Row(
+                mainAxisAlignment: kIsWeb
+                    ? MainAxisAlignment.start
+                    : MainAxisAlignment.center,
+                children: <Widget>[
+                  Text(
+                    "Meal",
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: Colors.black,
+                    ),
+                  ),
+                  Text(
+                    "Drop",
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: Colors.deepOrange,
+                    ),
+                  )
+                ],
               ),
-            ],
-          ),
+            ),
+            SizedBox(
+              height: MediaQuery.of(context).size.height - 100,
+              width: MediaQuery.of(context).size.width,
+              child: WebView(
+                      initialUrl: widget.postUrl,
+                      javascriptMode: JavaScriptMode.unrestricted,
+                      onWebViewCreated: (WebViewController webViewController){
+                        setState(() {
+                        controller.complete(webViewController);
+                        });
+                      }
+              ),
+            ),
+          ],
         ),
       );
     }

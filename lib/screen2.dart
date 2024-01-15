@@ -9,13 +9,14 @@ import 'package:meal_drop/recipeview.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Screen2 extends StatefulWidget {
+  const Screen2({super.key});
 
   @override
   Screen2State createState() => Screen2State();
 }
 
 class Screen2State extends State<Screen2> {
-
+  
   List<RecipeModels> recipes = List<RecipeModels>();
   late String ingredients;
   bool _loading = false;
@@ -79,15 +80,15 @@ class Screen2State extends State<Screen2> {
                     letterSpacing: 1,
                   ),
                   ),
-                   SizedBox(height: 8,),
-                   Text("Just enter the ingredient you don't want to waste and we will show the best recipe for you!",
+                   const SizedBox(height: 8,),
+                   const Text("Just enter the ingredient you don't want to waste and we will show the best recipe for you!",
                         style: TextStyle(
                         fontSize: 15,
                         color: Colors.deepOrange,
                   ),
                   ),
-                  SizedBox(height:30,),
-                  Container(
+                  const SizedBox(height:30,),
+                  SizedBox(
                     width: MediaQuery.of(context).size.width,
                     child: Row(
                       children: <Widget>[
@@ -101,20 +102,20 @@ class Screen2State extends State<Screen2> {
                                     color: Colors.black.withOpacity(0.5),
                                     letterSpacing: 1,
                               ),
-                               enabledBorder: UnderlineInputBorder(
+                               enabledBorder: const UnderlineInputBorder(
                                  borderSide: BorderSide(color: Colors.white),
                                ),
-                               focusedBorder: UnderlineInputBorder(
+                               focusedBorder: const UnderlineInputBorder(
                                  borderSide: BorderSide(color: Colors.white),
                                ),
                             ),
-                             style: TextStyle(
+                             style: const TextStyle(
                                fontSize:18,
                                color: Colors.black,
                              ),
                           ),
                          ),
-                         SizedBox(width: 16,),
+                         const SizedBox(width: 16,),
                         InkWell(
                           onTap: () async {
                             if(textEditingController.text.isNotEmpty) {
@@ -125,19 +126,13 @@ class Screen2State extends State<Screen2> {
                                 String url =
                                     "https://api.edamam.com/search?q=${textEditingController.text}&app_id=85721d4c&app_key=162c22da2f6dc5bc2f4e1caa61c652aa";
                                 var response = await http.get(url as Uri);
-                                print(" $response this is response");
                                 Map<String, dynamic> jsonData =
                                 jsonDecode(response.body);
-                                print("this is json Data $jsonData");
                                 jsonData["hits"].forEach((element) {
-                                  print(element.toString());
                                   RecipeModels recipeModels = RecipeModels(url: '', source: '', image: '', label: '');
                                   recipeModels = RecipeModels.fromMap(element['recipe']);
                                   recipes.add(recipeModels);
-                                  print(recipeModels.url);
                                 });
-
-                                List<RecipeModels> typedRecipes = recipes.cast<RecipeModels>();
 
                                 setState(() {
                                   _loading = false;
@@ -150,42 +145,38 @@ class Screen2State extends State<Screen2> {
                           child: Container(
                             decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8),
-                            gradient: LinearGradient(
+                            gradient: const LinearGradient(
                             colors: [
                               Color(0xFFFBE9E7),
                               Color(0xFFFFCCBC)
                             ],
                             begin: FractionalOffset.topRight,
                             end: FractionalOffset.bottomLeft)),
-                            padding: EdgeInsets.all(8),
-                            child: Container(
-                              child: const Icon(Icons.search, color: Colors.black,),
-                        ),
+                            padding: const EdgeInsets.all(8),
+                            child: const Icon(Icons.search, color: Colors.black,),
                         ),
                         ),
                       ],
                     ),
                   ),
-                  SizedBox(height:10,),
-                Container(
-                  child: GridView(
-                      gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                          mainAxisSpacing: 10.0, maxCrossAxisExtent: 200.0),
-                      shrinkWrap: true,
-                      scrollDirection: Axis.vertical,
-                      physics: ClampingScrollPhysics(),
-                      children: List.generate(recipes.length, (index) {
-                        return GridTile(
-                            child: RecipieTile(
-                              title: recipes[index].label,
-                              imgUrl: recipes[index].image,
-                              desc: recipes[index].source,
-                              url: recipes[index].url,
-                            )
-                        );
-                      }
-                      )
-                  ),
+                  const SizedBox(height:10,),
+                GridView(
+                    gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                        mainAxisSpacing: 10.0, maxCrossAxisExtent: 200.0),
+                    shrinkWrap: true,
+                    scrollDirection: Axis.vertical,
+                    physics: const ClampingScrollPhysics(),
+                    children: List.generate(recipes.length, (index) {
+                      return GridTile(
+                          child: RecipeTile(
+                            title: recipes[index].label,
+                            imgUrl: recipes[index].image,
+                            desc: recipes[index].source,
+                            url: recipes[index].url,
+                          )
+                      );
+                    }
+                    )
                 ),
                 ],
               ),
@@ -198,20 +189,19 @@ class Screen2State extends State<Screen2> {
   }
 }
 
-class RecipieTile extends StatefulWidget {
+class RecipeTile extends StatefulWidget {
   final String title, desc, imgUrl, url;
 
-  RecipieTile({required this.title, required this.desc, required this.imgUrl, required this.url});
+  const RecipeTile({super.key, required this.title, required this.desc, required this.imgUrl, required this.url});
 
   @override
-  RecipieTileState createState() => RecipieTileState();
+  RecipeTileState createState() => RecipeTileState();
 }
 
-class RecipieTileState extends State<RecipieTile> {
+class RecipeTileState extends State<RecipeTile> {
   _launchURL(String url) async {
-
-    if (await canLaunch(url)) {
-      await launch(url);
+    if (await canLaunchUrl(url as Uri)) {
+      await launchUrl(url as Uri);
     } else {
       throw 'Could not launch $url';
     }
@@ -238,7 +228,7 @@ class RecipieTileState extends State<RecipieTile> {
             }
           },
           child: Container(
-            margin: EdgeInsets.all(8),
+            margin: const EdgeInsets.all(8),
             child: Stack(
               children: <Widget>[
                 Image.network(
@@ -250,7 +240,7 @@ class RecipieTileState extends State<RecipieTile> {
                 Container(
                   width: 200,
                   alignment: Alignment.bottomLeft,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                       gradient: LinearGradient(
                           colors: [Colors.white30, Colors.white],
                           begin: FractionalOffset.centerRight,
@@ -263,14 +253,14 @@ class RecipieTileState extends State<RecipieTile> {
                       children: <Widget>[
                         Text(
                           widget.title,
-                          style: TextStyle(
+                          style: const TextStyle(
                               fontSize: 13,
                               color: Colors.black54,
                               ),
                         ),
                         Text(
                           widget.desc,
-                          style: TextStyle(
+                          style: const TextStyle(
                               fontSize: 10,
                               color: Colors.black54,
                           ),
@@ -294,8 +284,8 @@ class GradientCard extends StatelessWidget {
   final String topColorCode;
   final String bottomColorCode;
 
-  GradientCard(
-      {required this.topColor,
+  const GradientCard(
+      {super.key, required this.topColor,
         required this.bottomColor,
         required this.topColorCode,
         required this.bottomColorCode});
@@ -306,44 +296,42 @@ class GradientCard extends StatelessWidget {
       padding: const EdgeInsets.all(8.0),
       child: Wrap(
         children: <Widget>[
-          Container(
-            child: Stack(
-              children: <Widget>[
-                Container(
-                  height: 160,
-                  width: 180,
-                  decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                          colors: [topColor, bottomColor],
-                          begin: FractionalOffset.topLeft,
-                          end: FractionalOffset.bottomRight)),
-                ),
-                Container(
-                  width: 180,
-                  alignment: Alignment.bottomLeft,
-                  decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                          colors: [Colors.white30, Colors.white],
-                          begin: FractionalOffset.centerRight,
-                          end: FractionalOffset.centerLeft)),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      children: <Widget>[
-                        Text(
-                          topColorCode,
-                          style: TextStyle(fontSize: 16, color: Colors.black54),
-                        ),
-                        Text(
-                          bottomColorCode,
-                          style: TextStyle(fontSize: 16, color: bottomColor),
-                        )
-                      ],
-                    ),
+          Stack(
+            children: <Widget>[
+              Container(
+                height: 160,
+                width: 180,
+                decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                        colors: [topColor, bottomColor],
+                        begin: FractionalOffset.topLeft,
+                        end: FractionalOffset.bottomRight)),
+              ),
+              Container(
+                width: 180,
+                alignment: Alignment.bottomLeft,
+                decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                        colors: [Colors.white30, Colors.white],
+                        begin: FractionalOffset.centerRight,
+                        end: FractionalOffset.centerLeft)),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    children: <Widget>[
+                      Text(
+                        topColorCode,
+                        style: const TextStyle(fontSize: 16, color: Colors.black54),
+                      ),
+                      Text(
+                        bottomColorCode,
+                        style: TextStyle(fontSize: 16, color: bottomColor),
+                      )
+                    ],
                   ),
-                )
-              ],
-            ),
+                ),
+              )
+            ],
           ),
         ],
       ),
