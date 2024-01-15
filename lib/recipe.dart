@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:meal_drop/hits.dart';
 import 'package:http/http.dart' as http;
 
-class Recipe {
+class Recipes {
   List<Hits> hits = [];
 
   Future<void> getRecipe() async {
@@ -13,7 +13,7 @@ class Recipe {
     var jsonData = jsonDecode(response.body);
     jsonData["hits"].forEach((element) {
       Hits hits = Hits(
-        recipeModels: element['recipe'],
+        recipeModels: element['recipes'],
       );
       // hits.recipeModel = add(Hits.fromMap(hits.recipeModel));
     });

@@ -13,10 +13,10 @@ class RecipeModels {
 
   factory RecipeModels.fromMap(Map<String, dynamic> parsedJson){
     return RecipeModels(
-      url: parsedJson["url"],
-      label: parsedJson["label"],
-      image: parsedJson["image"],
-      source: parsedJson["source"],
+      url: parsedJson["url"] ?? "",
+      label: parsedJson["label"] ?? "",
+      image: parsedJson["image"] ?? "",
+      source: parsedJson["source"] ?? "",
     );
   }
 }

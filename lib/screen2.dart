@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:core';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -15,8 +16,8 @@ class Screen2 extends StatefulWidget {
 
 class Screen2State extends State<Screen2> {
 
-  List<RecipeModels> recipes = List();
-  String ingridients;
+  List<RecipeModels> recipes = List<RecipeModels>();
+  late String ingredients;
   bool _loading = false;
   String query = "";
   TextEditingController textEditingController =  TextEditingController();
@@ -39,18 +40,22 @@ class Screen2State extends State<Screen2> {
                 colors: [
                   Color(0xFFFBE9E7),
                   Color(0xFFFFCCBC)
-                ]
+                ],
+                  begin: FractionalOffset.topRight,
+                  end: FractionalOffset.bottomLeft,
               )
-            )
+            ),
           ),
           SingleChildScrollView(
             child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 30),
+              padding: EdgeInsets.symmetric(vertical: !kIsWeb ? Platform.isIOS? 60: 30 : 30, horizontal: 24),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   const Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisAlignment: kIsWeb
+                        ? MainAxisAlignment.start
+                        : MainAxisAlignment.center,
                     children: <Widget>[
                       Text("Meal", style: TextStyle(
                         fontSize: 18,
@@ -111,16 +116,51 @@ class Screen2State extends State<Screen2> {
                          ),
                          SizedBox(width: 16,),
                         InkWell(
-                          onTap: () {
+                          onTap: () async {
                             if(textEditingController.text.isNotEmpty) {
-                              getRecipes(textEditingController.text);
+                                setState(() {
+                                    _loading = true;
+                                  });
+                                recipes = new List();
+                                String url =
+                                    "https://api.edamam.com/search?q=${textEditingController.text}&app_id=85721d4c&app_key=162c22da2f6dc5bc2f4e1caa61c652aa";
+                                var response = await http.get(url as Uri);
+                                print(" $response this is response");
+                                Map<String, dynamic> jsonData =
+                                jsonDecode(response.body);
+                                print("this is json Data $jsonData");
+                                jsonData["hits"].forEach((element) {
+                                  print(element.toString());
+                                  RecipeModels recipeModels = RecipeModels(url: '', source: '', image: '', label: '');
+                                  recipeModels = RecipeModels.fromMap(element['recipe']);
+                                  recipes.add(recipeModels);
+                                  print(recipeModels.url);
+                                });
+
+                                List<RecipeModels> typedRecipes = recipes.cast<RecipeModels>();
+
+                                setState(() {
+                                  _loading = false;
+                                });
 
                             }else{
 
                             }
                           },
                           child: Container(
-                            child: const Icon(Icons.search, color: Colors.black,),
+                            decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            gradient: LinearGradient(
+                            colors: [
+                              Color(0xFFFBE9E7),
+                              Color(0xFFFFCCBC)
+                            ],
+                            begin: FractionalOffset.topRight,
+                            end: FractionalOffset.bottomLeft)),
+                            padding: EdgeInsets.all(8),
+                            child: Container(
+                              child: const Icon(Icons.search, color: Colors.black,),
+                        ),
                         ),
                         ),
                       ],
@@ -244,6 +284,69 @@ class RecipieTileState extends State<RecipieTile> {
           ),
         ),
       ],
+    );
+  }
+}
+
+class GradientCard extends StatelessWidget {
+  final Color topColor;
+  final Color bottomColor;
+  final String topColorCode;
+  final String bottomColorCode;
+
+  GradientCard(
+      {required this.topColor,
+        required this.bottomColor,
+        required this.topColorCode,
+        required this.bottomColorCode});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Wrap(
+        children: <Widget>[
+          Container(
+            child: Stack(
+              children: <Widget>[
+                Container(
+                  height: 160,
+                  width: 180,
+                  decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                          colors: [topColor, bottomColor],
+                          begin: FractionalOffset.topLeft,
+                          end: FractionalOffset.bottomRight)),
+                ),
+                Container(
+                  width: 180,
+                  alignment: Alignment.bottomLeft,
+                  decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                          colors: [Colors.white30, Colors.white],
+                          begin: FractionalOffset.centerRight,
+                          end: FractionalOffset.centerLeft)),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      children: <Widget>[
+                        Text(
+                          topColorCode,
+                          style: TextStyle(fontSize: 16, color: Colors.black54),
+                        ),
+                        Text(
+                          bottomColorCode,
+                          style: TextStyle(fontSize: 16, color: bottomColor),
+                        )
+                      ],
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

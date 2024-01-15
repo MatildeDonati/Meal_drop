@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'screen2.dart';
 
-void main() => runApp(const MaterialApp(
+void main() => runApp( const MaterialApp(
   home: Home(),
 ));
 
 // Home screen:
 class Home extends StatelessWidget {
   const Home({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
