@@ -1,6 +1,18 @@
 import 'package:flutter/material.dart';
-import 'home.dart';
+import 'package:meal_drop/home.dart';
 
-void main() => runApp(const MaterialApp(
-  home: Home(),
-));
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  // This widget is the root of your application.
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Flutter Recipe',
+      debugShowCheckedModeBanner: false,
+      home: Home(),
+    );
+  }
+}

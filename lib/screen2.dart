@@ -16,8 +16,8 @@ class Screen2 extends StatefulWidget {
 }
 
 class Screen2State extends State<Screen2> {
-  
-  List<RecipeModels> recipes = List<RecipeModels>();
+
+  List<RecipeModels> recipes = [];
   late String ingredients;
   bool _loading = false;
   String query = "";
@@ -99,14 +99,14 @@ class Screen2State extends State<Screen2> {
                                 hintText: "Enter Ingredients",
                                 hintStyle: TextStyle(
                                     fontSize: 15,
-                                    color: Colors.black.withOpacity(0.5),
+                                    color: Colors.black,
                                     letterSpacing: 1,
                               ),
                                enabledBorder: const UnderlineInputBorder(
-                                 borderSide: BorderSide(color: Colors.white),
+                                 borderSide: BorderSide(color: Colors.black),
                                ),
                                focusedBorder: const UnderlineInputBorder(
-                                 borderSide: BorderSide(color: Colors.white),
+                                 borderSide: BorderSide(color: Colors.black),
                                ),
                             ),
                              style: const TextStyle(
@@ -119,27 +119,39 @@ class Screen2State extends State<Screen2> {
                         InkWell(
                           onTap: () async {
                             if(textEditingController.text.isNotEmpty) {
-                                setState(() {
-                                    _loading = true;
-                                  });
-                                recipes = new List();
-                                String url =
-                                    "https://api.edamam.com/search?q=${textEditingController.text}&app_id=85721d4c&app_key=162c22da2f6dc5bc2f4e1caa61c652aa";
-                                var response = await http.get(url as Uri);
+                              setState(() {
+                                _loading = true;
+                              });
+                              recipes = [];  // Clear the list before adding new recipes
+                              String url =
+                                  "https://api.edamam.com/search?q=${textEditingController.text}&app_id=85721d4c&app_key=162c22da2f6dc5bc2f4e1caa61c652aa";
+                              var response = await http.get(Uri.parse(url));
+
+                              if (response.statusCode == 200) {
                                 Map<String, dynamic> jsonData =
                                 jsonDecode(response.body);
                                 jsonData["hits"].forEach((element) {
-                                  RecipeModels recipeModels = RecipeModels(url: '', source: '', image: '', label: '');
-                                  recipeModels = RecipeModels.fromMap(element['recipe']);
+                                  RecipeModels recipeModels = RecipeModels(
+                                    url: '',
+                                    source: '',
+                                    image: '',
+                                    label: '',
+                                  );
+                                  recipeModels =
+                                      RecipeModels.fromMap(element['recipe']);
                                   recipes.add(recipeModels);
                                 });
+                              } else {
 
-                                setState(() {
-                                  _loading = false;
-                                });
+                                print('Failed to load recipes');
+                              }
 
-                            }else{
+                              setState(() {
+                                _loading = false;
+                              });
 
+                            } else {
+                              // Handle the case when the text is empty
                             }
                           },
                           child: Container(
@@ -200,8 +212,8 @@ class RecipeTile extends StatefulWidget {
 
 class RecipeTileState extends State<RecipeTile> {
   _launchURL(String url) async {
-    if (await canLaunchUrl(url as Uri)) {
-      await launchUrl(url as Uri);
+    if (await canLaunch(url)) {
+      await launch(url);
     } else {
       throw 'Could not launch $url';
     }
@@ -255,7 +267,7 @@ class RecipeTileState extends State<RecipeTile> {
                           widget.title,
                           style: const TextStyle(
                               fontSize: 13,
-                              color: Colors.black54,
+                              color: Colors.black,
                               ),
                         ),
                         Text(
@@ -321,7 +333,7 @@ class GradientCard extends StatelessWidget {
                     children: <Widget>[
                       Text(
                         topColorCode,
-                        style: const TextStyle(fontSize: 16, color: Colors.black54),
+                        style: const TextStyle(fontSize: 16, color: Colors.black),
                       ),
                       Text(
                         bottomColorCode,
