@@ -35,25 +35,25 @@ class Home extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Text("Meal", style: TextStyle(
-                        fontSize: 18,
+                        fontSize: 20,
                         fontWeight: FontWeight.bold,
                         color: Colors.black,
                       ),
                       ),
                       Text("Drop", style: TextStyle(
                         color: Colors.deepOrange,
-                        fontSize: 18,
+                        fontSize: 20,
                         fontWeight: FontWeight.bold,
                       ),
                       )
                     ],
                   ),
-                  SizedBox(height: 80),
+                  SizedBox(height: 250),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      Text("Welcome!", style: TextStyle(
-                    fontSize: 50,
+                      Text("NO WASTE JUST TASTE", style: TextStyle(
+                    fontSize: 30,
                     color: Colors.deepOrange,
                     fontWeight: FontWeight.bold,
                     letterSpacing: 1,
